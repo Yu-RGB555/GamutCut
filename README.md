@@ -138,3 +138,7 @@
 | API | Google API OAuth 2.0 <br> Twitter API |
 | ホスティング<br>プラットフォーム	| render |
 | バージョン管理システム	| Git <br> GitHub |
+
+
+# 画面遷移図
+https://www.figma.com/design/8QBPC8njhgxCLgDvBckxXY/GamutCut?node-id=43-199&t=bwuw8nToEr8Uq1Js-1
