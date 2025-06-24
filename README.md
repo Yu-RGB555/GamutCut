@@ -143,3 +143,6 @@
 ### 画面遷移図（Figma）
 https://www.figma.com/design/L3rfddFQ4uDPR1rhKFgTxm/GamutCut_%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E5%9B%B3?node-id=0-1&p=f&t=PX9CSdgK7AQqFl2P-0
 <br>
+
+### ER図
+![alt 卒制ER図](https://i.gyazo.com/a80507a7fcae124456a09338cd53cb3e.png)
