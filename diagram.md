@@ -1,5 +1,5 @@
 ### ER図
-![alt ER図](https://i.gyazo.com/89272cec0f428aad61b717004e45616e.png)
+![alt ER図](https://i.gyazo.com/47a9fec68813b990224b7eb079ec8a38.png)
 
 ### 本サービスの概要（700文字以内）
 色相環上に円形や多角形の図形をマスクとして配置し、統一感を生み出せる色域に制限する「ガマットマスク」を作成できます。<br>
@@ -59,7 +59,7 @@
 | カラム名 | 型 | PK | FK | 備考 |
 | :-: | :-: | :-: | :-: | :---- |
 | id  | bigint  | ⚪︎ |  | プリセットマスクID |
-| user_id | string |  | ⚪︎ | マスク作成者(users.id) |
+| user_id | bigint |  | ⚪︎ | マスク作成者(users.id) |
 | name | string |  |  | プリセットマスク名 |
 | mask_data | jsonb |  |  | マスク |
 | created_at | datetime |  |  | 作成日時 |
