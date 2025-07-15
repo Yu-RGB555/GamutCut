@@ -1,0 +1,22 @@
+# Ruby 3.4.2 のイメージを取得
+FROM ruby:3.4.2
+
+# 必要なパッケージをインストール
+RUN apt-get update -qq && apt-get install -y \
+    postgresql-client \
+    build-essential \
+    libpq-dev \
+    imagemagick \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# アプリケーションディレクトリを作成
+WORKDIR /back
+
+# GemfileとGemfile.lockをコピーしてbundle install
+COPY ./Gemfile ./Gemfile.lock ./
+RUN bundle install
+
+# アプリケーションコードを.(/back/)にコピー
+COPY . .
