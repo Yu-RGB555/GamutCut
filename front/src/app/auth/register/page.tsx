@@ -1,3 +1,7 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,16 +12,113 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { registerUser } from '@/lib/api';
+import { RegisterRequest } from "@/types/auth";
 
 export default function Register() {
+  // ルーティング設定
+  const router = useRouter();
+
+  // 送信する入力情報(ハッシュ形式)の状態管理
+  const [formData, setFormData] = useState<RegisterRequest>({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+  });
+
+  // バリデーションエラーの状態管理
+  const [errors, setErrors] = useState<string[]>([]);
+
+  // フォームに入力された値だけをリアルタイムにキャッチして、fromDataへ更新をかける
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // バリデーションエラーの有無のチェック
+  const validateForm = (): boolean => {
+    const newErrors: string[] = [];
+
+    if (!formData.name.trim()) {
+      newErrors.push('ハンドルネームを入力してください');
+    } else if (formData.name.length > 20) {
+      newErrors.push('ハンドルネームは20文字以内で入力してください');
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.push('メールアドレスを入力してください');
+    }
+    // else if (formData.emailが無効なアドレスの場合){ }
+
+    if (!formData.password) {
+      newErrors.push('パスワードを入力してください');
+    } else if (formData.password.length < 6) {
+      newErrors.push('パスワードは6文字以上で入力してください');
+    } else if (!/^[a-zA-Z0-9]+$/.test(formData.password)) {
+      newErrors.push('パスワードは半角英数字で入力してください');
+    }
+
+    if (formData.password !== formData.password_confirmation) {
+      newErrors.push('パスワードが一致しません');
+    }
+
+    setErrors(newErrors);
+    return newErrors.length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()){
+      return;
+    }
+
+    setErrors([]);
+
+    try{
+      // formDataをRailsに送信
+      const response = await registerUser(formData);
+
+      // 登録成功
+      alert(response.message);
+
+      // ログイン画面にリダイレクト
+      router.push('/auth/login');
+    } catch(error) {
+      // 登録失敗（errorがresponseに含まれる）
+      if (error instanceof Error) {
+        try {
+          const errorData = JSON.parse(error.message);
+          setErrors(errorData.errors || [errorData.message]);
+        } catch {
+          setErrors([error.message]);
+        }
+      } else {
+        setErrors(['予期しないエラーが発生しました']);
+      }
+    }
+  };
+
   return (
     <div className="my-8">
       <Card className="w-full max-w-sm mx-auto">
         <CardHeader>
           <CardTitle>GamutCut</CardTitle>
         </CardHeader>
+          {errors.length > 0 && (
+            <div className="px-6">
+              {errors.map((error, index) => (
+                <p key={index} className="text-error text-sm">・{error}</p>
+              ))}
+            </div>
+          )}
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="name">ハンドルネーム</Label>
@@ -26,6 +127,8 @@ export default function Register() {
                   name="name"
                   type="text"
                   placeholder="最大20文字まで"
+                  value={formData.name}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
@@ -36,6 +139,8 @@ export default function Register() {
                   name="email"
                   type="email"
                   placeholder="メールアドレス"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
@@ -48,6 +153,8 @@ export default function Register() {
                   name="password"
                   type="password"
                   placeholder="半角英数字6文字以上"
+                  value={formData.password}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
@@ -60,6 +167,8 @@ export default function Register() {
                   name="password_confirmation"
                   type="password"
                   placeholder="半角英数字6文字以上"
+                  value={formData.password_confirmation}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
