@@ -1,7 +1,19 @@
+'use client';
+
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export function Header() {
+  const { user, logout, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  }
+
   return (
     <header className="bg-background shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,16 +37,33 @@ export function Header() {
 
           {/* 認証ボタン */}
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <Link href="/auth/login">
-                ログイン
-              </Link>
-            </Button>
-            <Button size="sm">
-              <Link href="/auth/register">
-                新規登録
-              </Link>
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <span className="text-foreground text-sm">
+                  {user?.name}さん
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                >
+                  ログアウト
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="sm">
+                  <Link href="/auth/login">
+                    ログイン
+                  </Link>
+                </Button>
+                <Button size="sm">
+                  <Link href="/auth/register">
+                    新規登録
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
