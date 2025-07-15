@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # PostgreSQLデータベース
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${DATABASE_NAME} -U ${DATABASE_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIOオブジェクトストレージ（開発環境用）
+  minio:
+    image: minio/minio:latest
+    restart: always
+    environment:
+      TZ: Asia/Tokyo
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9001:9000"  # API用ポート
+      - "9002:9001"  # 管理画面用ポート
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Railsアプリケーション
+  backend:
+    build:
+      context: ./back
+      dockerfile: Dockerfile.dev
+    command: bash -c "bundle install && bundle exec rails db:prepare && rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./back:/back
+      - bundle_data:/usr/local/bundle:cached
+    ports:
+      - "3002:3000"
+    environment:
+      TZ: Asia/Tokyo
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      # MinIO接続設定（開発環境用）
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ENDPOINT: ${AWS_ENDPOINT}
+      AWS_FORCE_PATH_STYLE: ${AWS_FORCE_PATH_STYLE}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      # 環境判定用
+      RAILS_ENV: ${RAILS_ENV}
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  # React開発サーバー(Next.js)
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile.dev
+    command: bash -c "yarn run dev"
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./front:/front
+      - node_modules_frontend:/front/node_modules
+    ports:
+      - "3003:3000"
+    environment:
+      TZ: Asia/Tokyo
+      # バックエンドAPI接続設定
+      # NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  minio_data:
+  bundle_data:
+  node_modules_frontend:
