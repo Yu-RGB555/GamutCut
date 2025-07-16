@@ -31,8 +31,8 @@ services:
     volumes:
       - minio_data:/data
     ports:
-      - "9001:9000"  # API用ポート
-      - "9002:9001"  # 管理画面用ポート
+      - "9000:9000"  # API用ポート
+      - "9001:9001"  # 管理画面用ポート
     command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
