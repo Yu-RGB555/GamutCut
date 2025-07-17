@@ -1,6 +1,21 @@
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+// 環境に応じたAPI URLの取得
+const getApiBaseUrl = (): string => {
+  // Vercelの環境変数を優先
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  // フォールバック（開発環境）
+  return 'http://localhost:3002';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// ⚠️デバッグ用（本番では削除推奨）
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
 
 // 新規登録用
 export async function registerUser(userData: RegisterRequest): Promise<RegisterResponse> {
@@ -10,6 +25,7 @@ export async function registerUser(userData: RegisterRequest): Promise<RegisterR
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ user: userData }),
+    credentials: 'include',
   });
 
   const data = await response.json();
