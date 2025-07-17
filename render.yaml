@@ -1,0 +1,32 @@
+previewsEnabled: true
+
+databases:
+  - name: gamut-cut-db
+    plan: starter
+    previewPlan: starter
+    databaseName: gamut-cut-db
+    user: gamut-cut
+    region: singapore
+
+services:
+  - type: web
+    name: gamut-cut-rails-api
+    repo: https://github.com/Yu-RGB555/GamutCut
+    rootDir: back
+    branch: main
+    plan: starter
+    previewPlan: starter
+    buildCommand: bundle install && bundle exec rake db:migrate
+    startCommand: bundle exec rails server -b 0.0.0.0 -p $PORT
+    region: singapore
+    env: ruby
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gamut-cut-db
+          property: connectionString
+      - key: RAILS_ENV
+        value: production
+        previewValue: staging
+      - key: TZ
+        value: Asia/Tokyo
