@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  # Health check endpoints
+  get '/health', to: 'health_check#index'
+  get '/health/detailed', to: 'health_check#detailed'
+
   devise_for :users, skip: [:registrations, :sessions]
 
   namespace :api do
