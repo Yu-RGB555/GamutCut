@@ -15,7 +15,24 @@ const API_BASE_URL = getApiBaseUrl();
 
 // ⚠️デバッグ用（本番では削除推奨）
 console.log('API_BASE_URL:', API_BASE_URL);
-console.log('NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+
+// Next.js側で実行するテスト用コード
+export async function testApiConnection() {
+  try {
+    // 基本的なヘルスチェック
+    const healthResponse = await fetch(`${API_BASE_URL}/health`);
+    const healthData = await healthResponse.json();
+    console.log('Health check:', healthData);
+
+    // 詳細なヘルスチェック
+    const detailedResponse = await fetch(`${API_BASE_URL}/health/detailed`);
+    const detailedData = await detailedResponse.json();
+    console.log('Detailed health check:', detailedData);
+
+  } catch (error) {
+    console.error('API connection failed:', error);
+  }
+};
 
 // 新規登録用
 export async function registerUser(userData: RegisterRequest): Promise<RegisterResponse> {
