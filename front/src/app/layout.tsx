@@ -15,7 +15,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body  className="min-h-screen flex flex-col">
         <AuthProvider>
           <Header />
-            <main className="flex-1 flex items-center justify-center py-20 px-4">
+            {/* <main className="flex-1 flex flex-col items-center justify-start py-8 px-4"> */}
+            <main>
               {children}
             </main>
         </AuthProvider>

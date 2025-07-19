@@ -45,8 +45,8 @@
   --card: #101010;                             /* カード背景色 */
   --card-foreground: #dfdfdf;                  /* カードテキスト */
   --mouseover: #4C7F0E;                        /* マウスオーバー */
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: #101010;
+  --popover-foreground: #dfdfdf;
   --primary: #87EE0C;                          /* プライマリーボタン色 */
   --primary-foreground: #222529;
   --secondary: oklch(0.97 0 0);                /* セカンダリーボタン色 */
