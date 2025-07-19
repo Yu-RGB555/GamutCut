@@ -26,7 +26,7 @@ export function Header() {
           </div>
 
           {/* ナビゲーション */}
-          <nav className="md:flex space-x-4 md:space-x-8">
+          <nav className="flex space-x-2 md:space-x-8">
             <Link href="/work" className="text-foreground hover:text-mouseover font-semibold">
               作品一覧
             </Link>
@@ -39,11 +39,9 @@ export function Header() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <span className="text-foreground text-sm">
-                  {user?.name}さん
-                </span>
+                <p className="text-foreground text-sm"><span className="font-semibold p-1">{user?.name}</span>さん</p>
                 <Button
-                  variant="outline"
+                  variant="destructive"
                   size="sm"
                   onClick={handleLogout}
                 >

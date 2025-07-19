@@ -18,12 +18,12 @@ export function Footer() {
             <h4 className="font-semibold text-white mb-4">User Guide</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/work" className="text-foreground hover:text-gray-900">
+                <Link href="/work" className="text-foreground hover:underline">
                   ガマットマスクとは？
                 </Link>
               </li>
               <li>
-                <Link href="/work/new" className="text-foreground hover:text-gray-900">
+                <Link href="/work/new" className="text-foreground hover:underline">
                   使い方
                 </Link>
               </li>
@@ -35,17 +35,17 @@ export function Footer() {
             <h4 className="font-semibold text-white mb-4">Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/legal/terms_of_service" className="text-foreground hover:text-gray-900">
+                <Link href="/legal/terms_of_service" className="text-foreground hover:underline">
                   利用規約
                 </Link>
               </li>
               <li>
-                <Link href="/legal/privacy_policy" className="text-foreground hover:text-gray-900">
+                <Link href="/legal/privacy_policy" className="text-foreground hover:underline">
                   プライバシーポリシー
                 </Link>
               </li>
               <li>
-                <Link href="/legal/contact" className="text-foreground hover:text-gray-900">
+                <Link href="/legal/contact" className="text-foreground hover:underline">
                   お問い合わせ
                 </Link>
               </li>
