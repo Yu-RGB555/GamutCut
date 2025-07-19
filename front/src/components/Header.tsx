@@ -26,11 +26,11 @@ export function Header() {
           </div>
 
           {/* ナビゲーション */}
-          <nav className="hidden md:flex space-x-8">
-            <Link href="/work" className="text-foreground hover:text-mouseover font-medium">
+          <nav className="md:flex space-x-4 md:space-x-8">
+            <Link href="/work" className="text-foreground hover:text-mouseover font-semibold">
               作品一覧
             </Link>
-            <Link href="/work/new" className="text-foreground hover:text-mouseover font-medium">
+            <Link href="/work/new" className="text-foreground hover:text-mouseover font-semibold">
               作品投稿
             </Link>
           </nav>
