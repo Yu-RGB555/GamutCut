@@ -33,6 +33,7 @@
   --color-text-selection: var(--text-selection);
   --color-error: var(--error);
   --color-mouseover: var(--mouseover);
+  --color-label: var(--label);
 }
 
 /* ライトモード */
@@ -44,6 +45,7 @@
   --error: #e14a42;                            /* エラーメッセージ */
   --card: #101010;                             /* カード背景色 */
   --card-foreground: #dfdfdf;                  /* カードテキスト */
+  --label: #dfdfdf;                            /* ラベル */
   --mouseover: #4C7F0E;                        /* マウスオーバー */
   --popover: #101010;
   --popover-foreground: #dfdfdf;
@@ -55,7 +57,7 @@
   --muted-foreground: #cdcdcd95;               /* 控えめなテキスト色 */
   --accent: #97FF60;                           /* アクセント色 */
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);    /* 危険・削除ボタン色 */
+  --destructive: #B3261E;                      /* 危険・削除ボタン色 */
   --border: #757575;                           /* ボーダー色（ライン用） */
   --btn-border: #87EE0C;                       /* ボーダー色（ボタン用） */
   --input: #dfdfdf;                            /* インプット枠線色 */
