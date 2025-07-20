@@ -1,4 +1,6 @@
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
+// import { WorkRequest, WorkResponse } from '@/types/work';
+
 
 // 環境に応じたAPI URLの取得
 const getApiBaseUrl = (): string => {
@@ -7,16 +9,16 @@ const getApiBaseUrl = (): string => {
     return process.env.NEXT_PUBLIC_API_URL;
   }
 
-  // フォールバック（開発環境）
+  // 開発環境
   return 'http://localhost:3002';
 };
 
 const API_BASE_URL = getApiBaseUrl();
 
-// ⚠️デバッグ用（本番では削除推奨）
+// ⚠️デバッグ用（MVPで削除）
 console.log('API_BASE_URL:', API_BASE_URL);
 
-// Next.js側で実行するテスト用コード
+// ⚠️Next.js側で実行するテスト用コード（MVPで削除）
 export async function testApiConnection() {
   try {
     // 基本的なヘルスチェック
@@ -88,3 +90,21 @@ export async function logoutUser(): Promise<void> {
     throw new Error('ログアウトに失敗しました');
   }
 }
+
+// 作品投稿
+export async function postWork(formData: FormData) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    },
+    body: formData,
+    credentials: 'include'
+  });
+
+  if (!response.ok) {
+    throw new Error('作品の投稿に失敗しました');
+  }
+
+  return response.json();
+};
