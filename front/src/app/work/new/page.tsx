@@ -59,14 +59,6 @@ export default function PostWorks() {
       };
       submitData.append('work[set_mask_data]', JSON.stringify(dummyMaskData));
 
-
-      // デバッグ用：FormDataの内容を確認
-      console.log('FormData contents:');
-      for (let [key, value] of submitData.entries()) {
-        console.log(key, value);
-        console.log(publicStatus.toString())
-      }
-
       await postWork(submitData);
       router.push('/work');
     } catch (error) {

@@ -3,7 +3,7 @@ export interface Work{
   title: string;
   description: string;
   illustration_image_url?: string;
-  set_mask_data?: any;
+  set_mask_data?: string;
   is_public: string;
   user: {
     id: number;
