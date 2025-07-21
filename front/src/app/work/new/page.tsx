@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DropZone } from "@/components/ui/dropzone";
@@ -20,8 +21,22 @@ export default function PostWorks() {
     title: '',
     description: '',
   });
-  const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
   const [maskFile, setMaskFile] = useState<File | null>(null);
+  const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
+  const [illustrationPreview, setIllustrationPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!illustrationFile){
+      return setIllustrationPreview(null);
+    }
+    // ObjectURLを生成
+    const url = URL.createObjectURL(illustrationFile);
+    setIllustrationPreview(url);
+    // クリーンアップ(メモリリーク防止)
+    return () => URL.revokeObjectURL(url);
+  }, [illustrationFile]);
+
+
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -94,7 +109,14 @@ export default function PostWorks() {
               <DropZone
                 onFileSelect={setIllustrationFile}
                 accept="image/*"
+                previewUrl={illustrationPreview}
               />
+              {/* ⚠️ デバッグ用の情報表示（本番では削除） */}
+              {illustrationFile && (
+                <p className="text-sm text-gray-600 mt-2">
+                  選択中: {illustrationFile.name} ({(illustrationFile.size / 1024 / 1024).toFixed(2)}MB)
+                </p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
