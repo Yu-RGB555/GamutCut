@@ -2,15 +2,15 @@
 
 import { useEffect } from "react";
 import { testApiConnection } from '@/lib/api'
+import { ColorWheel } from "@/components/colorwheel";
 
 export default function Home() {
   useEffect(() => {
     testApiConnection();
   }, []);
   return (
-    // <div className="font-sans items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-    <div>
-
+    <div className="justify-items-center">
+      <ColorWheel></ColorWheel>
     </div>
   );
 }
