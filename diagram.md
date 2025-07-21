@@ -1,5 +1,5 @@
 ### ER図
-![alt ER図](https://i.gyazo.com/47a9fec68813b990224b7eb079ec8a38.png)
+![alt ER図](https://i.gyazo.com/a5a23a3f80022e34b3b8a89f7770cf23.png)
 
 ### 本サービスの概要（700文字以内）
 色相環上に円形や多角形の図形をマスクとして配置し、統一感を生み出せる色域に制限する「ガマットマスク」を作成できます。<br>
@@ -64,6 +64,16 @@
 | mask_data | jsonb |  |  | マスク |
 | created_at | datetime |  |  | 作成日時 |
 | updated_at | datetime |  |  | 更新日時 |
+
+#### ShapeTemplates（ガマットマスクテンプレート）
+| カラム名 | 型 | PK | FK | 備考 |
+| :-: | :-: | :-: | :-: | :---- |
+| id | bigint | ⚪︎ | | テンプレートID |
+| shape_type | string | | ⚪︎ | マスクの型 |
+| display_order | string | | | 表示順 |
+| shape_data | jsonb | | ⚪︎ | マスクの形状(データ) |
+| created_at | datetime | | | 作成日時 |
+| updated_at | datetime | | | 更新日時 |
 
 ### SocialAccounts（ソーシャルログイン関連）
 | カラム名 | 型 | PK | FK | 備考 |

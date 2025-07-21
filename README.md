@@ -130,7 +130,7 @@
 | オブジェクトストレージ | Amazon S3 |
 | CDN | Cloudfrare |
 | API | Google API OAuth 2.0 <br> Twitter API |
-| ホスティング<br>プラットフォーム	| render |
+| ホスティング<br>プラットフォーム	| vercel<br>render |
 | バージョン管理システム	| Git <br> GitHub |
 
 
@@ -139,4 +139,4 @@ https://www.figma.com/design/L3rfddFQ4uDPR1rhKFgTxm/GamutCut_%E7%94%BB%E9%9D%A2%
 <br>
 
 ### ER図
-![alt 卒制ER図](https://i.gyazo.com/89272cec0f428aad61b717004e45616e.png)
+![alt 卒制ER図](https://i.gyazo.com/a5a23a3f80022e34b3b8a89f7770cf23.png)
