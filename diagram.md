@@ -69,9 +69,9 @@
 | カラム名 | 型 | PK | FK | 備考 |
 | :-: | :-: | :-: | :-: | :---- |
 | id | bigint | ⚪︎ | | テンプレートID |
-| shape_type | string | | ⚪︎ | マスクの型 |
+| shape_type | string | | | マスクの型 |
 | display_order | string | | | 表示順 |
-| shape_data | jsonb | | ⚪︎ | マスクの形状(データ) |
+| shape_data | jsonb | | | マスクの形状(データ) |
 | created_at | datetime | | | 作成日時 |
 | updated_at | datetime | | | 更新日時 |
 
