@@ -1,17 +1,30 @@
 'use client';
 
+import { useState, useEffect } from "react";
 import { Combobox } from "@/components/ui/combobox";
 import { Search } from "@/components/ui/search";
+import { Work } from "@/types/work";
+import { getWorks } from "@/lib/api";
 
-export default function Work() {
-  // ダミーデータ
-  const works = Array.from({ length: 15 }, (_, index) => ({
-  id: index + 1,
-  title: `作品 ${index + 1}`,
-  image: `/placeholder-${index + 1}.jpg`,
-  description: `作品${index + 1}の説明文です。`,
-  date: `2025-${String(Math.floor(index / 3) + 1).padStart(2, '0')}-${String((index % 3) + 1).padStart(2, '0')}`
-  }));
+export default function WorksList() {
+  const [works, setWorks] = useState<Work[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchWorks = async () => {
+      try{
+        const worksData = await getWorks();
+        console.log('workData:', worksData);
+        setWorks(worksData);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWorks();
+  }, []);
 
   return (
     <div>
@@ -23,7 +36,7 @@ export default function Work() {
       </div>
       <div className="px-8 pb-8 mb-32">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {works.map((work, index) => (
+          {works.map((work) => (
             <div
               key={work.id}
               className="bg-card rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -36,7 +49,7 @@ export default function Work() {
               {/* 作品情報エリア */}
               <div className="p-4 border-t">
                 <h3 className="text-card-foreground font-semibold text-lg mb-2">{work.title}</h3>
-                <p className="text-gray-400 text-xs">{work.date}</p>
+                <p className="text-gray-400 text-xs">{work.created_at}</p>
               </div>
             </div>
           ))}
