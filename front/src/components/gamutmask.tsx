@@ -27,7 +27,6 @@ export function GamutMask() {
 
   // 色相環のパラメータ
   const [currentValue, setCurrentValue] = useState<number>(100);
-  const [showGrid, setShowGrid] = useState<boolean>(false);
   const [colorInfo, setColorInfo] = useState<ColorInfo>({
     coordinates: '-',
     hue: '-',
@@ -40,7 +39,7 @@ export function GamutMask() {
   const sectorCount = 360;
   const trackCount = 10;
 
-  // マスク関連
+  // テンプレートマスク
   const [presets] = useState<ShapeTemplate[]>([
     {
       id: 1,
@@ -79,14 +78,11 @@ export function GamutMask() {
   const [dragPointIndex, setDragPointIndex] = useState<number>(-1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // カスタムマスク作成
-  const [customShapePoints, setCustomShapePoints] = useState<Point[]>([]);
-  const [isCreatingCustomShape, setIsCreatingCustomShape] = useState(false);
-
   const degToRad = (degrees: number): number => {
     return degrees * (Math.PI / 180);
   };
 
+  // HSV変換
   const hsvToRgb = (h: number, s: number, v: number): [number, number, number] => {
     h = h / 360;
     s = s / 100;
@@ -119,6 +115,7 @@ export function GamutMask() {
     ];
   };
 
+  // 各座標(x, y)の色相と彩度を定義
   const getColorFromCoords = (x: number, y: number, centerX: number, centerY: number) => {
     const dx = x - centerX;
     const dy = y - centerY;
@@ -131,6 +128,7 @@ export function GamutMask() {
     return { hue, saturation, distance };
   };
 
+  // 色相環の描画
   const drawColorWheel = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     const centerX = width / 2;
     const centerY = height / 2;
@@ -168,30 +166,6 @@ export function GamutMask() {
       ctx.restore();
     }
 
-    if (showGrid) {
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
-      ctx.lineWidth = 0.5;
-      for (let sector = 0; sector < sectorCount; sector++) {
-        const angle = degToRad(sector * degreesPerSector - 90);
-        const endX = centerX + Math.cos(angle) * maxRadius;
-        const endY = centerY + Math.sin(angle) * maxRadius;
-
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.lineTo(endX, endY);
-        ctx.stroke();
-      }
-
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.lineWidth = 0.5;
-      for (let track = 1; track < trackCount; track++) {
-        const radius = (track * maxRadius) / trackCount;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-        ctx.stroke();
-      }
-    }
-
     ctx.beginPath();
     ctx.arc(centerX, centerY, maxRadius, 0, 2 * Math.PI);
     ctx.strokeStyle = '#333';
@@ -199,6 +173,7 @@ export function GamutMask() {
     ctx.stroke();
   };
 
+  // マスクの描画
   const drawMask = (ctx: CanvasRenderingContext2D, points: Point[], isActive: boolean = false) => {
     if (points.length < 3) return;
 
@@ -212,26 +187,13 @@ export function GamutMask() {
     ctx.closePath();
 
     // マスク境界線
-    ctx.strokeStyle = isActive ? '#007acc' : '#666';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = isActive ? '#101010' : '#666';
+    ctx.lineWidth = 1;
     ctx.stroke();
 
     // マスク内部の半透明オーバーレイ
-    ctx.fillStyle = 'rgba(0, 122, 204, 0.1)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fill();
-
-    // 頂点を描画
-    if (isActive) {
-      points.forEach((point, index) => {
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, 6, 0, 2 * Math.PI);
-        ctx.fillStyle = '#007acc';
-        ctx.fill();
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      });
-    }
 
     ctx.restore();
   };
@@ -251,6 +213,7 @@ export function GamutMask() {
     return closestIndex;
   };
 
+  // レンダリング時に色相環を再描画(マスクを選択中はマスクも再描画)
   const redraw = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -263,10 +226,6 @@ export function GamutMask() {
     if (selectedMask) {
       drawMask(ctx, selectedMask.points, true);
     }
-
-    if (isCreatingCustomShape && customShapePoints.length > 0) {
-      drawMask(ctx, customShapePoints, true);
-    }
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -277,11 +236,6 @@ export function GamutMask() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (isCreatingCustomShape) {
-      setCustomShapePoints([...customShapePoints, { x, y }]);
-      return;
-    }
-
     if (selectedMask) {
       const pointIndex = findClosestPoint(x, y, selectedMask.points);
       if (pointIndex !== -1) {
@@ -291,6 +245,7 @@ export function GamutMask() {
     }
   };
 
+  // マウスオーバーポイントの色情報取得
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -301,28 +256,25 @@ export function GamutMask() {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
-    // 色情報の更新
-    if (!isDragging && !isCreatingCustomShape) {
-      const { hue, saturation, distance } = getColorFromCoords(x, y, centerX, centerY);
+    const { hue, saturation, distance } = getColorFromCoords(x, y, centerX, centerY);
 
-      if (distance <= maxRadius) {
-        const [r, g, b] = hsvToRgb(hue, saturation, currentValue);
-        setColorInfo({
-          coordinates: `(${Math.round(x)}, ${Math.round(y)})`,
-          hue: Math.round(hue).toString(),
-          saturation: Math.round(saturation).toString(),
-          value: currentValue.toString(),
-          rgb: `${r}, ${g}, ${b}`
-        });
-      } else {
-        setColorInfo({
-          coordinates: '-',
-          hue: '-',
-          saturation: '-',
-          value: '-',
-          rgb: '-'
-        });
-      }
+    if (distance <= maxRadius) {
+      const [r, g, b] = hsvToRgb(hue, saturation, currentValue);
+      setColorInfo({
+        coordinates: `(${Math.round(x)}, ${Math.round(y)})`,
+        hue: Math.round(hue).toString(),
+        saturation: Math.round(saturation).toString(),
+        value: currentValue.toString(),
+        rgb: `${r}, ${g}, ${b}`
+      });
+    } else {
+      setColorInfo({
+        coordinates: '-',
+        hue: '-',
+        saturation: '-',
+        value: '-',
+        rgb: '-'
+      });
     }
 
     // ドラッグ処理
@@ -348,31 +300,13 @@ export function GamutMask() {
     setDragPointIndex(-1);
   };
 
+  // ガマットマスクテンプレートの選択
   const handleMaskSelect = (mask: ShapeTemplate) => {
     setSelectedMask({ ...mask });
     setIsDialogOpen(false);
   };
 
-  const handleStartCustomMask = () => {
-    setIsCreatingCustomShape(true);
-    setSelectedMask(null);
-    setCustomShapePoints([]);
-    setIsDialogOpen(false);
-  };
-
-  const finishCustomShape = () => {
-    if (customShapePoints.length > 2) {
-      const newShape: ShapeTemplate = {
-        id: Date.now(),
-        name: `カスタムマスク`,
-        points: customShapePoints
-      };
-      setSelectedMask(newShape);
-    }
-    setCustomShapePoints([]);
-    setIsCreatingCustomShape(false);
-  };
-
+  // マスク画像のエクスポート
   const exportMaskedImage = () => {
     const canvas = canvasRef.current;
     const hiddenCanvas = hiddenCanvasRef.current;
@@ -389,7 +323,7 @@ export function GamutMask() {
     // 色相環を描画
     drawColorWheel(hiddenCtx, hiddenCanvas.width, hiddenCanvas.height);
 
-    // マスクでクリッピング
+    // クリッピングマスクを描画
     hiddenCtx.globalCompositeOperation = 'destination-in';
     hiddenCtx.beginPath();
     hiddenCtx.moveTo(selectedMask.points[0].x, selectedMask.points[0].y);
@@ -399,7 +333,7 @@ export function GamutMask() {
     hiddenCtx.closePath();
     hiddenCtx.fill();
 
-    // PNGとしてダウンロード
+    // クリッピングマスクをかけた色相環をPNGとしてダウンロード
     hiddenCanvas.toBlob((blob) => {
       if (blob) {
         const url = URL.createObjectURL(blob);
@@ -414,9 +348,10 @@ export function GamutMask() {
     }, 'image/png');
   };
 
+  // リロード時、明度変更時、マスク選択時に再レンダリング
   useEffect(() => {
     redraw();
-  }, [currentValue, showGrid, selectedMask, customShapePoints, isCreatingCustomShape]);
+  }, [currentValue, selectedMask]);
 
   return (
     <div className="flex flex-col items-center p-6">
@@ -439,7 +374,6 @@ export function GamutMask() {
 
       {/* コントロールパネル */}
       <div className="w-full max-w-2xl space-y-6">
-        {/* マスク操作 */}
         <div className="bg-card p-4 rounded-lg">
           <h3 className="text-card-foreground text-lg font-semibold mb-4">ガマットマスク</h3>
           <div className="flex gap-4 items-center">
@@ -462,13 +396,6 @@ export function GamutMask() {
                       {preset.name}
                     </Button>
                   ))}
-                  <Button
-                    variant="outline"
-                    onClick={handleStartCustomMask}
-                    className="p-4 h-auto"
-                  >
-                    カスタムマスクを作成
-                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -489,19 +416,9 @@ export function GamutMask() {
                 </Button>
               </>
             )}
-
-            {isCreatingCustomShape && (
-              <Button
-                onClick={finishCustomShape}
-                className="bg-primary hover:bg-mouseover"
-              >
-                カスタムマスクを完了
-              </Button>
-            )}
           </div>
         </div>
 
-        {/* 明度調整 */}
         <div className="bg-card p-4">
           <h3 className="text-card-foreground text-lg font-semibold mb-4">明度調整</h3>
           <div className="flex items-center gap-4">
@@ -517,20 +434,6 @@ export function GamutMask() {
           </div>
         </div>
 
-        {/* グリッド表示 */}
-        <div className="bg-card p-4">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showGrid}
-              onChange={(e) => setShowGrid(e.target.checked)}
-              className="rounded"
-            />
-            <span>グリッド表示</span>
-          </label>
-        </div>
-
-        {/* 色情報表示 */}
         <div className="bg-card p-4 rounded-lg border">
           <h3 className="text-card-foreground text-lg font-semibold mb-3">色情報</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
