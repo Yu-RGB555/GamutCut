@@ -1,5 +1,5 @@
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
-// import { WorkRequest, WorkResponse } from '@/types/work';
+import { Work } from '@/types/work';
 
 
 // 環境に応じたAPI URLの取得
@@ -88,6 +88,31 @@ export async function logoutUser(): Promise<void> {
 
   if(!response.ok){
     throw new Error('ログアウトに失敗しました');
+  }
+}
+
+// 作品一覧取得
+export async function getWorks(): Promise<Work[]> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const text = await response.text(); // 一旦 JSON をパースせずにテキストで受け取る
+  console.log('APIレスポンス（text）:', text);
+
+  if(!response.ok){
+    throw new Error('作品一覧の取得に失敗しました');
+  }
+
+  try {
+    const data = JSON.parse(text);
+    return data.works;
+  } catch (error) {
+    throw new Error('APIレスポンスがJSONではありません');
   }
 }
 

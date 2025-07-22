@@ -1,6 +1,26 @@
 class Api::V1::WorksController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, only: [:create]
   # before_action :set_work, only: [:show, :update, :destroy]
+
+  def index
+    @works = Work.includes(:user).where(is_public: 'published').order(created_at: :desc)
+
+    render json: {
+      works: @works.map do |work|
+        {
+          id: work.id,
+          title: work.title,
+          illustration_image_url: work.illustration_image.attached? ? url_for(work.illustration_image) : nil,
+          user: {
+            id: work.user.id,
+            name: work.user.name,
+            avatar_url: work.user.avatar_url
+          },
+          created_at: work.created_at
+        }
+      end
+    }
+  end
 
   def create
     @work = current_user.works.build(work_params)
