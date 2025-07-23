@@ -43,12 +43,21 @@ export default function WorksList() {
             >
               {/* 作品画像エリア */}
               <div className="aspect-video bg-card flex items-center justify-center">
-                <span className="text-gray-500">作品 {work.id}</span>
+                {work.illustration_image_url ? (
+                  <img
+                    src={work.illustration_image_url}
+                    alt={work.title}
+                    className="object-contain w-full h-full"
+                  />
+                ) : (
+                  <span className="text-gray-500">作品 {work.id}</span>
+                )}
               </div>
 
               {/* 作品情報エリア */}
               <div className="p-4 border-t">
-                <h3 className="text-card-foreground font-semibold text-lg mb-2">{work.title}</h3>
+                <h3 className="text-card-foreground font-semibold text-xl mb-2">{work.title}</h3>
+                <p className="text-white text-base font-normal">{work.user.name}</p>
                 <p className="text-gray-400 text-xs">{work.created_at}</p>
               </div>
             </div>
