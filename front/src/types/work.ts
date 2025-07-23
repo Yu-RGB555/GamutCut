@@ -1,7 +1,7 @@
 export interface Work{
   id: number;
   title: string;
-  // description: string;
+  description: string;
   illustration_image_url?: string;
   set_mask_data?: string;
   is_public: string;
