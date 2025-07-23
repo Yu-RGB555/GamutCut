@@ -16,7 +16,7 @@ const getApiBaseUrl = (): string => {
 const API_BASE_URL = getApiBaseUrl();
 
 // ⚠️デバッグ用（MVPで削除）
-console.log('API_BASE_URL:', API_BASE_URL);
+// console.log('API_BASE_URL:', API_BASE_URL);
 
 // ⚠️Next.js側で実行するテスト用コード（MVPで削除）
 export async function testApiConnection() {
@@ -96,13 +96,13 @@ export async function getWorks(): Promise<Work[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
       'Content-Type': 'application/json',
     },
   });
 
-  const text = await response.text(); // 一旦 JSON をパースせずにテキストで受け取る
-  console.log('APIレスポンス（text）:', text);
+  // ⚠️ JSONをパースせずにテキストで受け取る
+  const text = await response.text();
+  // console.log('APIレスポンス（text）:', text);
 
   if(!response.ok){
     throw new Error('作品一覧の取得に失敗しました');
@@ -114,6 +114,23 @@ export async function getWorks(): Promise<Work[]> {
   } catch (error) {
     throw new Error('APIレスポンスがJSONではありません');
   }
+}
+
+// 作品詳細
+export async function showWork(workId: number): Promise<Work> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('作品の表示に失敗しました');
+  }
+
+  return response.json();
 }
 
 // 作品投稿

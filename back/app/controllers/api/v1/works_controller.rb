@@ -1,6 +1,6 @@
 class Api::V1::WorksController < ApplicationController
-  before_action :authenticate_user!, only: [:create]
-  # before_action :set_work, only: [:show, :update, :destroy]
+  before_action :authenticate_user!, only: [:create, :destroy]
+  before_action :set_work, only: [:destroy]
 
   def index
     @works = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).where(is_public: 'published').order(created_at: :desc)
@@ -44,6 +44,30 @@ class Api::V1::WorksController < ApplicationController
       Rails.logger.error "Work validation errors: #{@work.errors.full_messages}"
       render json: { errors: @work.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  def show
+
+    @work = Work.find_by(id: params[:id])
+
+    render json: {
+      id: @work.id,
+      title: @work.title,
+      illustration_image_url: minio_direct_url(@work.illustration_image),
+      set_mask_data: @work.set_mask_data,
+      description: @work.description,
+      user: {
+        id: @work.user.id,
+        name: @work.user.name,
+        avatar_url: @work.user.avatar_url
+      },
+      created_at: @work.created_at
+    }
+  end
+
+  def destroy
+    @work.destroy
+    render json: { message: '作品が削除されました' }
   end
 
   private
