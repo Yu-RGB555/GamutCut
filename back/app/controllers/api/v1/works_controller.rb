@@ -3,14 +3,14 @@ class Api::V1::WorksController < ApplicationController
   # before_action :set_work, only: [:show, :update, :destroy]
 
   def index
-    @works = Work.includes(:user).where(is_public: 'published').order(created_at: :desc)
+    @works = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).where(is_public: 'published').order(created_at: :desc)
 
     render json: {
       works: @works.map do |work|
         {
           id: work.id,
           title: work.title,
-          illustration_image_url: work.illustration_image.attached? ? url_for(work.illustration_image) : nil,
+          illustration_image_url: work.illustration_image.attached? ? minio_direct_url(work.illustration_image) : nil,
           user: {
             id: work.user.id,
             name: work.user.name,
@@ -23,7 +23,9 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def create
-    @work = current_user.works.build(work_params)
+    @work = current_user.works.build(work_params.except(:illustration_image))
+
+    @work.illustration_image.attach(params[:work][:illustration_image]) if params[:work][:illustration_image].present?
 
     # プリセットからマスクデータを独立して保存
     # @work.save_mask_data_from_preset

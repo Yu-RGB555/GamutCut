@@ -15,7 +15,7 @@ namespace :test_works do
     # テスト作品データ
     test_works = [
       {
-        user_id: 1,
+        user_id: 4,
         title: "#{TEST_WORK_PREFIX}1",
         illustration_image: nil,
         set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
@@ -23,7 +23,7 @@ namespace :test_works do
         is_public: "published"
       },
       {
-        user_id: 2,
+        user_id: 5,
         title: "#{TEST_WORK_PREFIX}2",
         illustration_image: nil,
         set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
@@ -31,7 +31,7 @@ namespace :test_works do
         is_public: "published"
       },
       {
-        user_id: 3,
+        user_id: 6,
         title: "#{TEST_WORK_PREFIX}3",
         illustration_image: nil,
         set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
