@@ -150,3 +150,18 @@ export async function postWork(formData: FormData) {
 
   return response.json();
 };
+
+// 作品削除
+export async function deleteWork(workId: number): Promise<void>{
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+
+  if(!response.ok) {
+    throw new Error('作品の削除に失敗しました')
+  }
+}

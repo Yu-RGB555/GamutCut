@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Work } from "@/types/work";
-import { showWork } from "@/lib/api";
+import { deleteWork, showWork } from "@/lib/api";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function ShowWorks() {
+  const router = useRouter();
   const params = useParams();
   const id = params?.id;
   const { user } = useAuth();
@@ -34,6 +36,17 @@ export default function ShowWorks() {
     fetchWork();
   }, []);
 
+  const handleDelete = async (id: number) => {
+    if (window.confirm('本当に削除しますか？')) {
+      try {
+        await deleteWork(id);
+        router.push('/work');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
     if (isLoading) {
     return <div>読み込み中...</div>;
   }
@@ -49,7 +62,10 @@ export default function ShowWorks() {
           {/* <h1 className="text-label text-4xl font-extrabold">{work.title}</h1> */}
         </div>
         {user && work.user.id === user.id && (
-          <Button variant="destructive">削除</Button>
+          <Button
+            variant="destructive"
+            onClick={() => handleDelete(work.id)}
+          >削除</Button>
         )}
       </div>
       <div className="flex flex-col gap-6">
