@@ -73,10 +73,13 @@ export function GamutMask() {
     }
   ]);
 
-  const [selectedMask, setSelectedMask] = useState<ShapeTemplate | null>(null);
+  const [selectedMask, setSelectedMask] = useState<ShapeTemplate[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragPointIndex, setDragPointIndex] = useState<number>(-1);
+  const [dragPointIndex, setDragPointIndex] = useState<number>(-1);  // 頂点ドラッグ用
+  const [draggingMaskIndex, setDraggingMaskIndex] = useState<number>(-1); // 図形全体ドラッグ用
+  const [lastMousePos, setLastMousePos] = useState<{x: number, y: number} | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dragMaskIndex, setDragMaskIndex] = useState<number>(-1);
 
   const degToRad = (degrees: number): number => {
     return degrees * (Math.PI / 180);
@@ -173,31 +176,6 @@ export function GamutMask() {
     ctx.stroke();
   };
 
-  // マスクの描画
-  const drawMask = (ctx: CanvasRenderingContext2D, points: Point[], isActive: boolean = false) => {
-    if (points.length < 3) return;
-
-    ctx.save();
-
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      ctx.lineTo(points[i].x, points[i].y);
-    }
-    ctx.closePath();
-
-    // マスク境界線
-    ctx.strokeStyle = isActive ? '#101010' : '#666';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // マスク内部の半透明オーバーレイ
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fill();
-
-    ctx.restore();
-  };
-
   const findClosestPoint = (x: number, y: number, points: Point[]): number => {
     let minDistance = Infinity;
     let closestIndex = -1;
@@ -214,20 +192,83 @@ export function GamutMask() {
   };
 
   // レンダリング時に色相環を再描画(マスクを選択中はマスクも再描画)
-  const redraw = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+const redraw = () => {
+  const canvas = canvasRef.current;
+  if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
-    drawColorWheel(ctx, canvas.width, canvas.height);
+  // 1. 色相環を描画
+  drawColorWheel(ctx, canvas.width, canvas.height);
 
-    if (selectedMask) {
-      drawMask(ctx, selectedMask.points, true);
+  if (selectedMask.length === 0) {
+    return; // マスクがない場合はグレーアウト処理をしない
+  }
+
+  // 2. グレーアウト用のレイヤーを作成
+  // 一時キャンバスを用意
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
+  const tempCtx = tempCanvas.getContext('2d');
+  if (!tempCtx) return;
+
+// 2-1. 全体を半透明グレーで塗りつぶす
+  tempCtx.globalAlpha = 0.65;
+  tempCtx.fillStyle = "#000";
+  tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+  // 2-2. 全マスク領域をまとめて透明に抜く
+  tempCtx.globalCompositeOperation = "destination-out";
+  tempCtx.globalAlpha = 1.0;
+  tempCtx.beginPath();
+  selectedMask.forEach(mask => {
+    if (mask.points.length > 0) {
+      tempCtx.moveTo(mask.points[0].x, mask.points[0].y);
+      for (let i = 1; i < mask.points.length; i++) {
+        tempCtx.lineTo(mask.points[i].x, mask.points[i].y);
+      }
+      tempCtx.closePath();
     }
-  };
+  });
+  tempCtx.fill();
 
+  // 2-3. マスク境界線を描画（オプション）
+  tempCtx.globalCompositeOperation = "source-over";
+  tempCtx.globalAlpha = 1.0;
+  selectedMask.forEach(mask => {
+    tempCtx.beginPath();
+    tempCtx.moveTo(mask.points[0].x, mask.points[0].y);
+    for (let i = 1; i < mask.points.length; i++) {
+      tempCtx.lineTo(mask.points[i].x, mask.points[i].y);
+    }
+    tempCtx.closePath();
+    tempCtx.strokeStyle = "#101010";
+    tempCtx.lineWidth = 0.1;
+    tempCtx.stroke();
+  });
+
+  // 3. メインキャンバスにグレーアウトレイヤーを合成
+  ctx.drawImage(tempCanvas, 0, 0);
+
+  ctx.restore();
+};
+
+  // マウスポインタのマスク領域内外判定
+  function isPointInPolygon(x: number, y: number, points: Point[]): boolean {
+  let inside = false;
+  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+    const xi = points[i].x, yi = points[i].y;
+    const xj = points[j].x, yj = points[j].y;
+    const intersect = ((yi > y) !== (yj > y)) &&
+      (x < (xj - xi) * (y - yi) / (yj - yi + 0.00001) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+  // マスク図形自体または頂点のドラッグ
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -236,11 +277,25 @@ export function GamutMask() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (selectedMask) {
-      const pointIndex = findClosestPoint(x, y, selectedMask.points);
-      if (pointIndex !== -1) {
+    // 1. 頂点ドラッグ判定（最初にヒットしたものだけ）
+    for (let maskIdx = 0; maskIdx < selectedMask.length; maskIdx++) {
+      const mask = selectedMask[maskIdx];
+      const pointIdx = findClosestPoint(x, y, mask.points);
+      if (pointIdx !== -1) {
         setIsDragging(true);
-        setDragPointIndex(pointIndex);
+        setDragMaskIndex(maskIdx);
+        setDragPointIndex(pointIdx);
+        return; // 頂点にヒットしたらここで終了
+      }
+    }
+
+    // 2. 図形全体ドラッグ判定（頂点にヒットしなかった場合のみ）
+    for (let idx = 0; idx < selectedMask.length; idx++) {
+      const mask = selectedMask[idx];
+      if (isPointInPolygon(x, y, mask.points)) {
+        setDraggingMaskIndex(idx);
+        setLastMousePos({ x, y });
+        return;
       }
     }
   };
@@ -277,63 +332,127 @@ export function GamutMask() {
       });
     }
 
-    // ドラッグ処理
-    if (isDragging && selectedMask && dragPointIndex !== -1) {
-      const updatedPoints = [...selectedMask.points];
-      updatedPoints[dragPointIndex] = { x, y };
+  // 1. 頂点ドラッグ
+  if (isDragging && dragMaskIndex !== -1 && dragPointIndex !== -1) {
+    const updatedMasks = selectedMask.map((mask, idx) => {
+      if (idx === dragMaskIndex) {
+        const updatedPoints = [...mask.points];
+        updatedPoints[dragPointIndex] = { x, y };
+        return { ...mask, points: updatedPoints };
+      }
+      return mask;
+    });
+    setSelectedMask(updatedMasks);
+    return; // 頂点ドラッグ時は他の処理をしない
+  }
 
-      setSelectedMask({
-        ...selectedMask,
-        points: updatedPoints
-      });
-    }
+  // 2. 図形全体ドラッグ
+  if (draggingMaskIndex !== -1 && lastMousePos) {
+    const dx = x - lastMousePos.x;
+    const dy = y - lastMousePos.y;
+    const updatedMasks = selectedMask.map((mask, idx) => {
+      if (idx === draggingMaskIndex) {
+        return {
+          ...mask,
+          points: mask.points.map(p => ({ x: p.x + dx, y: p.y + dy }))
+        };
+      }
+      return mask;
+    });
+    setSelectedMask(updatedMasks);
+    setLastMousePos({ x, y });
+    return;
+  }
 
     // カーソル変更
-    if (selectedMask && !isDragging) {
-      const pointIndex = findClosestPoint(x, y, selectedMask.points);
-      canvas.style.cursor = pointIndex !== -1 ? 'pointer' : 'default';
+    if (!isDragging) {
+      let found = false;
+      selectedMask.forEach(mask => {
+        const pointIndex = findClosestPoint(x, y, mask.points);
+        if (pointIndex !== -1) found = true;
+      });
+      canvas.style.cursor = found ? 'pointer' : 'default';
     }
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
     setDragPointIndex(-1);
+    setDragMaskIndex(-1);
+    setDraggingMaskIndex(-1);
+    setLastMousePos(null);
   };
 
   // ガマットマスクテンプレートの選択
   const handleMaskSelect = (mask: ShapeTemplate) => {
-    setSelectedMask({ ...mask });
-    setIsDialogOpen(false);
+    if (selectedMask.length < 3) {
+      setSelectedMask([...selectedMask,{ ...mask }]);
+      setIsDialogOpen(false);
+    } else {
+      alert('マスクは最大3つまで追加できます');
+    }
   };
 
   // マスク画像のエクスポート
   const exportMaskedImage = () => {
     const canvas = canvasRef.current;
     const hiddenCanvas = hiddenCanvasRef.current;
-    if (!canvas || !hiddenCanvas || !selectedMask) return;
+    if (!canvas || !hiddenCanvas || selectedMask.length === 0) return;
 
-    const ctx = canvas.getContext('2d');
     const hiddenCtx = hiddenCanvas.getContext('2d');
-    if (!ctx || !hiddenCtx) return;
+    if (!hiddenCtx) return;
 
-    // 隠しキャンバスのサイズを設定
     hiddenCanvas.width = canvas.width;
     hiddenCanvas.height = canvas.height;
 
-    // 色相環を描画
     drawColorWheel(hiddenCtx, hiddenCanvas.width, hiddenCanvas.height);
 
-    // クリッピングマスクを描画
-    hiddenCtx.globalCompositeOperation = 'destination-in';
-    hiddenCtx.beginPath();
-    hiddenCtx.moveTo(selectedMask.points[0].x, selectedMask.points[0].y);
-    for (let i = 1; i < selectedMask.points.length; i++) {
-      hiddenCtx.lineTo(selectedMask.points[i].x, selectedMask.points[i].y);
-    }
-    hiddenCtx.closePath();
-    hiddenCtx.fill();
+    // 3. グレーアウト用のレイヤーを作成
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = hiddenCanvas.width;
+    tempCanvas.height = hiddenCanvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
 
-    // クリッピングマスクをかけた色相環をPNGとしてダウンロード
+    // 3-1. 全体を半透明グレーで塗りつぶす
+    tempCtx.globalAlpha = 0.65;
+    tempCtx.fillStyle = "#000";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    // 3-2. 全マスク領域をまとめて透明に抜く
+    tempCtx.globalCompositeOperation = "destination-out";
+    tempCtx.globalAlpha = 1.0;
+    tempCtx.beginPath();
+    selectedMask.forEach(mask => {
+      if (mask.points.length > 0) {
+        tempCtx.moveTo(mask.points[0].x, mask.points[0].y);
+        for (let i = 1; i < mask.points.length; i++) {
+          tempCtx.lineTo(mask.points[i].x, mask.points[i].y);
+        }
+        tempCtx.closePath();
+      }
+    });
+    tempCtx.fill();
+
+    // 3-3. マスク境界線を描画（オプション）
+    tempCtx.globalCompositeOperation = "source-over";
+    tempCtx.globalAlpha = 1.0;
+    selectedMask.forEach(mask => {
+      tempCtx.beginPath();
+      tempCtx.moveTo(mask.points[0].x, mask.points[0].y);
+      for (let i = 1; i < mask.points.length; i++) {
+        tempCtx.lineTo(mask.points[i].x, mask.points[i].y);
+      }
+      tempCtx.closePath();
+      tempCtx.strokeStyle = "#101010";
+      tempCtx.lineWidth = 1;
+      tempCtx.stroke();
+    });
+
+    // 4. hiddenCanvasにグレーアウトレイヤーを合成
+    hiddenCtx.drawImage(tempCanvas, 0, 0);
+
+    // 5. エクスポート
     hiddenCanvas.toBlob((blob) => {
       if (blob) {
         const url = URL.createObjectURL(blob);
@@ -400,10 +519,10 @@ export function GamutMask() {
               </DialogContent>
             </Dialog>
 
-            {selectedMask && (
+            {selectedMask.length > 0 && (
               <>
                 <Button
-                  onClick={() => setSelectedMask(null)}
+                  onClick={() => setSelectedMask(selectedMask.slice(0, -1))}
                   variant="outline"
                 >
                   マスクを削除
