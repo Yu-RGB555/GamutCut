@@ -23,6 +23,7 @@ interface ColorInfo {
 
 interface MaskWithScale extends ShapeTemplate {
   scale: number;
+  originalPoints: Point[]; // スケールの基準
 }
 
 export function GamutMask() {
@@ -412,6 +413,14 @@ export function GamutMask() {
     setDragMaskIndex(-1);
     setDraggingMaskIndex(-1);
     setLastMousePos(null);
+
+    // ドラッグ終了時、originalPointsも更新
+    setSelectedMask(selectedMask.map((mask, idx) => {
+      if (idx === selectedMaskIndex) {
+        return { ...mask, originalPoints: mask.points };
+      }
+      return mask;
+    }));
   };
 
   // ガマットマスクテンプレートの選択
@@ -428,8 +437,11 @@ export function GamutMask() {
     const width = canvas.width;
     const height = canvas.height;
     const absPoints = toAbsolutePoints(mask.points, width, height);
-    setSelectedMask([...selectedMask, { ...mask, points: absPoints, scale: 1 }]);
-    setSelectedMaskIndex(selectedMask.length); // 新規マスクを選択状態に
+    setSelectedMask([
+      ...selectedMask,
+      { ...mask, points: absPoints, originalPoints: absPoints, scale: 1 }
+    ]);
+    setSelectedMaskIndex(selectedMask.length);
     setIsDialogOpen(false);
   };
 
@@ -639,11 +651,14 @@ export function GamutMask() {
               value={selectedMask[selectedMaskIndex]?.scale ?? 1}
               onChange={e => {
                 const newScale = parseFloat(e.target.value);
-                setSelectedMask(selectedMask.map((mask, idx) =>
-                  idx === selectedMaskIndex
-                    ? { ...mask, scale: newScale }
-                    : mask
-                ));
+                setSelectedMask(selectedMask.map((mask, idx) => {
+                  if (idx === selectedMaskIndex) {
+                    // スケール時はoriginalPointsから再計算
+                    const scaledPoints = getScaledPoints(mask.originalPoints, newScale);
+                    return { ...mask, scale: newScale, points: scaledPoints };
+                  }
+                  return mask;
+                }));
               }}
               className="w-full"
             />
