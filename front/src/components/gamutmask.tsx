@@ -23,7 +23,7 @@ interface ColorInfo {
 
 interface MaskWithScale extends ShapeTemplate {
   scale: number;
-  originalPoints: Point[]; // スケールの基準
+  originalPoints: Point[];
 }
 
 export function GamutMask() {
@@ -142,6 +142,17 @@ export function GamutMask() {
     return { hue, saturation, distance };
   };
 
+  // マスクの中心座標を計算
+  function getCenter(points: Point[]): Point {
+    const center = points.reduce(
+      (acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }),
+      { x: 0, y: 0 }
+    );
+    center.x /= points.length;
+    center.y /= points.length;
+    return center;
+  }
+
   // マスクの拡大縮小
   function getScaledPoints(points: Point[], scale: number): Point[] {
     // 中心座標を計算
@@ -252,7 +263,7 @@ export function GamutMask() {
     tempCtx.globalAlpha = 1.0;
     tempCtx.beginPath();
     selectedMask.forEach(mask => {
-      const scaledPoints = getScaledPoints(mask.points, mask.scale ?? 1);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
       if (scaledPoints.length > 0) {
         tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
         for (let i = 1; i < scaledPoints.length; i++) {
@@ -267,7 +278,7 @@ export function GamutMask() {
     tempCtx.globalCompositeOperation = "source-over";
     tempCtx.globalAlpha = 1.0;
     selectedMask.forEach(mask => {
-      const scaledPoints = getScaledPoints(mask.points, mask.scale ?? 1);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
       if (scaledPoints.length > 0) {
         tempCtx.beginPath();
         tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
@@ -312,7 +323,8 @@ export function GamutMask() {
     // 1. 頂点ドラッグ判定（最初にヒットしたものだけ）
     for (let maskIdx = 0; maskIdx < selectedMask.length; maskIdx++) {
       const mask = selectedMask[maskIdx];
-      const pointIdx = findClosestPoint(x, y, mask.points);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+      const pointIdx = findClosestPoint(x, y, scaledPoints);
       if (pointIdx !== -1) {
         setIsDragging(true);
         setDragMaskIndex(maskIdx);
@@ -324,7 +336,8 @@ export function GamutMask() {
     // 2. 図形全体ドラッグ判定（頂点にヒットしなかった場合のみ）
     for (let idx = 0; idx < selectedMask.length; idx++) {
       const mask = selectedMask[idx];
-      if (isPointInPolygon(x, y, mask.points)) {
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+      if (isPointInPolygon(x, y, scaledPoints)) {
         setDraggingMaskIndex(idx);
         setLastMousePos({ x, y });
         return;
@@ -368,9 +381,19 @@ export function GamutMask() {
   if (isDragging && dragMaskIndex !== -1 && dragPointIndex !== -1) {
     const updatedMasks = selectedMask.map((mask, idx) => {
       if (idx === dragMaskIndex) {
-        const updatedPoints = [...mask.points];
-        updatedPoints[dragPointIndex] = { x, y };
-        return { ...mask, points: updatedPoints };
+        // 1. スケール済み点群を取得
+        const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+        // 2. ドラッグされた頂点だけ新しい座標に置き換え
+        const newScaledPoints = [...scaledPoints];
+        newScaledPoints[dragPointIndex] = { x, y };
+        // 3. 逆変換でoriginalPointsを再計算
+        const center = getCenter(scaledPoints);
+        const scale = mask.scale ?? 1;
+        const newOriginalPoints = newScaledPoints.map(p => ({
+          x: center.x + (p.x - center.x) / scale,
+          y: center.y + (p.y - center.y) / scale
+        }));
+        return { ...mask, originalPoints: newOriginalPoints };
       }
       return mask;
     });
@@ -386,7 +409,7 @@ export function GamutMask() {
       if (idx === draggingMaskIndex) {
         return {
           ...mask,
-          points: mask.points.map(p => ({ x: p.x + dx, y: p.y + dy }))
+          originalPoints: mask.originalPoints.map(p => ({ x: p.x + dx, y: p.y + dy }))
         };
       }
       return mask;
@@ -400,7 +423,8 @@ export function GamutMask() {
     if (!isDragging) {
       let found = false;
       selectedMask.forEach(mask => {
-        const pointIndex = findClosestPoint(x, y, mask.points);
+        const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+        const pointIndex = findClosestPoint(x, y, scaledPoints);
         if (pointIndex !== -1) found = true;
       });
       canvas.style.cursor = found ? 'pointer' : 'default';
@@ -417,7 +441,7 @@ export function GamutMask() {
     // ドラッグ終了時、originalPointsも更新
     setSelectedMask(selectedMask.map((mask, idx) => {
       if (idx === selectedMaskIndex) {
-        return { ...mask, originalPoints: mask.points };
+        return { ...mask, originalPoints: mask.originalPoints };
       }
       return mask;
     }));
@@ -439,7 +463,7 @@ export function GamutMask() {
     const absPoints = toAbsolutePoints(mask.points, width, height);
     setSelectedMask([
       ...selectedMask,
-      { ...mask, points: absPoints, originalPoints: absPoints, scale: 1 }
+      { ...mask, originalPoints: absPoints, scale: 1 }
     ]);
     setSelectedMaskIndex(selectedMask.length);
     setIsDialogOpen(false);
@@ -476,7 +500,7 @@ export function GamutMask() {
     tempCtx.globalAlpha = 1.0;
     tempCtx.beginPath();
     selectedMask.forEach(mask => {
-      const scaledPoints = getScaledPoints(mask.points, mask.scale ?? 1);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
       if (scaledPoints.length > 0) {
         tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
         for (let i = 1; i < scaledPoints.length; i++) {
@@ -491,7 +515,7 @@ export function GamutMask() {
     tempCtx.globalCompositeOperation = "source-over";
     tempCtx.globalAlpha = 1.0;
     selectedMask.forEach(mask => {
-      const scaledPoints = getScaledPoints(mask.points, mask.scale ?? 1);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
       if (scaledPoints.length > 0) {
         tempCtx.beginPath();
         tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
@@ -651,14 +675,11 @@ export function GamutMask() {
               value={selectedMask[selectedMaskIndex]?.scale ?? 1}
               onChange={e => {
                 const newScale = parseFloat(e.target.value);
-                setSelectedMask(selectedMask.map((mask, idx) => {
-                  if (idx === selectedMaskIndex) {
-                    // スケール時はoriginalPointsから再計算
-                    const scaledPoints = getScaledPoints(mask.originalPoints, newScale);
-                    return { ...mask, scale: newScale, points: scaledPoints };
-                  }
-                  return mask;
-                }));
+                setSelectedMask(selectedMask.map((mask, idx) =>
+                  idx === selectedMaskIndex
+                    ? { ...mask, scale: newScale }
+                    : mask
+                ));
               }}
               className="w-full"
             />
