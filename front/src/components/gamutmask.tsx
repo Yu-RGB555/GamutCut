@@ -21,6 +21,10 @@ interface ColorInfo {
   rgb: string;
 }
 
+interface MaskWithScale extends ShapeTemplate {
+  scale: number;
+}
+
 export function GamutMask() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hiddenCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -35,7 +39,7 @@ export function GamutMask() {
     rgb: '-'
   });
 
-  const maxRadius = 200;
+  const maxRadius = 150;
   const sectorCount = 360;
   const trackCount = 10;
 
@@ -45,45 +49,51 @@ export function GamutMask() {
       id: 1,
       name: "三角形",
       points: [
-        { x: 350, y: 200 },
-        { x: 400, y: 150 },
-        { x: 400, y: 250 }
+        { x: 0.5, y: 0.2 },
+        { x: 0.7, y: 0.8 },
+        { x: 0.3, y: 0.8 }
       ]
     },
     {
       id: 2,
       name: "四角形",
       points: [
-        { x: 320, y: 180 },
-        { x: 380, y: 180 },
-        { x: 380, y: 240 },
-        { x: 320, y: 240 }
+        { x: 0.3, y: 0.3 },
+        { x: 0.7, y: 0.3 },
+        { x: 0.7, y: 0.7 },
+        { x: 0.3, y: 0.7 }
       ]
     },
     {
       id: 3,
-      name: "五角形",
-      points: [
-        { x: 350, y: 170 },
-        { x: 380, y: 190 },
-        { x: 370, y: 230 },
-        { x: 330, y: 230 },
-        { x: 320, y: 190 }
-      ]
+      name: "円形",
+      points: createCirclePoints(0.5, 0.5, 0.2, 36)
     }
   ]);
 
-  const [selectedMask, setSelectedMask] = useState<ShapeTemplate[]>([]);
+  const [selectedMask, setSelectedMask] = useState<MaskWithScale[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [dragPointIndex, setDragPointIndex] = useState<number>(-1);  // 頂点ドラッグ用
   const [draggingMaskIndex, setDraggingMaskIndex] = useState<number>(-1); // 図形全体ドラッグ用
   const [lastMousePos, setLastMousePos] = useState<{x: number, y: number} | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dragMaskIndex, setDragMaskIndex] = useState<number>(-1);
+  const [selectedMaskIndex, setSelectedMaskIndex] = useState<number>(0); // 0番目を初期選択
 
   const degToRad = (degrees: number): number => {
     return degrees * (Math.PI / 180);
   };
+
+  // 円形ポリゴン生成関数
+  function createCirclePoints(centerX: number, centerY: number, radius: number, numPoints: number): Point[] {
+    return Array.from({ length: numPoints }, (_, i) => {
+      const angle = (2 * Math.PI * i) / numPoints;
+      return {
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle)
+      };
+    });
+  }
 
   // HSV変換
   const hsvToRgb = (h: number, s: number, v: number): [number, number, number] => {
@@ -130,6 +140,23 @@ export function GamutMask() {
 
     return { hue, saturation, distance };
   };
+
+  // マスクの拡大縮小
+  function getScaledPoints(points: Point[], scale: number): Point[] {
+    // 中心座標を計算
+    const center = points.reduce(
+      (acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }),
+      { x: 0, y: 0 }
+    );
+    center.x /= points.length;
+    center.y /= points.length;
+
+    // 各頂点をスケール
+    return points.map(p => ({
+      x: center.x + (p.x - center.x) * scale,
+      y: center.y + (p.y - center.y) * scale
+    }));
+  }
 
   // 色相環の描画
   const drawColorWheel = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
@@ -192,81 +219,85 @@ export function GamutMask() {
   };
 
   // レンダリング時に色相環を再描画(マスクを選択中はマスクも再描画)
-const redraw = () => {
-  const canvas = canvasRef.current;
-  if (!canvas) return;
+  const redraw = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-  // 1. 色相環を描画
-  drawColorWheel(ctx, canvas.width, canvas.height);
+    // 1. 色相環を描画
+    drawColorWheel(ctx, canvas.width, canvas.height);
 
-  if (selectedMask.length === 0) {
-    return; // マスクがない場合はグレーアウト処理をしない
-  }
-
-  // 2. グレーアウト用のレイヤーを作成
-  // 一時キャンバスを用意
-  const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = canvas.width;
-  tempCanvas.height = canvas.height;
-  const tempCtx = tempCanvas.getContext('2d');
-  if (!tempCtx) return;
-
-// 2-1. 全体を半透明グレーで塗りつぶす
-  tempCtx.globalAlpha = 0.65;
-  tempCtx.fillStyle = "#000";
-  tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-  // 2-2. 全マスク領域をまとめて透明に抜く
-  tempCtx.globalCompositeOperation = "destination-out";
-  tempCtx.globalAlpha = 1.0;
-  tempCtx.beginPath();
-  selectedMask.forEach(mask => {
-    if (mask.points.length > 0) {
-      tempCtx.moveTo(mask.points[0].x, mask.points[0].y);
-      for (let i = 1; i < mask.points.length; i++) {
-        tempCtx.lineTo(mask.points[i].x, mask.points[i].y);
-      }
-      tempCtx.closePath();
+    if (selectedMask.length === 0) {
+      return; // マスクがない場合はグレーアウト処理をしない
     }
-  });
-  tempCtx.fill();
 
-  // 2-3. マスク境界線を描画（オプション）
-  tempCtx.globalCompositeOperation = "source-over";
-  tempCtx.globalAlpha = 1.0;
-  selectedMask.forEach(mask => {
+    // 2. グレーアウト用のレイヤーを作成
+    // 一時キャンバスを用意
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
+
+  // 2-1. 全体を半透明グレーで塗りつぶす
+    tempCtx.globalAlpha = 0.65;
+    tempCtx.fillStyle = "#000";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    // 2-2. 全マスク領域をまとめて透明に抜く
+    tempCtx.globalCompositeOperation = "destination-out";
+    tempCtx.globalAlpha = 1.0;
     tempCtx.beginPath();
-    tempCtx.moveTo(mask.points[0].x, mask.points[0].y);
-    for (let i = 1; i < mask.points.length; i++) {
-      tempCtx.lineTo(mask.points[i].x, mask.points[i].y);
-    }
-    tempCtx.closePath();
-    tempCtx.strokeStyle = "#101010";
-    tempCtx.lineWidth = 0.1;
-    tempCtx.stroke();
-  });
+    selectedMask.forEach(mask => {
+      const scaledPoints = getScaledPoints(mask.points, mask.scale ?? 1);
+      if (scaledPoints.length > 0) {
+        tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
+        for (let i = 1; i < scaledPoints.length; i++) {
+          tempCtx.lineTo(scaledPoints[i].x, scaledPoints[i].y);
+        }
+        tempCtx.closePath();
+      }
+    });
+    tempCtx.fill();
 
-  // 3. メインキャンバスにグレーアウトレイヤーを合成
-  ctx.drawImage(tempCanvas, 0, 0);
+    // 2-3. マスク境界線を描画（オプション）
+    tempCtx.globalCompositeOperation = "source-over";
+    tempCtx.globalAlpha = 1.0;
+    selectedMask.forEach(mask => {
+      const scaledPoints = getScaledPoints(mask.points, mask.scale ?? 1);
+      if (scaledPoints.length > 0) {
+        tempCtx.beginPath();
+        tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
+        for (let i = 1; i < scaledPoints.length; i++) {
+          tempCtx.lineTo(scaledPoints[i].x, scaledPoints[i].y);
+        }
+        tempCtx.closePath();
+        tempCtx.strokeStyle = "#101010";
+        tempCtx.lineWidth = 0.001;
+        tempCtx.stroke();
+      }
+    });
 
-  ctx.restore();
-};
+    // 3. メインキャンバスにグレーアウトレイヤーを合成
+    ctx.drawImage(tempCanvas, 0, 0);
+
+    ctx.restore();
+  };
 
   // マウスポインタのマスク領域内外判定
   function isPointInPolygon(x: number, y: number, points: Point[]): boolean {
-  let inside = false;
-  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-    const xi = points[i].x, yi = points[i].y;
-    const xj = points[j].x, yj = points[j].y;
-    const intersect = ((yi > y) !== (yj > y)) &&
-      (x < (xj - xi) * (y - yi) / (yj - yi + 0.00001) + xi);
-    if (intersect) inside = !inside;
+    let inside = false;
+    for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+      const xi = points[i].x, yi = points[i].y;
+      const xj = points[j].x, yj = points[j].y;
+      const intersect = ((yi > y) !== (yj > y)) &&
+        (x < (xj - xi) * (y - yi) / (yj - yi + 0.00001) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
   }
-  return inside;
-}
 
   // マスク図形自体または頂点のドラッグ
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -384,13 +415,22 @@ const redraw = () => {
   };
 
   // ガマットマスクテンプレートの選択
+  const toAbsolutePoints = (points: Point[], width: number, height: number): Point[] => {
+    return points.map(p => ({
+      x: p.x * width,
+      y: p.y * height
+    }));
+  };
+
   const handleMaskSelect = (mask: ShapeTemplate) => {
-    if (selectedMask.length < 3) {
-      setSelectedMask([...selectedMask,{ ...mask }]);
-      setIsDialogOpen(false);
-    } else {
-      alert('マスクは最大3つまで追加できます');
-    }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const width = canvas.width;
+    const height = canvas.height;
+    const absPoints = toAbsolutePoints(mask.points, width, height);
+    setSelectedMask([...selectedMask, { ...mask, points: absPoints, scale: 1 }]);
+    setSelectedMaskIndex(selectedMask.length); // 新規マスクを選択状態に
+    setIsDialogOpen(false);
   };
 
   // マスク画像のエクスポート
@@ -424,10 +464,11 @@ const redraw = () => {
     tempCtx.globalAlpha = 1.0;
     tempCtx.beginPath();
     selectedMask.forEach(mask => {
-      if (mask.points.length > 0) {
-        tempCtx.moveTo(mask.points[0].x, mask.points[0].y);
-        for (let i = 1; i < mask.points.length; i++) {
-          tempCtx.lineTo(mask.points[i].x, mask.points[i].y);
+      const scaledPoints = getScaledPoints(mask.points, mask.scale ?? 1);
+      if (scaledPoints.length > 0) {
+        tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
+        for (let i = 1; i < scaledPoints.length; i++) {
+          tempCtx.lineTo(scaledPoints[i].x, scaledPoints[i].y);
         }
         tempCtx.closePath();
       }
@@ -438,15 +479,18 @@ const redraw = () => {
     tempCtx.globalCompositeOperation = "source-over";
     tempCtx.globalAlpha = 1.0;
     selectedMask.forEach(mask => {
-      tempCtx.beginPath();
-      tempCtx.moveTo(mask.points[0].x, mask.points[0].y);
-      for (let i = 1; i < mask.points.length; i++) {
-        tempCtx.lineTo(mask.points[i].x, mask.points[i].y);
+      const scaledPoints = getScaledPoints(mask.points, mask.scale ?? 1);
+      if (scaledPoints.length > 0) {
+        tempCtx.beginPath();
+        tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
+        for (let i = 1; i < scaledPoints.length; i++) {
+          tempCtx.lineTo(scaledPoints[i].x, scaledPoints[i].y);
+        }
+        tempCtx.closePath();
+        tempCtx.strokeStyle = "#101010";
+        tempCtx.lineWidth = 0.001;
+        tempCtx.stroke();
       }
-      tempCtx.closePath();
-      tempCtx.strokeStyle = "#101010";
-      tempCtx.lineWidth = 1;
-      tempCtx.stroke();
     });
 
     // 4. hiddenCanvasにグレーアウトレイヤーを合成
@@ -473,12 +517,12 @@ const redraw = () => {
   }, [currentValue, selectedMask]);
 
   return (
-    <div className="flex flex-col items-center p-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center p-6">
       <div className="relative mb-6">
         <canvas
           ref={canvasRef}
-          width={500}
-          height={500}
+          width={400}
+          height={400}
           className="cursor-crosshair"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
@@ -495,7 +539,7 @@ const redraw = () => {
       <div className="w-full max-w-2xl space-y-6">
         <div className="bg-card p-4 rounded-lg">
           <h3 className="text-card-foreground text-lg font-semibold mb-4">ガマットマスク</h3>
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-2 items-center">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline">マスクを追加</Button>
@@ -555,25 +599,57 @@ const redraw = () => {
 
         <div className="bg-card p-4 rounded-lg border">
           <h3 className="text-card-foreground text-lg font-semibold mb-3">色情報</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-sm">
             <div>
-              <span className="font-medium">色相(H)：</span>
-              <span className="font-mono">{colorInfo.hue}°</span>
+              <span className="text-label font-medium inline-block">色相（H）：</span>
+              <span className="font-mono inline-block mr-3">{colorInfo.hue}°</span>
+              <span className="text-label font-medium inline-block">彩度（S）：</span>
+              <span className="font-mono inline-block mr-3">{colorInfo.saturation}%</span>
+              <span className="text-label font-medium inline-block">明度（V）：</span>
+              <span className="font-mono inline-block mr-3">{colorInfo.value}%</span>
             </div>
             <div>
-              <span className="font-medium">彩度(S)：</span>
-              <span className="font-mono">{colorInfo.saturation}%</span>
-            </div>
-            <div>
-              <span className="font-medium">明度(V)：</span>
-              <span className="font-mono">{colorInfo.value}%</span>
-            </div>
-            <div>
-              <span className="font-medium">RGB：</span>
-              <span className="font-mono">({colorInfo.rgb})</span>
+              <span className="text-label font-medium">RGB：</span>
+              <span className="font-mono text-right">({colorInfo.rgb})</span>
             </div>
           </div>
         </div>
+
+        {selectedMask.length > 0 && (
+          <div className="flex gap-2 mb-2">
+            {selectedMask.map((mask, idx) => (
+              <button
+                key={idx}
+                className={`px-2 py-1 rounded ${selectedMaskIndex === idx ? 'bg-primary text-white' : 'bg-gray-200'}`}
+                onClick={() => setSelectedMaskIndex(idx)}
+              >
+                {mask.name} {idx + 1}
+              </button>
+            ))}
+          </div>
+        )}
+        {selectedMask.length > 0 && (
+          <div className="my-2">
+            <label className="block text-sm font-medium mb-1">マスク拡大縮小</label>
+            <input
+              type="range"
+              min="0.5"
+              max="2"
+              step="0.01"
+              value={selectedMask[selectedMaskIndex]?.scale ?? 1}
+              onChange={e => {
+                const newScale = parseFloat(e.target.value);
+                setSelectedMask(selectedMask.map((mask, idx) =>
+                  idx === selectedMaskIndex
+                    ? { ...mask, scale: newScale }
+                    : mask
+                ));
+              }}
+              className="w-full"
+            />
+            <span className="text-xs">{((selectedMask[selectedMaskIndex]?.scale ?? 1) * 100).toFixed(0)}%</span>
+          </div>
+        )}
       </div>
     </div>
   );
