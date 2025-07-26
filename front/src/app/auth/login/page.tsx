@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
+import SocialLoginButtons from '@/components/ui/socialLoginButtons';
 import {
   Card,
   CardContent,
@@ -63,9 +64,9 @@ export default function Login() {
       const response = await loginUser(formData);
 
       // ユーザー情報をlocalStorageに保存（⭐️Context APIやZustandなどの使用も検討）
-      if (response.user) {
+      if (response.user && response.token) {
         // AuthContext経由でユーザー情報を保存
-        login(response.user);
+        login(response.user, response.token);
         alert(response.message);
         router.push('/');
       }
@@ -148,9 +149,7 @@ export default function Login() {
                   アカウントを作成
                 </Link>
               </div>
-              <Button className="text-foreground border bg-muted w-full py-5 m-4">
-                Googleアカウントでログイン
-              </Button>
+              <SocialLoginButtons></SocialLoginButtons>
             </CardFooter>
           </form>
         </CardContent>

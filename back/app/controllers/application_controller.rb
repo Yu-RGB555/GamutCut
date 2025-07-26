@@ -1,10 +1,29 @@
 class ApplicationController < ActionController::API
-  before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :authenticate_user_from_token!
 
   private
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+  def authenticate_user_from_token!
+    auth_header = request.headers['Authorization']
+    if auth_header.present? && auth_header[/^Bearer /]
+      token = auth_header.split(' ').last
+      begin
+        payload = JWT.decode(token, Rails.application.credentials.secret_key_base)[0]
+        @current_user = User.find_by(id: payload['user_id'])
+      rescue JWT::DecodeError
+        @current_user = nil
+      end
+    else
+      @current_user = nil
+    end
+  end
+
+  def current_user
+    @current_user
+  end
+
+  def authenticate_user!
+    render json: { error: 'Unauthorized' }, status: :unauthorized unless current_user
   end
 
   protected

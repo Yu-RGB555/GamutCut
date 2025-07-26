@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
+import SocialLoginButtons from '@/components/ui/socialLoginButtons';
 import {
   Card,
   CardContent,
@@ -195,9 +196,7 @@ export default function Register() {
                 </a>
                 <span className="card-foreground ml-1">に同意する</span>
               </div>
-              <Button className="text-foreground border bg-muted w-full py-5 m-4">
-                Googleアカウントで登録
-              </Button>
+              <SocialLoginButtons></SocialLoginButtons>
             </CardFooter>
           </form>
         </CardContent>
