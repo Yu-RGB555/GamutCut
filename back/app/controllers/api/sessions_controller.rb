@@ -1,13 +1,11 @@
-class Api::SessionsController < Devise::SessionsController
-  respond_to :json
-
+class Api::SessionsController < ApplicationController
   def create
     user = User.find_by(email: params[:user][:email])
-
     if user && user.valid_password?(params[:user][:password])
-      sign_in(user)
+      token = generate_jwt_token(user)
       render json: {
         message: "ログインに成功しました",
+        token: token,
         user: {
           id: user.id,
           name: user.name,
@@ -23,15 +21,13 @@ class Api::SessionsController < Devise::SessionsController
   end
 
   def destroy
-    if current_user
-      sign_out(current_user)
-      render json: {
-        message: "ログアウトしました"
-      }, status: :ok
-    else
-      render json: {
-        message: "ログインしていません"
-      }, status: :unauthorized
-    end
+    render json: { message: "ログアウトしました" }, status: :ok
+  end
+
+  private
+
+  def generate_jwt_token(user)
+    payload = { user_id: user.id, exp: 24.hours.from_now.to_i }
+    JWT.encode(payload, Rails.application.credentials.secret_key_base)
   end
 end

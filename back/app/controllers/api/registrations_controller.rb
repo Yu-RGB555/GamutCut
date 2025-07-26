@@ -1,12 +1,12 @@
-class Api::RegistrationsController < Devise::RegistrationsController
-  respond_to :json
-
+class Api::RegistrationsController < ApplicationController
   def create
-    build_resource(sign_up_params)
+    user = User.new(sign_up_params)
 
-    if resource.save
+    if user.save
+      token = generate_jwt_token(user)
       render json: {
         message: "ユーザーが正常に作成されました",
+        token: token,
         user: {
           id: resource.id,
           name: resource.name,
@@ -25,5 +25,10 @@ class Api::RegistrationsController < Devise::RegistrationsController
 
   def sign_up_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
+  end
+
+  def generate_jwt_token(user)
+    payload = { user_id: user.id, exp: 24.hours.from_now.to_i }
+    JWT.encode(payload, Rails.application.credentials.secret_key_base)
   end
 end

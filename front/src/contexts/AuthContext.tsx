@@ -7,7 +7,7 @@ import { logoutUser } from '@/lib/api';
 // AuthContextの型定義
 interface AuthContextType {
   user: User | null;
-  login: (user: User) => void;
+  login: (user: User, token: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -27,22 +27,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // レスポンスで返されたuserをlocalStorageと状態userにセット
-  const login = (userData: User) => {
+  const login = (userData: User, token: string) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('authToken', token);
   };
 
   // APIでログアウト処理
-  const logout = async () => {
-    try {
-      await logoutUser();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    } finally{
-      // クライアントサイドの状態をクリア
-      setUser(null);
+  const logout = () => {
+      localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-    }
+      setUser(null);
   };
 
   // userがnullまたはundefinedならfalseを返す

@@ -5,8 +5,12 @@ Rails.application.routes.draw do
   get '/health', to: 'health_check#index'
   get '/health/detailed', to: 'health_check#detailed'
 
+  # Omniauthコールバック用ルーティング
+  get '/auth/:provider/callback', to: 'api/omniauth_callbacks#create'
+
   namespace :api do
     devise_scope :user do
+      get '/users/me', to: 'users#me'
       post 'users/sign_up', to: 'registrations#create'
       post 'users/sign_in', to: 'sessions#create'
       delete 'users/sign_out', to: 'sessions#destroy'

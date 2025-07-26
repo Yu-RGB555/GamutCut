@@ -38,9 +38,11 @@ export async function testApiConnection() {
 
 // 新規登録用
 export async function registerUser(userData: RegisterRequest): Promise<RegisterResponse> {
+  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/users/sign_up`, {
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ user: userData }),
@@ -58,9 +60,11 @@ export async function registerUser(userData: RegisterRequest): Promise<RegisterR
 
 // ログイン用
 export async function loginUser(userData: LoginRequest): Promise<LoginResponse> {
+  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/users/sign_in`, {
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     credentials: 'include',
@@ -78,9 +82,11 @@ export async function loginUser(userData: LoginRequest): Promise<LoginResponse> 
 
 // ログアウト用
 export async function logoutUser(): Promise<void> {
+  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/users/sign_out`, {
     method: 'DELETE',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     credentials: 'include',
@@ -93,9 +99,11 @@ export async function logoutUser(): Promise<void> {
 
 // 作品一覧取得
 export async function getWorks(): Promise<Work[]> {
+  // const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'GET',
     headers: {
+      // 'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   });
@@ -121,7 +129,7 @@ export async function showWork(workId: number): Promise<Work> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
       'Content-Type': 'application/json',
     },
   });
@@ -135,10 +143,11 @@ export async function showWork(workId: number): Promise<Work> {
 
 // 作品投稿
 export async function postWork(formData: FormData) {
+  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${token}`,
     },
     body: formData,
     credentials: 'include'
@@ -153,9 +162,11 @@ export async function postWork(formData: FormData) {
 
 // 作品削除
 export async function deleteWork(workId: number): Promise<void>{
+  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'DELETE',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     credentials: 'include',

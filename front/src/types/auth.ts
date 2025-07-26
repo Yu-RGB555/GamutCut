@@ -8,6 +8,7 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   message: string;
+  token?: string;
   user?: {
     id: number;
     name: string;
@@ -23,7 +24,8 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  message: string,
+  message: string;
+  token?: string;
   user?: {
     id: number;
     name: string;
