@@ -3,8 +3,9 @@
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { Suspense } from 'react';
 
-const AuthCallback = () => {
+function AuthCallbackInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
@@ -48,6 +49,12 @@ const AuthCallback = () => {
   }, []);
 
   return <div>認証処理中...</div>;
-};
+}
 
-export default AuthCallback;
+export default function AuthCallback() {
+  return (
+    <Suspense fallback={<div>認証処理中...</div>}>
+      <AuthCallbackInner />
+    </Suspense>
+  );
+}
