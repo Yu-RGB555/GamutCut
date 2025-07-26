@@ -10,7 +10,7 @@ class User < ApplicationRecord
   validates :bio, length: { maximum: 300 }
   # validates :x_account_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true
 
-    def self.from_omniauth(auth)
+  def self.from_omniauth(auth)
     # ソーシャルアカウントから既存ユーザーを検索
     social_account = SocialAccount.find_by(
       provider: auth.provider,
@@ -40,11 +40,13 @@ class User < ApplicationRecord
       )
     else
       # 新規ユーザーを作成
+      # 英数字のみのランダムパスワードを生成
+      random_password = SecureRandom.alphanumeric(20)
       user = User.create!(
         email: auth.info.email,
         name: auth.info.name || auth.info.nickname,
         avatar_url: auth.info.image,
-        password: Devise.friendly_token[0, 20]
+        password: random_password
       )
 
       user.social_accounts.create!(

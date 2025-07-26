@@ -9,13 +9,13 @@ class Api::OmniauthCallbacksController < ApplicationController
         token = generate_jwt_token(user)
 
         # フロントエンドにリダイレクト
-        redirect_to "#{frontend_url}/auth/callback?token=#{token}&success=true"
+        redirect_to "#{frontend_url}/auth/callback?token=#{token}&success=true", allow_other_host: true
       else
-        redirect_to "#{frontend_url}/auth/callback?success=false&error=registration_failed"
+        redirect_to "#{frontend_url}/auth/callback?success=false&error=registration_failed", allow_other_host: true
       end
     rescue => e
       Rails.logger.error "OAuth callback error: #{e.message}"
-      redirect_to "#{frontend_url}/auth/callback?success=false&error=oauth_error"
+      redirect_to "#{frontend_url}/auth/callback?success=false&error=oauth_error", allow_other_host: true
     end
   end
 
