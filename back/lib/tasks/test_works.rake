@@ -1,5 +1,6 @@
 namespace :test_works do
   TEST_WORK_PREFIX = "test_work_"
+  TEST_USER_PREFIX = "test_user_"
 
   desc "本番環境用テスト作品を作成"
   task create: :environment do
@@ -12,10 +13,17 @@ namespace :test_works do
       Work.where("title LIKE ?", "#{TEST_WORK_PREFIX}%").destroy_all
     end
 
+    # 直近で登録されたテストユーザー3人を取得
+    test_users = User.where("email LIKE ?", "#{TEST_USER_PREFIX}%").order(id: desc).limit(3).to_a.reverse
+    if test_users.size < 3
+      puts "✗ テストユーザーが3人未満のため、テスト作品を作成できません"
+      exit 1
+    end
+
     # テスト作品データ
     test_works = [
       {
-        user_id: 4,
+        user_id: test_users[0].id,
         title: "#{TEST_WORK_PREFIX}1",
         illustration_image: nil,
         set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
@@ -23,7 +31,7 @@ namespace :test_works do
         is_public: "published"
       },
       {
-        user_id: 5,
+        user_id: test_users[1].id,
         title: "#{TEST_WORK_PREFIX}2",
         illustration_image: nil,
         set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
@@ -31,7 +39,7 @@ namespace :test_works do
         is_public: "published"
       },
       {
-        user_id: 6,
+        user_id: test_users[2].id,
         title: "#{TEST_WORK_PREFIX}3",
         illustration_image: nil,
         set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
