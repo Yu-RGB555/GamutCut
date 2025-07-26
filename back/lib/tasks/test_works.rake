@@ -14,7 +14,7 @@ namespace :test_works do
     end
 
     # 直近で登録されたテストユーザー3人を取得
-    test_users = User.where("email LIKE ?", "#{TEST_USER_PREFIX}%").order(id: desc).limit(3).to_a.reverse
+    test_users = User.where("email LIKE ?", "#{TEST_USER_PREFIX}%").order(id: :desc).limit(3).to_a.reverse
     if test_users.size < 3
       puts "✗ テストユーザーが3人未満のため、テスト作品を作成できません"
       exit 1
