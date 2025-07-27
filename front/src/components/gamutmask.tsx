@@ -554,7 +554,7 @@ export function GamutMask() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center p-6">
-      <div className="relative mb-6">
+      <div className="justify-items-center mb-6">
         <canvas
           ref={canvasRef}
           width={400}
@@ -572,8 +572,8 @@ export function GamutMask() {
       </div>
 
       {/* コントロールパネル */}
-      <div className="w-full max-w-2xl space-y-6">
-        <div className="bg-card p-4 rounded-lg">
+      <div className="w-full max-w-2xl space-y-8">
+        <div className="bg-card rounded-lg">
           <h3 className="text-card-foreground text-lg font-semibold mb-4">ガマットマスク</h3>
           <div className="flex gap-2 items-center">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -618,7 +618,7 @@ export function GamutMask() {
           </div>
         </div>
 
-        <div className="bg-card p-4">
+        <div className="bg-card">
           <h3 className="text-card-foreground text-lg font-semibold mb-4">明度調整</h3>
           <div className="flex items-center gap-4">
             <input

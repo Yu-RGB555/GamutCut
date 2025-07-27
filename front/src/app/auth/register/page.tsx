@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import SocialLoginButtons from '@/components/ui/socialLoginButtons';
 import {
@@ -174,27 +175,40 @@ export default function Register() {
                 />
               </div>
             </div>
-
-            <CardFooter className="flex-col gap-2">
-              <Button type="submit" className="w-full py-5 mt-8">
+            <div className="flex items-center justify-center my-1">
+              <input type="checkbox" id="legal" className="mr-2" defaultChecked={false}></input>
+              <Link
+                href="#"
+                className="text-foreground inline-block text-sm underline-offset-4 hover:underline"
+              >
+                利用規約
+              </Link>
+              <span>、</span>
+              <Link
+                href="#"
+                className="text-foreground inline-block text-sm underline-offset-4 hover:underline"
+              >
+                プライバシーポリシー
+              </Link>
+              <span className="card-foreground text-sm ml-1">に同意する</span>
+            </div>
+            <CardFooter className="flex-col gap-2 mt-6">
+              <Button type="submit" className="w-full py-5">
                 新規登録
               </Button>
               <div>
-                <input type="checkbox" id="legal" className="mr-1" defaultChecked={false}></input>
-                <a
-                  href="#"
-                  className="text-foreground ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                <span className="text-sm mr-2">すでにアカウントをお持ちですか?</span>
+                <Link
+                  href="/auth/login"
+                  className="ml-auto inline-block text-foreground text-sm underline-offset-4 hover:underline"
                 >
-                  利用規約
-                </a>
-                <span>、</span>
-                <a
-                  href="#"
-                  className="text-foreground ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                >
-                  プライバシーポリシー
-                </a>
-                <span className="card-foreground ml-1">に同意する</span>
+                  ログイン
+                </Link>
+              </div>
+              <div className="flex justify-between items-center w-full my-8">
+                <hr className="w-1/3 border-gray-300" />
+                <span className="text-gray-300 text-sm">または</span>
+                <hr className="w-1/3 border-gray-300" />
               </div>
               <SocialLoginButtons></SocialLoginButtons>
             </CardFooter>
