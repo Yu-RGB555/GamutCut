@@ -11,6 +11,7 @@ class User < ApplicationRecord
   # validates :x_account_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true
 
   def self.from_omniauth(auth)
+    Rails.logger.debug "auth_info: #{auth.info}"
     # ソーシャルアカウントから既存ユーザーを検索
     social_account = SocialAccount.find_by(
       provider: auth.provider,
@@ -23,28 +24,46 @@ class User < ApplicationRecord
       return social_account.user
     end
 
-    # メールアドレスで既存ユーザーを検索
-    user = User.find_by(email: auth.info.email)
+    # メールアドレスが存在する場合、既存ユーザーを検索してアカウント統合
+    user = nil
+    if auth.info.email.present?
+      user = User.find_by(email: auth.info.email)
 
-    if user
-      # 既存ユーザーに新しいソーシャルアカウントを追加
-      user.social_accounts.create!(
-        provider: auth.provider,
-        provider_user_id: auth.uid,
-        access_token: auth.credentials.token,
-        refresh_token: auth.credentials.refresh_token,
-        token_expires_at: auth.credentials.expires_at ? Time.at(auth.credentials.expires_at) : nil,
-        scope: auth.credentials.scope,
-        provider_data: auth.extra,
-        last_login_at: Time.current
-      )
-    else
-      # 新規ユーザーを作成
-      # 英数字のみのランダムパスワードを生成
-      random_password = SecureRandom.alphanumeric(20)
+      if user
+        # 既存ユーザーに新しいソーシャルアカウントを統合
+        Rails.logger.info "Integrating #{auth.provider} account with existing user (email: #{auth.info.email})"
+
+        user.social_accounts.create!(
+          provider: auth.provider,
+          provider_user_id: auth.uid,
+          access_token: auth.credentials.token,
+          refresh_token: auth.credentials.refresh_token,
+          token_expires_at: auth.credentials.expires_at ? Time.at(auth.credentials.expires_at) : nil,
+          scope: auth.credentials.scope,
+          provider_data: auth.extra,
+          last_login_at: Time.current
+        )
+
+        # プロフィール情報を更新（既存情報が空の場合のみ）
+        update_user_profile_from_auth(user, auth)
+
+        return user
+      end
+    end
+
+    # 新規ユーザーを作成
+    Rails.logger.info "Creating new user from #{auth.provider} authentication"
+
+    # 英数字のみのランダムパスワードを生成
+    random_password = SecureRandom.alphanumeric(20)
+
+    # メールアドレスがない場合はダミーメールを生成
+    email = auth.info.email.presence || generate_dummy_email(auth)
+
+    User.transaction do
       user = User.create!(
-        email: auth.info.email,
-        name: auth.info.name || auth.info.nickname,
+        email: email,
+        name: auth.info.name || auth.info.nickname || "User",
         avatar_url: auth.info.image,
         password: random_password
       )
@@ -59,12 +78,33 @@ class User < ApplicationRecord
         provider_data: auth.extra,
         last_login_at: Time.current
       )
-    end
 
-    user
+      user
+    end
   end
 
   private
+
+  def self.generate_dummy_email(auth)
+    # プロバイダーとUIDを使ってユニークなダミーメールを生成
+    "#{auth.provider}_#{auth.uid}@dummy.local"
+  end
+
+  def self.update_user_profile_from_auth(user, auth)
+    # 既存情報が空の場合のみ更新
+    updates = {}
+
+    if user.avatar_url.blank? && auth.info.image.present?
+      updates[:avatar_url] = auth.info.image
+    end
+
+    if user.name.blank? && (auth.info.name || auth.info.nickname).present?
+      updates[:name] = auth.info.name || auth.info.nickname
+    end
+
+    user.update!(updates) if updates.any?
+  end
+
 
   def password_required?
     !persisted? || !password.nil? || !password_confirmation.nil?

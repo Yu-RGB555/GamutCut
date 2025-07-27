@@ -22,8 +22,6 @@ class Api::OmniauthCallbacksController < ApplicationController
   private
 
   def generate_jwt_token(user)
-    # 既存のsessions#createと同じロジックを使用
-    # 例：
     payload = {
       user_id: user.id,
       exp: 24.hours.from_now.to_i

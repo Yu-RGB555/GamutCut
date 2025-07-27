@@ -8,15 +8,15 @@ class Api::RegistrationsController < ApplicationController
         message: "ユーザーが正常に作成されました",
         token: token,
         user: {
-          id: resource.id,
-          name: resource.name,
-          email: resource.email
+          id: user.id,
+          name: user.name,
+          email: user.email
         }
       }, status: :created
     else
       render json: {
         message: "ユーザーの作成に失敗しました",
-        errors: resource.errors.full_messages
+        errors: user.errors.full_messages
       }, status: :unprocessable_entity
     end
   end
