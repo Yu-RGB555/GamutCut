@@ -15,12 +15,10 @@ module GamutCut
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use config.session_store, config.session_options
 
-    Rails.application.config.middleware.use OmniAuth::Builder do
-      # configure do |config|
-      #   config.allowed_request_methods = [:get, :post]
-      #   config.silence_get_warning = true
-      # end
+    # 画像処理ライブラリ
+    config.active_storage.variant_processor = :mini_magick
 
+    Rails.application.config.middleware.use OmniAuth::Builder do
       provider :google_oauth2,
               ENV['GOOGLE_CLIENT_ID'],
               ENV['GOOGLE_CLIENT_SECRET'],
