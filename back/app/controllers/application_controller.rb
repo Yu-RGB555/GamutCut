@@ -28,26 +28,33 @@ class ApplicationController < ActionController::API
 
   protected
 
-  # MinIOの直接URLを生成するヘルパーメソッド
+  # AWS S3(MinIO)の直接URLを生成するヘルパーメソッド
   def minio_direct_url(attachment)
     return nil unless attachment&.attached?
 
     blob = attachment.blob
     service = blob.service
 
-    # S3互換サービス（MinIO）の場合
+    # S3互換サービス(MinIO、AWS S3)の場合
     if service.is_a?(ActiveStorage::Service::S3Service)
-      endpoint = ENV['AWS_ENDPOINT'] || "http://minio:9000"
       bucket = ENV['S3_BUCKET_NAME']
 
-      # Docker内部のminio:9000をlocalhostに変換（フロントエンド用）
-      if endpoint.include?('minio:9000')
-        endpoint = endpoint.gsub('minio:9000', 'localhost:9000')
-      end
+      # 開発環境
+      if ENV['AWS_ENDPOINT'].present?
+        endpoint = ENV['AWS_ENDPOINT']
 
-      "#{endpoint}/#{bucket}/#{blob.key}"
+        # Docker内部のminio:9000をlocalhostに変換
+        if endpoint.include?('minio:9000')
+          endpoint = endpoint.gsub('minio:9000', 'localhost:9000')
+        end
+
+        "#{endpoint}/#{bucket}/#{blob.key}"
+      else
+        # 本番環境
+        url_for(attachment)
+      end
     else
-      # フォールバック：通常のActive Storage URL
+      # フォールバック(通常のActive Storage URL)
       url_for(attachment)
     end
   end
