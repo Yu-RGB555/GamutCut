@@ -8,7 +8,7 @@ import { shapeTemplates } from '@/lib/shapeTemplates';
 import { hsvToRgb, getColorFromCoords } from '@/lib/colorUtils';
 import { getCenter, getScaledPoints, findClosestPoint, isPointInPolygon, toAbsolutePoints } from '@/lib/maskUtils';
 
-export default function GamutMask() {
+export function MaskMaking() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hiddenCanvasRef = useRef<HTMLCanvasElement>(null);
 
