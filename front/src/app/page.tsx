@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from "react";
-import { testApiConnection } from '@/lib/api'
-import { GamutMask } from "@/components/gamutmask";
+import { testApiConnection } from '@/lib/api';
+import  GamutMask  from '../components/Gamutmask';
 
 export default function Home() {
   useEffect(() => {
