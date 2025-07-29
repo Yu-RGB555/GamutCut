@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from "react";
-import { testApiConnection } from '@/lib/api'
-import { GamutMask } from "@/components/gamutmask";
+import { testApiConnection } from '@/lib/api';
+import { MaskMaking } from "@/components/MaskMaking";
 
 export default function Home() {
   useEffect(() => {
@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
     <div className="justify-items-center mx-16 mb-40">
-      <GamutMask />
+      <MaskMaking />
     </div>
   );
 }
