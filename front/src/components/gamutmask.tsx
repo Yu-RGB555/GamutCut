@@ -569,6 +569,20 @@ export function GamutMask() {
           ref={hiddenCanvasRef}
           style={{ display: 'none' }}
         />
+        <div className="bg-card">
+          <h3 className="text-card-foreground text-lg font-semibold mb-4">明度調整</h3>
+          <div className="flex items-center gap-4">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={currentValue}
+              onChange={(e) => setCurrentValue(parseInt(e.target.value))}
+              className="flex-1"
+            />
+            <span className="w-12 text-center">{currentValue}%</span>
+          </div>
+        </div>
       </div>
 
       {/* コントロールパネル */}
@@ -618,48 +632,15 @@ export function GamutMask() {
           </div>
         </div>
 
-        <div className="bg-card">
-          <h3 className="text-card-foreground text-lg font-semibold mb-4">明度調整</h3>
-          <div className="flex items-center gap-4">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={currentValue}
-              onChange={(e) => setCurrentValue(parseInt(e.target.value))}
-              className="flex-1"
-            />
-            <span className="w-12 text-center">{currentValue}%</span>
-          </div>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg border">
-          <h3 className="text-card-foreground text-lg font-semibold mb-3">色情報</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-sm">
-            <div>
-              <span className="text-label font-medium inline-block">色相（H）：</span>
-              <span className="font-mono inline-block mr-3">{colorInfo.hue}°</span>
-              <span className="text-label font-medium inline-block">彩度（S）：</span>
-              <span className="font-mono inline-block mr-3">{colorInfo.saturation}%</span>
-              <span className="text-label font-medium inline-block">明度（V）：</span>
-              <span className="font-mono inline-block mr-3">{colorInfo.value}%</span>
-            </div>
-            <div>
-              <span className="text-label font-medium">RGB：</span>
-              <span className="font-mono text-right">({colorInfo.rgb})</span>
-            </div>
-          </div>
-        </div>
-
         {selectedMask.length > 0 && (
           <div className="flex gap-2 mb-2">
             {selectedMask.map((mask, idx) => (
               <button
                 key={idx}
-                className={`px-2 py-1 rounded ${selectedMaskIndex === idx ? 'bg-primary text-white' : 'bg-gray-200'}`}
+                className={`px-2 py-1 font-bold rounded hover:cursor-pointer ${selectedMaskIndex === idx ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground text-muted'}`}
                 onClick={() => setSelectedMaskIndex(idx)}
               >
-                {mask.name} {idx + 1}
+                {mask.name}
               </button>
             ))}
           </div>
@@ -686,6 +667,24 @@ export function GamutMask() {
             <span className="text-xs">{((selectedMask[selectedMaskIndex]?.scale ?? 1) * 100).toFixed(0)}%</span>
           </div>
         )}
+
+        <div className="bg-card p-4 rounded-lg border">
+          <h3 className="text-card-foreground text-lg font-semibold mb-3">色情報</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-sm">
+            <div>
+              <span className="text-label font-medium inline-block">色相（H）：</span>
+              <span className="font-mono inline-block mr-3">{colorInfo.hue}°</span>
+              <span className="text-label font-medium inline-block">彩度（S）：</span>
+              <span className="font-mono inline-block mr-3">{colorInfo.saturation}%</span>
+              <span className="text-label font-medium inline-block">明度（V）：</span>
+              <span className="font-mono inline-block mr-3">{colorInfo.value}%</span>
+            </div>
+            <div>
+              <span className="text-label font-medium">RGB：</span>
+              <span className="font-mono text-right">({colorInfo.rgb})</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

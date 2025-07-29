@@ -85,7 +85,7 @@ export default function PostWorks() {
   };
 
   return (
-    <div className="m-16">
+    <div className="mx-16 mt-12 mb-40">
       <div className="flex justify-between mb-16">
         <div className="flex items-center">
           <h1 className="text-label text-4xl font-extrabold">作品投稿</h1>
@@ -103,8 +103,8 @@ export default function PostWorks() {
       </div>
       <form onSubmit={(e) => handleSubmit(e, false)}>
         <div className="flex flex-col gap-6">
-          <div className="grid grid-cols-2 gap-8 mb-16">
-            <div className="grid gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <div className="gap-2">
               <Label className="text-label font-semibold mb-2">イラスト作品</Label>
               <DropZone
                 onFileSelect={setIllustrationFile}
@@ -113,12 +113,12 @@ export default function PostWorks() {
               />
               {/* ⚠️ デバッグ用の情報表示（本番では削除） */}
               {illustrationFile && (
-                <p className="text-sm text-gray-600 mt-2">
+                <span className="flex justify-end text-sm text-gray-600 mt-2">
                   選択中: {illustrationFile.name} ({(illustrationFile.size / 1024 / 1024).toFixed(2)}MB)
-                </p>
+                </span>
               )}
             </div>
-            <div className="grid gap-2">
+            <div className="gap-2">
               <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
               <DropZone
                 onFileSelect={setMaskFile}

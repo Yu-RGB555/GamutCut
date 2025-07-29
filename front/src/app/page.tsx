@@ -10,7 +10,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="justify-items-center">
+    <div className="justify-items-center mx-16 mb-40">
       <GamutMask />
     </div>
   );
