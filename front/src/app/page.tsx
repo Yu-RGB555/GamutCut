@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { testApiConnection } from '@/lib/api';
-import  GamutMask  from '../components/Gamutmask';
+import  GamutMask  from '@/components/Gamutmask';
 
 export default function Home() {
   useEffect(() => {
