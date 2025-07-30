@@ -1,5 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
 import { ShapeTemplate, ColorInfo, MaskWithScale } from '@/types/gamut';
+import { Preset } from '@/types/preset';
+import { maskSave } from '@/lib/api';
 import { MaskControls } from './MaskControls';
 import { ColorInfoPanel } from './ColorInfoPanel';
 import { ColorWheelDrawer } from '@/lib/colorWheelDrawer';
@@ -9,6 +12,8 @@ import { hsvToRgb, getColorFromCoords } from '@/lib/colorUtils';
 import { getCenter, getScaledPoints, findClosestPoint, isPointInPolygon, toAbsolutePoints } from '@/lib/maskUtils';
 
 export function MaskMaking() {
+  const router = useRouter();
+  // キャンバスを参照
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hiddenCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -28,7 +33,7 @@ export function MaskMaking() {
 
   // 選択マスクの状態
   const [selectedMask, setSelectedMask] = useState<MaskWithScale[]>([]); // 頂点座標(初期状態)、スケール
-  const [selectedMaskIndex, setSelectedMaskIndex] = useState<number>(0); // 表示したマスクのインデックス
+  const [selectedMaskIndex, setSelectedMaskIndex] = useState<number>(0); // 表示マスクのインデックス
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // ドラッグ関連の状態
@@ -56,7 +61,6 @@ export function MaskMaking() {
 
     // マスクを描画
     maskDrawer.drawMasks(ctx, selectedMask, canvas.width, canvas.height)
-    // ctx.restore();
   };
 
   // マスク図形自体または頂点のドラッグ
@@ -245,6 +249,31 @@ export function MaskMaking() {
     setSelectedMask(selectedMask.slice(0, -1));
   };
 
+  // プリセット保存
+  const handleMaskSave = async () => {
+    try {
+      // プリセットデータの作成
+      const presetData: Preset = {
+        name: `プリセット ${new Date().toLocaleString('ja-JP')}`,
+        mask_data: {
+          value: currentValue,
+          masks: selectedMask.map(mask => ({
+            originalPoints: mask.originalPoints,
+            scale: mask.scale || 1,
+          })),
+        }
+      };
+
+      // APIを使用してプリセットを保存
+      await maskSave(presetData);
+      router.push('/');
+      console.log('プリセットを保存しました');
+    } catch (error) {
+      console.error('プリセット保存エラー:', error);
+      // TODO: エラーメッセージを表示する
+    }
+  };
+
   // 拡大縮小
   const handleScaleChange = (scale: number) => {
     setSelectedMask(selectedMask.map((mask, idx) =>
@@ -258,8 +287,8 @@ export function MaskMaking() {
   }, [currentValue, selectedMask]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center p-6">
-      <div className="justify-items-center mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
+      <div className="justify-items-center space-y-8">
         <canvas
           ref={canvasRef}
           width={400}
@@ -274,8 +303,8 @@ export function MaskMaking() {
           ref={hiddenCanvasRef}
           style={{ display: 'none' }}
         />
-        <div className="bg-card">
-          <h3 className="text-card-foreground text-lg font-semibold mb-4">明度調整</h3>
+        <div className="w-full bg-card space-y-2">
+          <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
           <div className="flex items-center gap-4">
             <input
               type="range"
@@ -283,10 +312,11 @@ export function MaskMaking() {
               max="100"
               value={currentValue}
               onChange={(e) => setCurrentValue(parseInt(e.target.value))}
-              className="flex-1"
+              className=""
             />
             <span className="w-12 text-center">{currentValue}%</span>
           </div>
+          <ColorInfoPanel colorInfo={colorInfo}/>
         </div>
       </div>
 
@@ -303,8 +333,8 @@ export function MaskMaking() {
           onMaskExport={handleMaskExport}
           onMaskIndexChange={setSelectedMaskIndex}
           onScaleChange={handleScaleChange}
+          onMaskSave={handleMaskSave}
         />
-        <ColorInfoPanel colorInfo={colorInfo}/>
       </div>
     </div>
   );

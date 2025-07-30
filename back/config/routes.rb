@@ -18,6 +18,7 @@ Rails.application.routes.draw do
 
     namespace :v1 do
       resources :works, only: [:index, :show, :create, :update, :destroy]
+      resources :presets, only: [:index, :create, :update, :destroy]
     end
   end
 end

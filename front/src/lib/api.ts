@@ -1,5 +1,6 @@
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
 import { Work } from '@/types/work';
+import { Preset } from '@/types/preset';
 
 
 // 環境に応じたAPI URLの取得
@@ -19,22 +20,22 @@ const API_BASE_URL = getApiBaseUrl();
 // console.log('API_BASE_URL:', API_BASE_URL);
 
 // ⚠️Next.js側で実行するテスト用コード（MVPで削除）
-export async function testApiConnection() {
-  try {
-    // 基本的なヘルスチェック
-    const healthResponse = await fetch(`${API_BASE_URL}/health`);
-    const healthData = await healthResponse.json();
-    console.log('Health check:', healthData);
+// export async function testApiConnection() {
+//   try {
+//     // 基本的なヘルスチェック
+//     const healthResponse = await fetch(`${API_BASE_URL}/health`);
+//     const healthData = await healthResponse.json();
+//     console.log('Health check:', healthData);
 
-    // 詳細なヘルスチェック
-    const detailedResponse = await fetch(`${API_BASE_URL}/health/detailed`);
-    const detailedData = await detailedResponse.json();
-    console.log('Detailed health check:', detailedData);
+//     // 詳細なヘルスチェック
+//     const detailedResponse = await fetch(`${API_BASE_URL}/health/detailed`);
+//     const detailedData = await detailedResponse.json();
+//     console.log('Detailed health check:', detailedData);
 
-  } catch (error) {
-    console.error('API connection failed:', error);
-  }
-};
+//   } catch (error) {
+//     console.error('API connection failed:', error);
+//   }
+// };
 
 // 新規登録用
 export async function registerUser(userData: RegisterRequest): Promise<RegisterResponse> {
@@ -99,11 +100,9 @@ export async function logoutUser(): Promise<void> {
 
 // 作品一覧取得
 export async function getWorks(): Promise<Work[]> {
-  // const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'GET',
     headers: {
-      // 'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   });
@@ -129,7 +128,6 @@ export async function showWork(workId: number): Promise<Work> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'GET',
     headers: {
-      // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
       'Content-Type': 'application/json',
     },
   });
@@ -175,4 +173,23 @@ export async function deleteWork(workId: number): Promise<void>{
   if(!response.ok) {
     throw new Error('作品の削除に失敗しました')
   }
+}
+
+// プリセット保存
+export async function maskSave(presetData: Preset) {
+  const token = localStorage.getItem('authToken');
+  const response = await fetch(`${API_BASE_URL}/api/v1/presets`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(presetData)
+  });
+
+  if (!response.ok) {
+    throw new Error('プリセットの保存に失敗しました');
+  }
+
+  return response.json();
 }
