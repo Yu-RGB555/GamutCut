@@ -252,18 +252,31 @@ export function MaskMaking() {
   // プリセット保存
   const handleMaskSave = async () => {
     try {
-      // 現在のマスクの状態（ドラッグ後の座標）を取得
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+
+      // 現在のマスクの状態を相対座標で保存
       const currentMasks = selectedMask.map(mask => {
         const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+
+        // 中心点からの相対座標に変換（-1.0 ~ 1.0の範囲）
+        const relativePoints = scaledPoints.map(point => ({
+          x: (point.x - centerX) / canvas.width * 2,
+          y: (point.y - centerY) / canvas.height * 2
+        }));
+
         return {
-          originalPoints: scaledPoints, // ドラッグ後の座標を保存
-          scale: mask.scale || 1,
+          originalPoints: relativePoints, // 相対座標を保存
+          scale: 1, // スケールは相対座標化に含まれるため1にリセット
         };
       });
 
       // プリセットデータの作成
       const presetData: Preset = {
-        id: Date.now(), // 一時的なID（API側で上書きされる場合は適宜修正）
+        id: Date.now(), // 一時的なID（API側で上書き）
         name: `プリセット ${new Date().toLocaleString('ja-JP')}`,
         mask_data: {
           value: currentValue,

@@ -17,29 +17,26 @@ export function PresetCard({ preset }: PresetCardProps) {
   const colorWheelDrawer = new ColorWheelDrawer();
   const maskDrawer = new MaskDrawer();
 
-  // 座標のスケーリング
+  // 相対座標から絶対座標へのスケーリング
   const scalePoints = (points: Point[], scale: number): Point[] => {
     // キャンバスの中心を計算
     const centerX = CARD_CANVAS_SIZE / 2;
     const centerY = CARD_CANVAS_SIZE / 2;
 
     return points.map(point => {
-      // 1. まずキャンバスサイズの比率でスケーリング
-      const scaledX = (point.x * CARD_CANVAS_SIZE) / EDITOR_CANVAS_SIZE;
-      const scaledY = (point.y * CARD_CANVAS_SIZE) / EDITOR_CANVAS_SIZE;
+      // 1. 相対座標（-1.0 ~ 1.0）をキャンバスサイズに合わせて絶対座標に変換
+      const absoluteX = centerX + (point.x * CARD_CANVAS_SIZE / 2);
+      const absoluteY = centerY + (point.y * CARD_CANVAS_SIZE / 2);
 
-      // 2. 中心点からの相対位置を計算
-      const relativeX = scaledX - centerX;
-      const relativeY = scaledY - centerY;
+      // 2. スケール値を適用（中心点からの距離に対して）
+      const relativeX = absoluteX - centerX;
+      const relativeY = absoluteY - centerY;
+      const scaledX = centerX + (relativeX * scale);
+      const scaledY = centerY + (relativeY * scale);
 
-      // 3. マスクのスケール値を適用
-      const scaledRelativeX = relativeX * scale;
-      const scaledRelativeY = relativeY * scale;
-
-      // 4. 中心点から実際の位置に戻す
       return {
-        x: centerX + scaledRelativeX,
-        y: centerY + scaledRelativeY
+        x: scaledX,
+        y: scaledY
       };
     });
   };
