@@ -2,17 +2,20 @@ import { degToRad, hsvToRgb } from "./colorUtils";
 
 // 色相環クラス
 export class ColorWheelDrawer {
-  private maxRadius: number;
+  private maxRadius: number = 0;  // 初期値を設定
   private sectorCount: number;
 
-  constructor(maxRadius: number = 150, sectorCount: number = 360) {
-    this.maxRadius = maxRadius;
+  constructor(sectorCount: number = 360) {
     this.sectorCount = sectorCount;
   }
 
   draw(ctx: CanvasRenderingContext2D, width: number, height: number, value: number) {
     const centerX = width / 2;
     const centerY = height / 2;
+
+    // キャンバスサイズに応じて適切な半径を計算
+    // 最小サイズの75%を半径として使用（余白を確保）
+    this.maxRadius = Math.min(width, height) * 0.375;
 
     ctx.clearRect(0, 0, width, height);
 

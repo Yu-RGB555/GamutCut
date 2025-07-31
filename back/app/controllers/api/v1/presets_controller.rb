@@ -3,7 +3,17 @@ class Api::V1::PresetsController < ApplicationController
 
   def index
     @presets = current_user.presets
-    render json: @presets
+    render json: {
+      presets: @presets.map do |preset|
+        {
+          id: preset.id,
+          name: preset.name,
+          mask_data: preset.mask_data,
+          created_at: preset.created_at,
+          updated_at: preset.updated_at
+        }
+      end
+    }
   end
 
   def create

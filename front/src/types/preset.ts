@@ -1,4 +1,5 @@
 export interface Preset {
+  id: number;
   name: string;
   mask_data: {
     value: number;
