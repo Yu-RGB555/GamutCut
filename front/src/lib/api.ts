@@ -193,3 +193,28 @@ export async function maskSave(presetData: Preset) {
 
   return response.json();
 }
+
+// プリセット一覧取得
+export async function getPresets(): Promise<Preset[]> {
+  const token = localStorage.getItem('authToken');
+  const response = await fetch(`${API_BASE_URL}/api/v1/presets`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const text = await response.text();
+
+  if (!response.ok) {
+    throw new Error('プリセット一覧の取得に失敗しました');
+  }
+
+  try {
+    const data = JSON.parse(text);
+    return data.presets;
+  } catch (error) {
+    throw new Error('APIレスポンスがJSONではありません');
+  }
+}

@@ -252,15 +252,22 @@ export function MaskMaking() {
   // プリセット保存
   const handleMaskSave = async () => {
     try {
+      // 現在のマスクの状態（ドラッグ後の座標）を取得
+      const currentMasks = selectedMask.map(mask => {
+        const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+        return {
+          originalPoints: scaledPoints, // ドラッグ後の座標を保存
+          scale: mask.scale || 1,
+        };
+      });
+
       // プリセットデータの作成
       const presetData: Preset = {
+        id: Date.now(), // 一時的なID（API側で上書きされる場合は適宜修正）
         name: `プリセット ${new Date().toLocaleString('ja-JP')}`,
         mask_data: {
           value: currentValue,
-          masks: selectedMask.map(mask => ({
-            originalPoints: mask.originalPoints,
-            scale: mask.scale || 1,
-          })),
+          masks: currentMasks,
         }
       };
 
