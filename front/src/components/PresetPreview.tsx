@@ -4,13 +4,14 @@ import { ColorWheelDrawer } from '@/lib/colorWheelDrawer';
 import { MaskDrawer } from '@/lib/MaskDrawer';
 import { Point } from '@/types/gamut';
 
-interface PresetCardProps {
+interface PresetPreviewProps {
   preset: Preset;
+  size: number;
 }
 
-export function PresetCard({ preset }: PresetCardProps) {
+export function PresetPreview({ preset, size =300 }: PresetPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const CARD_CANVAS_SIZE = 200;   // プレビュー用のキャンバスサイズ
+  const PREVIEW_CANVAS_SIZE = size; // プレビュー用のキャンバスサイズ
 
   // 描画インスタンス
   const colorWheelDrawer = new ColorWheelDrawer();
@@ -19,13 +20,13 @@ export function PresetCard({ preset }: PresetCardProps) {
   // 相対座標から絶対座標へのスケーリング
   const scalePoints = (points: Point[], scale: number): Point[] => {
     // キャンバスの中心を計算
-    const centerX = CARD_CANVAS_SIZE / 2;
-    const centerY = CARD_CANVAS_SIZE / 2;
+    const centerX = PREVIEW_CANVAS_SIZE / 2;
+    const centerY = PREVIEW_CANVAS_SIZE / 2;
 
     return points.map(point => {
       // 1. 相対座標（-1.0 ~ 1.0）をキャンバスサイズに合わせて絶対座標に変換
-      const absoluteX = centerX + (point.x * CARD_CANVAS_SIZE / 2);
-      const absoluteY = centerY + (point.y * CARD_CANVAS_SIZE / 2);
+      const absoluteX = centerX + (point.x * PREVIEW_CANVAS_SIZE / 2);
+      const absoluteY = centerY + (point.y * PREVIEW_CANVAS_SIZE / 2);
 
       // 2. スケール値を適用（中心点からの距離に対して）
       const relativeX = absoluteX - centerX;
@@ -40,7 +41,7 @@ export function PresetCard({ preset }: PresetCardProps) {
     });
   };
 
-  // 描画処理(プリセット用)
+  // 描画処理
   const drawPreset = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -51,7 +52,7 @@ export function PresetCard({ preset }: PresetCardProps) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 色相環を描画
-    colorWheelDrawer.draw(ctx, CARD_CANVAS_SIZE, CARD_CANVAS_SIZE, preset.mask_data.value);
+    colorWheelDrawer.draw(ctx, PREVIEW_CANVAS_SIZE, PREVIEW_CANVAS_SIZE, preset.mask_data.value);
 
     // マスクを描画
     if (preset.mask_data.masks.length > 0) {
@@ -67,28 +68,23 @@ export function PresetCard({ preset }: PresetCardProps) {
           scale: mask.scale
         };
       });
-      maskDrawer.drawMasks(ctx, masksWithRequired, CARD_CANVAS_SIZE, CARD_CANVAS_SIZE);
+      maskDrawer.drawMasks(ctx, masksWithRequired, PREVIEW_CANVAS_SIZE, PREVIEW_CANVAS_SIZE);
     }
   };
 
   // 初回レンダリング時に描画
   useEffect(() => {
     drawPreset();
-  }, [preset]);
+  }, [preset, size]);
 
   return (
-    <div className="bg-card border p-4 rounded-lg">
-      <div className="flex flex-col">
-        <p className="text-gray-300 font-medium">{preset.name}</p>
+    <div className="rounded-lg h-80 flex items-center bg-background/50">
+      <div className="flex items-center justify-center w-full h-full">
         <canvas
           ref={canvasRef}
-          width={CARD_CANVAS_SIZE}
-          height={CARD_CANVAS_SIZE}
-          className="mb-2"
+          width={PREVIEW_CANVAS_SIZE}
+          height={PREVIEW_CANVAS_SIZE}
         />
-        <p className="text-gray-300 text-xs">
-          明度： {preset.mask_data.value}%
-        </p>
       </div>
     </div>
   );

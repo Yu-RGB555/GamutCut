@@ -24,11 +24,7 @@ class Api::V1::WorksController < ApplicationController
 
   def create
     @work = current_user.works.build(work_params.except(:illustration_image))
-
     @work.illustration_image.attach(params[:work][:illustration_image]) if params[:work][:illustration_image].present?
-
-    # プリセットからマスクデータを独立して保存
-    # @work.save_mask_data_from_preset
 
     if @work.save
       render json: {
@@ -47,7 +43,6 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def show
-
     @work = Work.find_by(id: params[:id])
 
     render json: {
