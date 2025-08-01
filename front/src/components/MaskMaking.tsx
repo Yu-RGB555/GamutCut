@@ -11,8 +11,11 @@ import { shapeTemplates } from '@/lib/shapeTemplates';
 import { hsvToRgb, getColorFromCoords } from '@/lib/colorUtils';
 import { getCenter, getScaledPoints, findClosestPoint, isPointInPolygon, toAbsolutePoints } from '@/lib/maskUtils';
 
-export function MaskMaking() {
-  const router = useRouter();
+interface MaskMakingProps {
+  onSaveSuccess: () => Promise<void>;
+}
+
+export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
   // キャンバスを参照
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hiddenCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -286,7 +289,8 @@ export function MaskMaking() {
 
       // APIを使用してプリセットを保存
       await maskSave(presetData);
-      router.push('/');
+      // 保存成功時にプリセット一覧を更新
+      await onSaveSuccess();
       console.log('プリセットを保存しました');
     } catch (error) {
       console.error('プリセット保存エラー:', error);
