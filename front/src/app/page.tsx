@@ -14,29 +14,40 @@ export default function Home() {
   const [presets, setPresets] = useState<Preset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchPresets = async () => {
+    try {
+      setIsLoading(true);
+      const presetData = await getPresets();
+      setPresets(presetData);
+    } catch (error) {
+      console.error('プリセット取得エラー:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 初回マウント時にプリセットを取得
   useEffect(() => {
-    const fetchPresets = async () => {
-      try{
-        const presetData = await getPresets();
-        console.log('presets.id', presetData)
-        setPresets(presetData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchPresets();
   }, []);
 
   return (
     <div className="justify-items-center mx-16 mb-40 space-y-8">
-      <MaskMaking />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {presets.map((preset) => (
-          <PresetCard key={preset.id} preset={preset} />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="text-center">読み込み中...</div>
+      ) : (
+        <>
+          <MaskMaking onSaveSuccess={fetchPresets} />
+          <div className="grid grid-cols-1 gap-y-4">
+            <h3 className="text-card-foreground text-left text-lg font-semibold">プリセット一覧</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {presets.map((preset) => (
+                <PresetCard key={preset.id} preset={preset} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

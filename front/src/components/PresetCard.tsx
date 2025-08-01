@@ -79,16 +79,18 @@ export function PresetCard({ preset }: PresetCardProps) {
 
   return (
     <div className="bg-card border p-4 rounded-lg">
-      <canvas
-        ref={canvasRef}
-        width={CARD_CANVAS_SIZE}
-        height={CARD_CANVAS_SIZE}
-        className="mb-2"
-      />
-      <p className="text-gray-300 font-medium">{preset.name}</p>
-      <p className="text-gray-300 text-xs">
-        明度: {preset.mask_data.value}%
-      </p>
+      <div className="flex flex-col">
+        <p className="text-gray-300 font-medium">{preset.name}</p>
+        <canvas
+          ref={canvasRef}
+          width={CARD_CANVAS_SIZE}
+          height={CARD_CANVAS_SIZE}
+          className="mb-2"
+        />
+        <p className="text-gray-300 text-xs">
+          明度： {preset.mask_data.value}%
+        </p>
+      </div>
     </div>
   );
 }
