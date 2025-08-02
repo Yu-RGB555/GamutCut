@@ -25,7 +25,7 @@ export default function PostWorks() {
     title: '',
     description: '',
   });
-  const [maskData, setMaskData] = useState<Preset | null>(null);
+  const [presetData, setPresetData] = useState<Preset | null>(null);
   const [isPresetDialogOpen, setIsPresetDialogOpen] = useState(false);
   const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
   const [illustrationPreview, setIllustrationPreview] = useState<string | null>(null);
@@ -51,7 +51,7 @@ export default function PostWorks() {
   const handleRemoveMask = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setMaskData(null);
+    setPresetData(null);
   }
 
   const handleSubmit = async (e: React.FormEvent, isDraft: boolean = false) => {
@@ -71,7 +71,7 @@ export default function PostWorks() {
         submitData.append('work[illustration_image]', illustrationFile);
       }
 
-      submitData.append('work[set_mask_data]', JSON.stringify(maskData?.mask_data));
+      submitData.append('work[set_mask_data]', JSON.stringify(presetData?.mask_data));
 
       await postWork(submitData);
       router.push('/work');
@@ -122,9 +122,9 @@ export default function PostWorks() {
                 className="cursor-pointer"
                 onClick={() => setIsPresetDialogOpen(true)}
               >
-                {maskData ? (
+                {presetData ? (
                   <div className="grid grid-row-2 relative">
-                    <PresetPreview preset={maskData} size={300} />
+                    <PresetPreview maskData={presetData.mask_data} size={300} />
                     <button
                       type="button"
                       title="マスクを削除"
@@ -134,7 +134,7 @@ export default function PostWorks() {
                       <X className="w-4 h-4 text-white" />
                     </button>
                     <span className="flex justify-end text-sm text-gray-600 mt-2">
-                      選択中: {maskData.name}
+                      選択中: {presetData.name}
                     </span>
                   </div>
                 ) : (
@@ -152,7 +152,7 @@ export default function PostWorks() {
               <PresetSelectDialog
                 open={isPresetDialogOpen}
                 onOpenChange={setIsPresetDialogOpen}
-                onSelect={setMaskData}
+                onSelect={setPresetData}
               />
             </div>
           </div>

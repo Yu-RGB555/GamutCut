@@ -11,6 +11,7 @@ class Api::V1::WorksController < ApplicationController
           id: work.id,
           title: work.title,
           illustration_image_url: work.illustration_image.attached? ? minio_direct_url(work.illustration_image) : nil,
+          set_mask_data: work.set_mask_data,
           user: {
             id: work.user.id,
             name: work.user.name,

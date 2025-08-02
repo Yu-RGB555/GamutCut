@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from 'react';
-import { Preset } from '@/types/preset';
+import { MaskData } from '@/types/mask';
 import { ColorWheelDrawer } from '@/lib/colorWheelDrawer';
 import { MaskDrawer } from '@/lib/MaskDrawer';
 import { Point } from '@/types/gamut';
 
 interface PresetPreviewProps {
-  preset: Preset;
+  maskData: MaskData;
   size: number;
 }
 
-export function PresetPreview({ preset, size =300 }: PresetPreviewProps) {
+export function PresetPreview({ maskData, size =300 }: PresetPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const PREVIEW_CANVAS_SIZE = size; // プレビュー用のキャンバスサイズ
 
@@ -52,11 +52,11 @@ export function PresetPreview({ preset, size =300 }: PresetPreviewProps) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 色相環を描画
-    colorWheelDrawer.draw(ctx, PREVIEW_CANVAS_SIZE, PREVIEW_CANVAS_SIZE, preset.mask_data.value);
+    colorWheelDrawer.draw(ctx, PREVIEW_CANVAS_SIZE, PREVIEW_CANVAS_SIZE, maskData.value);
 
     // マスクを描画
-    if (preset.mask_data.masks.length > 0) {
-      const masksWithRequired = preset.mask_data.masks.map((mask, index) => {
+    if (maskData.masks.length > 0) {
+      const masksWithRequired = maskData.masks.map((mask, index) => {
         // 保存された座標をプレビューサイズにスケーリング
         const scaledPoints = scalePoints(mask.originalPoints, mask.scale);
 
@@ -75,7 +75,7 @@ export function PresetPreview({ preset, size =300 }: PresetPreviewProps) {
   // 初回レンダリング時に描画
   useEffect(() => {
     drawPreset();
-  }, [preset, size]);
+  }, [maskData, size]);
 
   return (
     <div className="rounded-lg h-80 flex items-center bg-background/50">

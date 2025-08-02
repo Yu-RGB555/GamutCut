@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Work } from "@/types/work";
 import { deleteWork, showWork } from "@/lib/api";
-import { useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { PresetPreview } from "@/components/PresetPreview";
 
 export default function ShowWorks() {
   const router = useRouter();
@@ -23,7 +23,6 @@ export default function ShowWorks() {
     const fetchWork = async () => {
       try{
         const workData = await showWork(Number(id));
-        console.log('workData:', workData);
         setWork(workData);
       } catch (error) {
         console.error(error);
@@ -59,7 +58,6 @@ export default function ShowWorks() {
     <div className="m-16">
       <div className="flex justify-between">
         <div className="flex items-center">
-          {/* <h1 className="text-label text-4xl font-extrabold">{work.title}</h1> */}
         </div>
         {user && work.user.id === user.id && (
           <Button
@@ -71,7 +69,6 @@ export default function ShowWorks() {
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols md:grid-cols-2 gap-8 mb-4">
           <div className="grid gap-2">
-            {/* <Label className="text-label font-semibold mb-2">{work.title}</Label> */}
             <div className="flex items-center justify-center border rounded-sm w-full h-80">
               {work.illustration_image_url ? (
                 <img
@@ -86,12 +83,14 @@ export default function ShowWorks() {
           </div>
           <div className="grid gap-2">
             <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
-            <div>{JSON.stringify(work.set_mask_data)}</div>
+            <PresetPreview maskData={work.set_mask_data} size={300} />
           </div>
         </div>
         <div className="grid grid-cols gap-6">
           <div>
             <Label className="text-label text-2xl font-semibold mb-2">{work.title}</Label>
+            {/* <p className="text-label">{work.user.avatar_url}<span>{work.user.name}</span></p> */}
+            <p className="text-label">{work.user.name}</p>
           </div>
           {/* <div className="text-label font-semibold mb-2"> タグ </div> */}
           <div className="text-label">{work.description}</div>
