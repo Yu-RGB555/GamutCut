@@ -141,6 +141,22 @@ export async function postWork(formData: FormData) {
   return response.json();
 };
 
+// 作品更新
+export async function updateWork(submitData: FormData, workId: number) {
+  const token = localStorage.getItem('authToken');
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: submitData
+  });
+
+  if(!response.ok) {
+    throw new Error('投稿作品の更新に失敗しました');
+  }
+}
+
 // 作品削除
 export async function deleteWork(workId: number): Promise<void>{
   const token = localStorage.getItem('authToken');

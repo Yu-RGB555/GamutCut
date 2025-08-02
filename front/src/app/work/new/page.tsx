@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Preset } from "@/types/preset";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,6 @@ import { postWork } from "@/lib/api";
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
 
 export default function PostWorks() {
-
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -90,7 +88,7 @@ export default function PostWorks() {
           <h1 className="text-label text-4xl font-extrabold">作品投稿</h1>
         </div>
         <div className="flex items-center gap-x-2">
-          <Button variant="destructive">削除</Button>
+          {/* <Button variant="destructive">削除</Button> */}
           <Button
             variant="outline"
             onClick={(e) => handleSubmit(e, true)}

@@ -1,6 +1,6 @@
 class Api::V1::WorksController < ApplicationController
   before_action :authenticate_user!, only: [:create, :destroy]
-  before_action :set_work, only: [:destroy]
+  before_action :set_work, only: [:update, :destroy]
 
   def index
     @works = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).where(is_public: 'published').order(created_at: :desc)
@@ -61,6 +61,15 @@ class Api::V1::WorksController < ApplicationController
     }
   end
 
+  def update
+    if @work.update(work_params)
+      head :ok
+    else
+      Rails.logger.error "Work validation errors: #{@work.errors.full_messages}"
+      render json: { errors: @work.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     @work.destroy
     render json: { message: '作品が削除されました' }
@@ -75,18 +84,18 @@ class Api::V1::WorksController < ApplicationController
   def work_params
     permitted_params = params.require(:work).permit(:title, :description, :is_public, :illustration_image, :set_mask_data)
 
-    # is_publicが文字列で送られてきた場合は数値に変換
+    # is_public(string)を数値に変換
     if permitted_params[:is_public].present?
       permitted_params[:is_public] = permitted_params[:is_public].to_i
     end
 
-    # set_mask_dataが文字列(JSON)で送られてきた場合はパース
+    # set_mask_data(文字列(JSON))をパース
     if permitted_params[:set_mask_data].present? && permitted_params[:set_mask_data].is_a?(String)
       begin
         permitted_params[:set_mask_data] = JSON.parse(permitted_params[:set_mask_data])
       rescue JSON::ParserError => e
         Rails.logger.error "JSON parse error for set_mask_data: #{e.message}"
-        # パースに失敗した場合はnilを設定（バリデーションエラーになる）
+        # パースに失敗した場合はnilを設定（バリデーションエラー）
         permitted_params[:set_mask_data] = nil
       end
     end
