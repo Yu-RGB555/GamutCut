@@ -1,9 +1,11 @@
+import { MaskData } from "./mask";
+
 export interface Work{
   id: number;
   title: string;
   description: string;
   illustration_image_url?: string;
-  set_mask_data?: string;
+  set_mask_data: MaskData;
   is_public: string;
   user: {
     id: number;

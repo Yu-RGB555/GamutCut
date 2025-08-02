@@ -81,23 +81,6 @@ export async function loginUser(userData: LoginRequest): Promise<LoginResponse> 
   return data;
 }
 
-// ログアウト用
-// export async function logoutUser(): Promise<void> {
-//   const token = localStorage.getItem('authToken');
-//   const response = await fetch(`${API_BASE_URL}/api/users/sign_out`, {
-//     method: 'DELETE',
-//     headers: {
-//       'Authorization': `Bearer ${token}`,
-//       'Content-Type': 'application/json',
-//     },
-//     credentials: 'include',
-//   });
-
-//   if(!response.ok){
-//     throw new Error('ログアウトに失敗しました');
-//   }
-// }
-
 // 作品一覧取得
 export async function getWorks(): Promise<Work[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
