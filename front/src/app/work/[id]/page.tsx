@@ -35,6 +35,10 @@ export default function ShowWorks() {
     fetchWork();
   }, []);
 
+  const handleEdit = (id: number) => {
+    router.push(`/work/${id}/edit`);
+  }
+
   const handleDelete = async (id: number) => {
     if (window.confirm('本当に削除しますか？')) {
       try {
@@ -60,10 +64,16 @@ export default function ShowWorks() {
         <div className="flex items-center">
         </div>
         {user && work.user.id === user.id && (
-          <Button
-            variant="destructive"
-            onClick={() => handleDelete(work.id)}
-          >削除</Button>
+          <div className="flex items-center gap-x-2">
+            <Button
+              variant="outline"
+              onClick={() => handleEdit(work.id)}
+            >編集</Button>
+            <Button
+              variant="destructive"
+              onClick={() => handleDelete(work.id)}
+            >削除</Button>
+          </div>
         )}
       </div>
       <div className="flex flex-col gap-6">
