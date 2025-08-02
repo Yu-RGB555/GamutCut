@@ -3,6 +3,7 @@ class Api::V1::PresetsController < ApplicationController
 
   def index
     @presets = current_user.presets
+
     render json: {
       presets: @presets.map do |preset|
         {

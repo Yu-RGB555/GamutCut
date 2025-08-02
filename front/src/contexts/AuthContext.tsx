@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types/auth';
-import { logoutUser } from '@/lib/api';
 
 // AuthContextの型定義
 interface AuthContextType {
