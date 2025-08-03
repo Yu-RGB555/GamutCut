@@ -16,11 +16,11 @@ import { updateWork, showWork, getWorkImageBlob } from "@/lib/api";
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
 
-// バックエンド経由でFileオブジェクト作成メソッド
+// Fileオブジェクト作成メソッド
 const createFileFromBackend = async (workId: number, filename: string, filesize?: number): Promise<File> => {
   try {
     const blob = await getWorkImageBlob(workId);
-    
+
     return new File([blob], filename, {
       type: blob.type,
       lastModified: Date.now()
