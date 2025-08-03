@@ -17,7 +17,11 @@ Rails.application.routes.draw do
     end
 
     namespace :v1 do
-      resources :works, only: [:index, :show, :create, :update, :destroy]
+      resources :works, only: [:index, :show, :create, :update, :destroy] do
+        member do
+          get :image  # 画像取得用エンドポイント
+        end
+      end
       resources :presets, only: [:index, :create, :update, :destroy]
     end
   end

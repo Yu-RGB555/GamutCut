@@ -169,9 +169,23 @@ export async function deleteWork(workId: number): Promise<void>{
     credentials: 'include',
   });
 
-  if(!response.ok) {
-    throw new Error('作品の削除に失敗しました')
+  if (!response.ok) {
+    throw new Error('作品の削除に失敗しました');
   }
+}
+
+// 作品の画像をBlobとして取得（バックエンド経由）
+export async function getWorkImageBlob(workId: number): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/image`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('画像の取得に失敗しました');
+  }
+
+  return response.blob();
 }
 
 // プリセット保存
