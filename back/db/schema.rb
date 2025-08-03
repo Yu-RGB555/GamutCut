@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_25_092819) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_03_063613) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -103,6 +103,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_25_092819) do
     t.integer "is_public", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "filename"
+    t.integer "filesize"
     t.index ["preset_id"], name: "index_works_on_preset_id"
     t.index ["user_id"], name: "index_works_on_user_id"
   end

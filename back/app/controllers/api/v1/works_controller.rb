@@ -25,7 +25,16 @@ class Api::V1::WorksController < ApplicationController
 
   def create
     @work = current_user.works.build(work_params.except(:illustration_image))
-    @work.illustration_image.attach(params[:work][:illustration_image]) if params[:work][:illustration_image].present?
+
+    if params[:work][:illustration_image].present?
+      # アップロードされたファイルオブジェクトを直接参照
+      file = params[:work][:illustration_image]
+      # ファイル情報を保存
+      @work.filename = file.original_filename
+      @work.filesize = file.size
+      # ActiveStorageにファイルを添付
+      @work.illustration_image.attach(file)
+    end
 
     if @work.save
       render json: {
@@ -34,11 +43,12 @@ class Api::V1::WorksController < ApplicationController
           id: @work.id,
           title: @work.title,
           description: @work.description,
-          illustration_image_url: @work.illustration_image.attached? ? url_for(@work.illustration_image) : nil
+          illustration_image_url: @work.illustration_image.attached? ? url_for(@work.illustration_image) : nil,
+          filename: @work.filename,
+          filesize: @work.filesize
         }
       }, status: :created
     else
-      Rails.logger.error "Work validation errors: #{@work.errors.full_messages}"
       render json: { errors: @work.errors.full_messages }, status: :unprocessable_entity
     end
   end
@@ -50,6 +60,8 @@ class Api::V1::WorksController < ApplicationController
       id: @work.id,
       title: @work.title,
       illustration_image_url: minio_direct_url(@work.illustration_image),
+      filename: @work.filename,
+      filesize: @work.filesize,
       set_mask_data: @work.set_mask_data,
       description: @work.description,
       user: {
@@ -62,10 +74,16 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def update
+    if params[:work][:illustration_image].present?
+      file = params[:work][:illustration_image]
+      @work.filename = file.original_filename
+      @work.filesize = file.size
+      @work.illustration_image.attach(file)
+    end
+
     if @work.update(work_params)
       head :ok
     else
-      Rails.logger.error "Work validation errors: #{@work.errors.full_messages}"
       render json: { errors: @work.errors.full_messages }, status: :unprocessable_entity
     end
   end
@@ -82,7 +100,7 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def work_params
-    permitted_params = params.require(:work).permit(:title, :description, :is_public, :illustration_image, :set_mask_data)
+    permitted_params = params.require(:work).permit(:title, :description, :is_public, :illustration_image, :filename, :filesize, :set_mask_data)
 
     # is_public(string)を数値に変換
     if permitted_params[:is_public].present?
