@@ -93,6 +93,32 @@ class Api::V1::WorksController < ApplicationController
     render json: { message: '作品が削除されました' }
   end
 
+  # 画像を取得してクライアントに返すプロキシメソッド
+  def image
+    @work = Work.find(params[:id])
+
+    unless @work.illustration_image.attached?
+      render json: { error: '画像が見つかりません' }, status: :not_found
+      return
+    end
+
+    # Active Storageから画像データを取得
+    begin
+      # 画像のバイナリデータを取得
+      image_data = @work.illustration_image.download
+
+      # 適切なContent-Typeを設定
+      response.headers['Content-Type'] = @work.illustration_image.content_type
+      response.headers['Content-Disposition'] = 'inline'
+
+      # 画像データをレスポンスとして返す
+      render body: image_data, content_type: @work.illustration_image.content_type
+    rescue => e
+      Rails.logger.error "Failed to download image: #{e.message}"
+      render json: { error: '画像の取得に失敗しました' }, status: :internal_server_error
+    end
+  end
+
   private
 
   def set_work

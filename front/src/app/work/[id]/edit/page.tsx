@@ -11,24 +11,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PresetPreview } from "@/components/PresetPreview";
 import { PresetSelectDialog } from "@/components/PresetSelectDialog";
-import { updateWork, showWork } from "@/lib/api";
+import { updateWork, showWork, getWorkImageBlob } from "@/lib/api";
 
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
 
 // Fileオブジェクト作成メソッド
-const createFileFromUrl = async (url: string, filename: string, filesize?: number): Promise<File> => {
+const createFileFromBackend = async (workId: number, filename: string, filesize?: number): Promise<File> => {
   try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const mimeType = blob.type
+    const blob = await getWorkImageBlob(workId);
 
     return new File([blob], filename, {
-      type: mimeType,
+      type: blob.type,
       lastModified: Date.now()
     });
   } catch (error) {
-    console.error('Failed to create File from URL:', error);
+    console.error('Failed to create File from backend:', error);
     throw error;
   }
 };
@@ -73,8 +71,8 @@ export default function EditWorks() {
         if(workData.illustration_image_url && workData.filename){
           setIsLoadingFile(true);
           try {
-            const file = await createFileFromUrl(
-              workData.illustration_image_url,
+            const file = await createFileFromBackend(
+              workData.id,
               workData.filename,
               workData.filesize
             );
