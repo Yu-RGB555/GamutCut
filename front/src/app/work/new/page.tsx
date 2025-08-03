@@ -109,9 +109,15 @@ export default function PostWorks() {
                 previewUrl={illustrationPreview}
               />
               {illustrationFile && (
-                <span className="flex justify-end text-sm text-gray-600 mt-2">
-                  選択中: {illustrationFile.name} ({(illustrationFile.size / 1024 / 1024).toFixed(2)}MB)
-                </span>
+                  (illustrationFile.size / 1024 / 1024) < 1 ? (
+                  <span className="flex justify-end text-sm text-gray-600 mt-2">
+                    選択中: {illustrationFile.name} ({Math.round(illustrationFile.size / 1024)}KB)
+                  </span>
+                  ) : (
+                  <span className="flex justify-end text-sm text-gray-600 mt-2">
+                    選択中: {illustrationFile.name} ({(illustrationFile.size / 1024 / 1024).toFixed(2)}MB)
+                  </span>
+                  )
               )}
             </div>
             <div className="gap-2">
