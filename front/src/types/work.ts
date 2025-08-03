@@ -5,6 +5,8 @@ export interface Work{
   title: string;
   description: string;
   illustration_image_url?: string;
+  filename: string;
+  filesize: number;
   set_mask_data: MaskData;
   is_public: string;
   user: {

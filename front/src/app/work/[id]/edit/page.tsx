@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Preset } from "@/types/preset";
-import { Work } from "@/types/work";
 import { Button } from "@/components/ui/button";
 import { X } from 'lucide-react';
 import { DropZone } from "@/components/ui/dropzone";
@@ -17,12 +16,28 @@ import { updateWork, showWork } from "@/lib/api";
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
 
+// Fileオブジェクト作成メソッド
+const createFileFromUrl = async (url: string, filename: string, filesize?: number): Promise<File> => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const mimeType = blob.type
+
+    return new File([blob], filename, {
+      type: mimeType,
+      lastModified: Date.now()
+    });
+  } catch (error) {
+    console.error('Failed to create File from URL:', error);
+    throw error;
+  }
+};
+
 export default function EditWorks() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id;
-
-  const [work, setWork] = useState<Work | null>(null);
+  const currentObjectUrl = useRef<string | null>(null); // ObjectURLの管理用ref
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -32,15 +47,15 @@ export default function EditWorks() {
   const [isPresetDialogOpen, setIsPresetDialogOpen] = useState(false);
   const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
   const [illustrationPreview, setIllustrationPreview] = useState<string | null>(null);
+  const [isLoadingFile, setIsLoadingFile] = useState(false); // ファイル読み込み状態
 
+  // 投稿中の作品情報をセット
   useEffect(() => {
     if(!id) return;
-
-    // 投稿中の作品情報をセット
     const fetchWork = async () => {
       try {
         const workData = await showWork(Number(id));
-        setWork(workData);
+        console.log(workData);
 
         setFormData({
           title: workData.title,
@@ -55,8 +70,22 @@ export default function EditWorks() {
           });
         }
 
-        if(workData.illustration_image_url){
-          setIllustrationPreview(workData.illustration_image_url);
+        if(workData.illustration_image_url && workData.filename){
+          setIsLoadingFile(true);
+          try {
+            const file = await createFileFromUrl(
+              workData.illustration_image_url,
+              workData.filename,
+              workData.filesize
+            );
+            setIllustrationFile(file);
+            setIllustrationPreview(workData.illustration_image_url);
+          } catch(error) {
+            console.error('Failed to reconstruct file:', error);
+            setIllustrationPreview(workData.illustration_image_url);
+          } finally {
+            setIsLoadingFile(false);
+          }
         }
       } catch (error) {
         console.error('作品データの取得に失敗しました');
@@ -68,22 +97,53 @@ export default function EditWorks() {
     fetchWork();
   }, [id]);
 
+  // 画像表示制御
   useEffect(() => {
-    if (!illustrationFile){
-      return setIllustrationPreview(null);
+    // ファイル読み込み時
+    if (isLoadingFile) return;
+
+    // 前のObjectURLをクリーンアップ
+    if (currentObjectUrl.current) {
+      URL.revokeObjectURL(currentObjectUrl.current);
+      currentObjectUrl.current = null;
     }
-    // ObjectURLを生成
+
+    // 画像削除時
+    if (!illustrationFile) {
+      setIllustrationPreview(null);
+      return;
+    }
+
+    // 変更前の画像のままの場合
+    if (illustrationPreview && illustrationPreview.startsWith('http')) {
+      // ObjectURLを新規作成(新規画像選択時)
+      const url = URL.createObjectURL(illustrationFile);
+      currentObjectUrl.current = url;
+      setIllustrationPreview(url);
+      return;
+    }
+
+    // 新規画像選択時
     const url = URL.createObjectURL(illustrationFile);
+    currentObjectUrl.current = url;
     setIllustrationPreview(url);
-    // クリーンアップ(メモリリーク防止)
-    return () => URL.revokeObjectURL(url);
-  }, [illustrationFile]);
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [illustrationFile, isLoadingFile]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleFileSelect = (file: File | null) => {
+    setIllustrationFile(file);
+    if (!file) {
+      setIllustrationPreview(null);
+    }
   };
 
   const handleRemoveMask = (e: React.MouseEvent) => {
@@ -144,14 +204,20 @@ export default function EditWorks() {
             <div>
               <Label className="text-label font-semibold mb-2">イラスト作品</Label>
               <DropZone
-                onFileSelect={setIllustrationFile}
+                onFileSelect={handleFileSelect}
                 accept="image/*"
                 previewUrl={illustrationPreview}
               />
               {illustrationFile && (
-                <span className="flex justify-end text-sm text-gray-600 mt-2">
-                  選択中: {illustrationFile.name} ({(illustrationFile.size / 1024 / 1024).toFixed(2)}MB)
-                </span>
+                  (illustrationFile.size / 1024 / 1024) < 1 ? (
+                  <span className="flex justify-end text-sm text-gray-600 mt-2">
+                    選択中: {illustrationFile.name} ({Math.round(illustrationFile.size / 1024)}KB)
+                  </span>
+                  ) : (
+                  <span className="flex justify-end text-sm text-gray-600 mt-2">
+                    選択中: {illustrationFile.name} ({(illustrationFile.size / 1024 / 1024).toFixed(2)}MB)
+                  </span>
+                  )
               )}
             </div>
             <div className="gap-2">
