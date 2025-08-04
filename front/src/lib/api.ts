@@ -7,18 +7,20 @@ const getApiBaseUrl = (): string => {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-
   return 'http://localhost:3002';
 };
 
 const API_BASE_URL = getApiBaseUrl();
 
 // 共通ヘッダーの設定
-const getCommonHeaders = (includeAuth: boolean = true): HeadersInit => {
+const getCommonHeaders = (includeAuth: boolean = true, includeContentType: boolean = true): HeadersInit => {
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
     'Accept-Language': navigator.language || 'ja',
   };
+
+  if (includeContentType) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (includeAuth) {
     const token = localStorage.getItem('authToken');
@@ -111,37 +113,38 @@ export async function showWork(workId: number): Promise<Work> {
 
 // 作品投稿
 export async function postWork(formData: FormData) {
-  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: getCommonHeaders(true, false),
     body: formData,
     credentials: 'include'
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error('作品の投稿に失敗しました');
+    const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || '作品の投稿に失敗しました';
+    throw new Error(errorMessage);
   }
 
-  return response.json();
+  return data;
 };
 
 // 作品更新
 export async function updateWork(submitData: FormData, workId: number) {
-  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'PATCH',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: getCommonHeaders(true, false),
     body: submitData
   });
 
-  if(!response.ok) {
-    throw new Error('投稿作品の更新に失敗しました');
+  if (!response.ok) {
+    const data = await response.json();
+    const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || '投稿作品の更新に失敗しました';
+    throw new Error(errorMessage);
   }
+
+  return response.json();
 }
 
 // 作品削除

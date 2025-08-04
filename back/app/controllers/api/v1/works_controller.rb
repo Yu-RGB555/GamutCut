@@ -1,6 +1,7 @@
 class Api::V1::WorksController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :destroy]
+  before_action :authenticate_user!, only: [:create, :update, :destroy]
   before_action :set_work, only: [:update, :destroy]
+  before_action :check_owner, only: [:update, :destroy]
 
   def index
     @works = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).where(is_public: 'published').order(created_at: :desc)
@@ -49,7 +50,10 @@ class Api::V1::WorksController < ApplicationController
         }
       }, status: :created
     else
-      render json: { errors: @work.errors.full_messages }, status: :unprocessable_entity
+      Rails.logger.info "Work validation failed: #{@work.errors.full_messages}"
+      render json: {
+        errors: @work.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
@@ -74,6 +78,19 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def update
+    # work_paramsからremove_illustration_image(削除フラグ)を除外してupdate
+    update_params = work_params.except(:remove_illustration_image)
+
+    # 画像削除フラグがある場合の処理
+    if params[:work][:remove_illustration_image] == 'true'
+      Rails.logger.info "Attempt to remove required illustration_image"
+      render json: {
+        errors: ['イラスト作品がアップロードされていません']
+      }, status: :unprocessable_entity
+      return
+    end
+
+    # 新しい画像のアップロード処理
     if params[:work][:illustration_image].present?
       file = params[:work][:illustration_image]
       @work.filename = file.original_filename
@@ -81,10 +98,21 @@ class Api::V1::WorksController < ApplicationController
       @work.illustration_image.attach(file)
     end
 
-    if @work.update(work_params)
-      head :ok
+    # 通常の更新処理
+    if @work.update(update_params)
+      render json: {
+        message: '作品を更新しました',
+        work: {
+          id: @work.id,
+          title: @work.title,
+          description: @work.description
+        }
+      }, status: :ok
     else
-      render json: { errors: @work.errors.full_messages }, status: :unprocessable_entity
+      Rails.logger.info "Work validation failed: #{@work.errors.full_messages}"
+      render json: {
+        errors: @work.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
@@ -125,8 +153,16 @@ class Api::V1::WorksController < ApplicationController
     @work = current_user.works.find(params[:id])
   end
 
+  def check_owner
+    unless @work.user == current_user
+      render json: {
+        errors: ['この作品を編集する権限がありません']
+      }, status: :forbidden
+    end
+  end
+
   def work_params
-    permitted_params = params.require(:work).permit(:title, :description, :is_public, :illustration_image, :filename, :filesize, :set_mask_data)
+    permitted_params = params.require(:work).permit(:title, :description, :is_public, :illustration_image, :filename, :filesize, :set_mask_data, :remove_illustration_image)
 
     # is_public(string)を数値に変換
     if permitted_params[:is_public].present?

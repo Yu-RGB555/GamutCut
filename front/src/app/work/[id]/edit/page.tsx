@@ -2,9 +2,21 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { Preset } from "@/types/preset";
 import { Button } from "@/components/ui/button";
-import { X } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { X, AlertCircleIcon } from 'lucide-react';
 import { DropZone } from "@/components/ui/dropzone";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,9 +46,13 @@ const createFileFromBackend = async (workId: number, filename: string, filesize?
 export default function EditWorks() {
   const router = useRouter();
   const params = useParams();
+  const { isAuthenticated, user } = useAuth();
   const id = params?.id;
   const currentObjectUrl = useRef<string | null>(null); // ObjectURLの管理用ref
   const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [showUnauthorizedDialog, setShowUnauthorizedDialog] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -46,14 +62,42 @@ export default function EditWorks() {
   const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
   const [illustrationPreview, setIllustrationPreview] = useState<string | null>(null);
   const [isLoadingFile, setIsLoadingFile] = useState(false); // ファイル読み込み状態
+  const [isAuthChecked, setIsAuthChecked] = useState(false); // 認証チェック完了フラグ
+  const [isImageRemoved, setIsImageRemoved] = useState(false); // 画像削除フラグ
+
+  // 認証チェック
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAuthChecked(true);
+
+      if (!isAuthenticated) {
+        setShowUnauthorizedDialog(true);
+        setIsPageLoading(false);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [isAuthenticated]);
 
   // 投稿中の作品情報をセット
   useEffect(() => {
-    if(!id) return;
+    // 認証チェックが完了していない、未認証、または必要な情報がない場合は処理しない
+    if (!isAuthChecked || !isAuthenticated || !id || !user) {
+      return;
+    }
+
     const fetchWork = async () => {
       try {
+        setIsPageLoading(true);
         const workData = await showWork(Number(id));
         console.log(workData);
+
+        // 所有者チェック
+        if (workData.user.id !== user.id) {
+          setShowUnauthorizedDialog(true);
+          setIsPageLoading(false);
+          return;
+        }
 
         setFormData({
           title: workData.title,
@@ -78,22 +122,26 @@ export default function EditWorks() {
             );
             setIllustrationFile(file);
             setIllustrationPreview(workData.illustration_image_url);
+            setIsImageRemoved(false); // 初期画像読み込み時は削除フラグをリセット
           } catch(error) {
             console.error('Failed to reconstruct file:', error);
             setIllustrationPreview(workData.illustration_image_url);
+            setIsImageRemoved(false);
           } finally {
             setIsLoadingFile(false);
           }
         }
       } catch (error) {
-        console.error('作品データの取得に失敗しました');
+        console.error('作品データの取得に失敗しました:', error);
+        setErrors(['作品データの取得に失敗しました']);
       } finally {
         setIsLoading(false);
+        setIsPageLoading(false);
       }
     };
 
     fetchWork();
-  }, [id]);
+  }, [id, isAuthenticated, user, isAuthChecked]);
 
   // 画像表示制御
   useEffect(() => {
@@ -141,6 +189,9 @@ export default function EditWorks() {
     setIllustrationFile(file);
     if (!file) {
       setIllustrationPreview(null);
+      setIsImageRemoved(true); // 画像削除フラグをセット
+    } else {
+      setIsImageRemoved(false); // 新しい画像選択時はフラグをリセット
     }
   };
 
@@ -150,9 +201,19 @@ export default function EditWorks() {
     setPresetData(null);
   }
 
+  const handleUnauthorizedAction = (action: 'login' | 'back') => {
+    if (action === 'login') {
+      router.push('/auth/login');
+    } else {
+      router.push('/work');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent, isDraft: boolean = false) => {
     e.preventDefault();
+
     setIsLoading(true);
+    setErrors([]);
 
     try{
       const submitData = new FormData();
@@ -162,6 +223,11 @@ export default function EditWorks() {
 
       const publicStatus: PublicStatus = isDraft ? 2 : 0;
       submitData.append('work[is_public]', publicStatus.toString());
+
+      // 画像削除フラグ
+      if (isImageRemoved && !illustrationFile) {
+        submitData.append('work[remove_illustration_image]', 'true');
+      }
 
       if (illustrationFile) {
         submitData.append('work[illustration_image]', illustrationFile);
@@ -173,17 +239,77 @@ export default function EditWorks() {
       router.push(`/work/${id}`);
     } catch (error) {
       console.error('投稿エラー:', error);
-      alert('更新に失敗しました');
+      if (error instanceof Error) {
+        try {
+          const errorData = JSON.parse(error.message);
+          setErrors(errorData.errors || [errorData.message]);
+        } catch {
+          setErrors([error.message]);
+        }
+      } else {
+        setErrors(['予期しないエラーが発生しました']);
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  if (isPageLoading && !showUnauthorizedDialog) {
+    return (
+      <div className="mx-16 mt-12 mb-40">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg">読み込み中...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
+    <>
+      <AlertDialog open={showUnauthorizedDialog} onOpenChange={setShowUnauthorizedDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {!isAuthenticated ? 'ログインが必要です' : 'アクセス権限がありません'}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-label">
+              {!isAuthenticated
+                ? '作品編集を行うにはログインが必要です。ログインしてください。'
+                : 'この作品を編集する権限がありません。作品の投稿者のみが編集できます。'
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => handleUnauthorizedAction('back')}>
+              戻る
+            </AlertDialogCancel>
+            {!isAuthenticated && (
+              <AlertDialogAction onClick={() => handleUnauthorizedAction('login')}>
+                ログイン
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     <div className="mx-16 mt-12 mb-40">
+      {errors.length > 0 && (
+        <Alert className="bg-card text-error mb-6">
+          <AlertCircleIcon className="h-4 w-4" />
+          <AlertTitle className="font-semibold">更新に失敗しました</AlertTitle>
+          <AlertDescription>
+            <ul className="text-error font-semibold space-y-1 mt-2">
+              {errors.map((error, index) => (
+                <li key={index}>・{error}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="flex justify-between mb-16">
         <div className="flex items-center">
-          <h1 className="text-label text-4xl font-extrabold">作品投稿</h1>
+          <h1 className="text-label text-4xl font-extrabold">作品編集</h1>
         </div>
         <div className="flex items-center gap-x-2">
           {/* <Button variant="default">更新</Button> */}
@@ -290,5 +416,6 @@ export default function EditWorks() {
           </div>
       </form>
     </div>
+    </>
   );
 }

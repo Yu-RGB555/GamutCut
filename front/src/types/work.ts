@@ -14,6 +14,7 @@ export interface Work{
     name: string;
     avatar_url?: string;
   };
+  message?: string;
   created_at: string;
   updated_at: string;
 }

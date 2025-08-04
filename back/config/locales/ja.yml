@@ -8,18 +8,30 @@ ja:
         user:
           attributes:
             name:
-              blank: "ハンドルネームを入力してください"
-              too_long: "ハンドルネームは%{count}文字以内で入力してください"
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
             email:
-              blank: "メールアドレスを入力してください"
-              invalid: "無効なメールアドレスです"
-              taken: "このメールアドレスは既に使用されています"
+              blank: "を入力してください"
+              invalid: "が無効です"
+              taken: "は既に使用されています"
             password:
-              blank: "パスワードを入力してください"
-              too_short: "パスワードは%{count}文字以上で入力してください"
-              invalid: "パスワードは半角英数字で入力してください"
+              blank: "を入力してください"
+              too_short: "は%{count}文字以上で入力してください"
+              invalid: "は半角英数字で入力してください"
             password_confirmation:
-              confirmation: "パスワードが一致しません"
+              confirmation: "が一致しません"
+        work:
+          attributes:
+            title:
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
+            description:
+              too_long: "は%{count}文字以内で入力してください"
+            illustration_image:
+              blank: "がアップロードされていません"
+              too_large: "のファイルサイズは%{capacity}MBまでです"
+            set_mask_data:
+              blank: "をセットしてください"
     attributes:
       user:
         name: "ハンドルネーム"
@@ -27,3 +39,8 @@ ja:
         password: "パスワード"
         password_confirmation: "パスワード（確認用）"
         bio: "プロフィール"
+      work:
+        title: "作品タイトル"
+        illustration_image: "イラスト作品"
+        set_mask_data: "作品で使用したマスク"
+        description: "作品説明"
