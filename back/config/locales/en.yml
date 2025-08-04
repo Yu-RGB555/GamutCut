@@ -11,18 +11,30 @@ en:
         user:
           attributes:
             name:
-              blank: "Handle name is required"
-              too_long: "Handle name must be %{count} characters or less"
+              blank: " is required"
+              too_long: " must be %{count} characters or less"
             email:
-              blank: "Email is required"
-              invalid: "Invalid email address"
-              taken: "This email address is already registered"
+              blank: " is required"
+              invalid: " is invalid"
+              taken: " is already registered"
             password:
-              blank: "Password is required"
-              too_short: "Password must be at least %{count} characters"
-              invalid: "Password must contain only alphanumeric characters"
+              blank: " is required"
+              too_short: " must be at least %{count} characters"
+              invalid: " must contain only alphanumeric characters"
             password_confirmation:
-              confirmation: "Password confirmation doesn't match"
+              confirmation: " doesn't match"
+        work:
+          attributes:
+            title:
+              blank: " is required"
+              too_long: " must be %{count} characters or less"
+            description:
+              too_long: " must be %{count} characters or less"
+            illustration_image:
+              blank: " is required"
+              too_large: " file size must be %{capacity}MB or less"
+            set_mask_data:
+              blank: " is required"
     attributes:
       user:
         name: "Handle name"

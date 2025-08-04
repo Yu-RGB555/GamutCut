@@ -42,8 +42,8 @@
   --background: #101010;                       /* メイン背景色 */
   --foreground: #87EE0C;                       /* メインテキスト色 */
   --text-selection: #7c96eb ;                  /* テキスト選択時*/
-  --error: #e14a42;                            /* エラーメッセージ */
-  --card: #101010;                             /* カード背景色 */
+  --error: #db4a43;                            /* エラーメッセージ */
+  --card: #171717;                             /* カード背景色 */
   --card-foreground: #dfdfdf;                  /* カードテキスト */
   --label: #dfdfdf;                            /* ラベル */
   --mouseover: #4C7F0E;                        /* マウスオーバー */
