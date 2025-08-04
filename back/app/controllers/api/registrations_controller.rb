@@ -1,4 +1,6 @@
 class Api::RegistrationsController < ApplicationController
+  skip_before_action :authenticate_user_from_token!, only: [:create]
+
   def create
     user = User.new(sign_up_params)
 
@@ -14,9 +16,11 @@ class Api::RegistrationsController < ApplicationController
         }
       }, status: :created
     else
+      error_message = I18n.t('errors.messages.invalid_credentials')
+      Rails.logger.info "Login failed - sending error: #{error_message}"
+
       render json: {
-        message: "ユーザーの作成に失敗しました",
-        errors: user.errors.full_messages
+        errors: [error_message]
       }, status: :unprocessable_entity
     end
   end

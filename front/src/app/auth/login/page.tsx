@@ -63,15 +63,12 @@ export default function Login() {
     try {
       const response = await loginUser(formData);
 
-      // ユーザー情報をlocalStorageに保存（⭐️Context APIやZustandなどの使用も検討）
       if (response.user && response.token) {
-        // AuthContext経由でユーザー情報を保存
         login(response.user, response.token);
         alert(response.message);
         router.push('/');
       }
     } catch (error) {
-      // エラー時の処理
       if (error instanceof Error) {
         try {
           const errorData = JSON.parse(error.message);
@@ -140,23 +137,23 @@ export default function Login() {
                   パスワードをお忘れですか?
                 </Link>
               </div>
-              <div className="flex justify-between items-center w-full my-8">
-                <hr className="w-1/3 border-gray-300" />
-                <span className="text-gray-300 text-sm">または</span>
-                <hr className="w-1/3 border-gray-300" />
-              </div>
-              <SocialLoginButtons></SocialLoginButtons>
-              <div>
-                <span className="text-sm mr-2">はじめてGamutCutをご利用ですか？</span>
-                <Link
-                  href="/auth/register"
-                  className="ml-auto inline-block text-foreground text-sm underline-offset-4 hover:underline"
-                >
-                  新規登録
-                </Link>
-              </div>
             </CardFooter>
           </form>
+          <div className="flex justify-between items-center w-full my-8">
+            <hr className="w-1/3 border-gray-300" />
+            <span className="text-gray-300 text-sm">または</span>
+            <hr className="w-1/3 border-gray-300" />
+          </div>
+          <SocialLoginButtons></SocialLoginButtons>
+          <div>
+            <span className="text-sm mr-2">はじめてGamutCutをご利用ですか？</span>
+            <Link
+              href="/auth/register"
+              className="ml-auto inline-block text-foreground text-sm underline-offset-4 hover:underline"
+            >
+              新規登録
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

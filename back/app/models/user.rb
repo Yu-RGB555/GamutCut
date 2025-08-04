@@ -6,9 +6,9 @@ class User < ApplicationRecord
   has_many :social_accounts, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 20 }
-  validates :password, format: { with: /\A[a-zA-Z0-9]+\z/ }, if: :password_required?
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :password, presence: true, length: { minimum: 6 }, format: { with: /\A[a-zA-Z0-9]+\z/ }, if: :password_required?
   validates :bio, length: { maximum: 300 }
-  # validates :x_account_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true
 
   def self.from_omniauth(auth)
     Rails.logger.debug "auth_info: #{auth.info}"

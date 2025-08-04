@@ -1,0 +1,29 @@
+ja:
+  errors:
+    messages:
+      invalid_credentials: "メールアドレスまたはパスワードが正しくありません"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            name:
+              blank: "ハンドルネームを入力してください"
+              too_long: "ハンドルネームは%{count}文字以内で入力してください"
+            email:
+              blank: "メールアドレスを入力してください"
+              invalid: "無効なメールアドレスです"
+              taken: "このメールアドレスは既に使用されています"
+            password:
+              blank: "パスワードを入力してください"
+              too_short: "パスワードは%{count}文字以上で入力してください"
+              invalid: "パスワードは半角英数字で入力してください"
+            password_confirmation:
+              confirmation: "パスワードが一致しません"
+    attributes:
+      user:
+        name: "ハンドルネーム"
+        email: "メールアドレス"
+        password: "パスワード"
+        password_confirmation: "パスワード（確認用）"
+        bio: "プロフィール"
