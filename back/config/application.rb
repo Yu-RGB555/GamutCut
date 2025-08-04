@@ -10,6 +10,11 @@ module GamutCut
     config.autoload_lib(ignore: %w[assets tasks])
     config.api_only = true
 
+    # 国際化設定
+    config.i18n.default_locale = :ja
+    config.i18n.available_locales = [:ja, :en]
+    config.i18n.fallbacks = [I18n.default_locale]
+
     # セッションとクッキーを有効化
     config.session_store :cookie_store, key: '_app_session'
     config.middleware.use ActionDispatch::Cookies

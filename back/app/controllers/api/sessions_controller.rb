@@ -1,6 +1,9 @@
 class Api::SessionsController < ApplicationController
+  skip_before_action :authenticate_user_from_token!, only: [:create]
+
   def create
     user = User.find_by(email: params[:user][:email])
+
     if user && user.valid_password?(params[:user][:password])
       token = generate_jwt_token(user)
       render json: {
@@ -13,15 +16,13 @@ class Api::SessionsController < ApplicationController
         }
       }, status: :ok
     else
+      error_message = I18n.t('errors.messages.invalid_credentials')
+      Rails.logger.info "Login failed - sending error: #{error_message}"
+
       render json: {
-        message: "ログインに失敗しました",
-        errors: ["認証に失敗しました"]
+        errors: [error_message]
       }, status: :unauthorized
     end
-  end
-
-  def destroy
-    render json: { message: "ログアウトしました" }, status: :ok
   end
 
   private

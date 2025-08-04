@@ -2,50 +2,39 @@ import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '
 import { Work } from '@/types/work';
 import { Preset } from '@/types/preset';
 
-
-// 環境に応じたAPI URLの取得
+// API_URLの取得
 const getApiBaseUrl = (): string => {
-  // Vercelの環境変数を優先
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
 
-  // 開発環境
   return 'http://localhost:3002';
 };
 
 const API_BASE_URL = getApiBaseUrl();
 
-// ⚠️デバッグ用（MVPで削除）
-// console.log('API_BASE_URL:', API_BASE_URL);
+// 共通ヘッダーの設定
+const getCommonHeaders = (includeAuth: boolean = true): HeadersInit => {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    'Accept-Language': navigator.language || 'ja',
+  };
 
-// ⚠️Next.js側で実行するテスト用コード（MVPで削除）
-// export async function testApiConnection() {
-//   try {
-//     // 基本的なヘルスチェック
-//     const healthResponse = await fetch(`${API_BASE_URL}/health`);
-//     const healthData = await healthResponse.json();
-//     console.log('Health check:', healthData);
+  if (includeAuth) {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
 
-//     // 詳細なヘルスチェック
-//     const detailedResponse = await fetch(`${API_BASE_URL}/health/detailed`);
-//     const detailedData = await detailedResponse.json();
-//     console.log('Detailed health check:', detailedData);
-
-//   } catch (error) {
-//     console.error('API connection failed:', error);
-//   }
-// };
+  return headers;
+};
 
 // 新規登録用
 export async function registerUser(userData: RegisterRequest): Promise<RegisterResponse> {
-  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/users/sign_up`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: getCommonHeaders(false),
     body: JSON.stringify({ user: userData }),
     credentials: 'include',
   });
@@ -61,13 +50,9 @@ export async function registerUser(userData: RegisterRequest): Promise<RegisterR
 
 // ログイン用
 export async function loginUser(userData: LoginRequest): Promise<LoginResponse> {
-  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/users/sign_in`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: getCommonHeaders(false),
     credentials: 'include',
     body: JSON.stringify({ user: userData }),
   });
@@ -75,7 +60,9 @@ export async function loginUser(userData: LoginRequest): Promise<LoginResponse> 
   const data = await response.json();
 
   if(!response.ok) {
-    throw new Error(data.message);
+    // エラーレスポンスの構造に合わせて修正
+    const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || 'ログインに失敗しました';
+    throw new Error(errorMessage);
   }
 
   return data;

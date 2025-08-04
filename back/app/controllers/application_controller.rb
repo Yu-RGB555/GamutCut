@@ -1,7 +1,18 @@
 class ApplicationController < ActionController::API
+  before_action :set_locale
   before_action :authenticate_user_from_token!
 
   private
+
+  def set_locale
+    # Accept-Languageヘッダーから言語を判定
+    locale = extract_locale_from_accept_language_header || I18n.default_locale
+    I18n.locale = locale
+  end
+
+  def extract_locale_from_accept_language_header
+    request.env['HTTP_ACCEPT_LANGUAGE']&.scan(/^[a-z]{2}/)&.first&.to_sym
+  end
 
   def authenticate_user_from_token!
     auth_header = request.headers['Authorization']

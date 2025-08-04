@@ -21,7 +21,7 @@ export default function Register() {
   // ルーティング設定
   const router = useRouter();
 
-  // 送信する入力情報(ハッシュ形式)の状態管理
+  // 送信フォームデータ
   const [formData, setFormData] = useState<RegisterRequest>({
     name: '',
     email: '',
@@ -29,10 +29,10 @@ export default function Register() {
     password_confirmation: '',
   });
 
-  // バリデーションエラーの状態管理
+  // バリデーションエラー
   const [errors, setErrors] = useState<string[]>([]);
 
-  // フォームに入力された値だけをリアルタイムにキャッチして、fromDataへ更新をかける
+  // フォーム入力値
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -42,7 +42,7 @@ export default function Register() {
     }));
   };
 
-  // バリデーションエラーの有無のチェック
+  // バリデーションエラー
   const validateForm = (): boolean => {
     const newErrors: string[] = [];
 
@@ -54,8 +54,9 @@ export default function Register() {
 
     if (!formData.email.trim()) {
       newErrors.push('メールアドレスを入力してください');
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+      newErrors.push('無効なメールアドレスです');
     }
-    // else if (formData.emailが無効なアドレスの場合){ }
 
     if (!formData.password) {
       newErrors.push('パスワードを入力してください');
@@ -83,16 +84,10 @@ export default function Register() {
     setErrors([]);
 
     try{
-      // formDataをRailsに送信
       const response = await registerUser(formData);
-
-      // 登録成功
       alert(response.message);
-
-      // ログイン画面にリダイレクト
       router.push('/auth/login');
     } catch(error) {
-      // 登録失敗（errorがresponseに含まれる）
       if (error instanceof Error) {
         try {
           const errorData = JSON.parse(error.message);
@@ -205,14 +200,14 @@ export default function Register() {
                   ログイン
                 </Link>
               </div>
-              <div className="flex justify-between items-center w-full my-8">
-                <hr className="w-1/3 border-gray-300" />
-                <span className="text-gray-300 text-sm">または</span>
-                <hr className="w-1/3 border-gray-300" />
-              </div>
-              <SocialLoginButtons></SocialLoginButtons>
             </CardFooter>
           </form>
+          <div className="flex justify-between items-center w-full my-8">
+            <hr className="w-1/3 border-gray-300" />
+            <span className="text-gray-300 text-sm">または</span>
+            <hr className="w-1/3 border-gray-300" />
+          </div>
+          <SocialLoginButtons></SocialLoginButtons>
         </CardContent>
       </Card>
     </div>
