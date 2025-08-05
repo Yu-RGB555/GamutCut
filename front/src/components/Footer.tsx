@@ -18,12 +18,12 @@ export function Footer() {
             <h4 className="font-semibold text-white mb-4">User Guide</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/work" className="text-foreground hover:underline">
+                <Link href="#" className="text-foreground hover:underline">
                   ガマットマスクとは？
                 </Link>
               </li>
               <li>
-                <Link href="/work/new" className="text-foreground hover:underline">
+                <Link href="#" className="text-foreground hover:underline">
                   使い方
                 </Link>
               </li>
