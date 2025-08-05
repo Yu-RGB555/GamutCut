@@ -18,7 +18,7 @@ class Api::V1::WorksController < ApplicationController
             name: work.user.name,
             avatar_url: work.user.avatar_url
           },
-          created_at: work.created_at
+          created_at: work.created_at.strftime("%Y年%-m月%-d日 %H:%M")
         }
       end
     }
@@ -73,7 +73,7 @@ class Api::V1::WorksController < ApplicationController
         name: @work.user.name,
         avatar_url: @work.user.avatar_url
       },
-      created_at: @work.created_at
+      created_at: @work.created_at.strftime("%Y年%-m月%-d日 %H:%M")
     }
   end
 
