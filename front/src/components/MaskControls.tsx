@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Lock, Download } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { ShapeTemplate, MaskWithScale } from '../types/gamut';
 
 interface MaskControlsProps {
@@ -30,6 +32,8 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
   onMaskIndexChange,
   onScaleChange
 }) => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="space-y-12">
       <div className="bg-card">
@@ -70,14 +74,28 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
                 onClick={onMaskExport}
                 className="bg-primary hover:bg-mouseover"
               >
+                <Download className=" w-4 h-4" />
                 ダウンロード
               </Button>
-              <Button
-                onClick={onMaskSave}
-                className="bg-primary hover:bg-mouseover"
-              >
-                プリセットに保存
-              </Button>
+              {isAuthenticated ? (
+                <Button
+                  onClick={onMaskSave}
+                  className="bg-primary hover:bg-mouseover"
+                >
+                  プリセットに保存
+                </Button>
+              ) : (
+                <Button
+                  disabled
+                  className="bg-gray-500 cursor-not-allowed relative"
+                >
+                  <p className="">プリセットに保存</p>
+                  <div className="absolute inset-0 flex items-center justify-center bg-muted/60 opacity-80 rounded">
+                    <Lock className="text-white w-4 h-4 mr-2" />
+                    <span className="text-white font-semibold">会員限定</span>
+                  </div>
+                </Button>
+              )}
             </>
           )}
         </div>
