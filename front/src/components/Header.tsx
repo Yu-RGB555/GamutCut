@@ -4,8 +4,25 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Image, PenToolIcon, UserCircle2 } from 'lucide-react'
+import {
+  Image,
+  PenToolIcon,
+  UserCircle2,
+  LogOutIcon,
+  BookmarkIcon,
+  Edit2Icon,
+  InfoIcon
+} from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from './ui/sheet';
 
 export function Header() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -47,19 +64,76 @@ export function Header() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <Avatar>
-                  <AvatarImage src={user?.avatar_url} />
-                  <AvatarFallback className="bg-background">
-                    <UserCircle2 className="w-full h-full" />
-                  </AvatarFallback>
-                </Avatar>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={handleLogout}
-                >
-                  ログアウト
-                </Button>
+                <Sheet>
+                  <SheetTrigger>
+                    <Avatar className="w-10 h-10 hover:cursor-pointer hover:opacity-80 transition-opacity">
+                      <AvatarImage src={user?.avatar_url} />
+                      <AvatarFallback className="bg-background">
+                        <UserCircle2 className="w-full h-full" />
+                      </AvatarFallback>
+                    </Avatar>
+                  </SheetTrigger>
+                  <SheetContent className="flex flex-col bg-card border-none w-80">
+                    <SheetHeader className="mt-4 border-b">
+                      <SheetTitle className="w-65 rounded-sm hover:bg-muted transition-colors">
+                        <Link
+                          href="#"
+                          className="flex items-center p-3"
+                        >
+                          <Avatar className="mr-3 w-12 h-12">
+                            <AvatarImage src={user?.avatar_url} />
+                            <AvatarFallback className="bg-background">
+                              <UserCircle2 className="w-full h-full" />
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="text-left flex-1 min-w-0">
+                            <p className="text-label font-semibold truncate">
+                              {user?.name && user.name.length > 14
+                                ? `${user.name.slice(0, 14)}...`
+                                : user?.name
+                              }
+                            </p>
+                            <p className="text-sm text-muted-foreground">マイページ</p>
+                          </div>
+                        </Link>
+                      </SheetTitle>
+                    </SheetHeader>
+
+                    <div className="flex-1 px-8 py-4">
+                      <ul className="space-y-2">
+                        <li>
+                          <Link href="#" className="flex items-center w-full p-3 rounded-lg hover:bg-muted transition-colors">
+                            <Edit2Icon className="w-6 h-6 mr-3" />
+                            <span className="text-xl font-medium">下書き</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="#" className="flex items-center w-full p-3 rounded-lg hover:bg-muted transition-colors">
+                            <BookmarkIcon className="w-6 h-6 mr-3" />
+                            <span className="text-xl font-medium">ブックマーク</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="#" className="flex items-center w-full p-3 rounded-lg hover:bg-muted transition-colors">
+                            <InfoIcon className="w-6 h-6 mr-3" />
+                            <span className="text-xl font-medium">使い方</span>
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <SheetFooter className="px-8 p-6 border-t">
+                      <Button
+                        variant="plain"
+                        onClick={handleLogout}
+                        className="w-full justify-center p-4 text-destructive"
+                      >
+                        <LogOutIcon className="w-6 h-6 mr-3" />
+                        <span className="text-lg font-medium">ログアウト</span>
+                      </Button>
+                    </SheetFooter>
+                  </SheetContent>
+                </Sheet>
               </>
             ) : (
               <>
