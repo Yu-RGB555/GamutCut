@@ -6,17 +6,25 @@ interface ColorInfoProps {
 
 export const ColorInfoPanel: React.FC<ColorInfoProps> = ({ colorInfo }) => {
   return (
-    <div className="bg-card p-4 rounded-lg border z-1">
-      <h3 className="text-card-foreground text-lg font-semibold mb-3">色情報</h3>
-      <div className="grid grid-cols-6 gap-x-1">
-        <span className="text-label font-medium col-span-1 text-right">色相：</span>
-        <span className="font-mono col-span-1 text-left">{colorInfo.hue}°</span>
-        <span className="text-label font-medium col-span-1 text-right">彩度：</span>
-        <span className="font-mono col-span-1 text-left">{colorInfo.saturation}%</span>
-        <span className="text-label font-medium col-span-1 text-right">明度：</span>
-        <span className="font-mono col-span-1 text-left">{colorInfo.value}%</span>
-        <span className="text-label font-medium col-span-1 text-right">RGB：</span>
-        <span className="font-mono col-span-3 text-left">({colorInfo.rgb})</span>
+    <div className="bg-card/90 backdrop-blur-sm p-2 rounded-lg border shadow-lg text-xs max-w-24">
+      <h4 className="text-card-foreground font-semibold mb-2 text-xs">色情報</h4>
+      <div className="space-y-0.5">
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">色相：</span>
+          <span className="font-mono">{colorInfo.hue}°</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">彩度：</span>
+          <span className="font-mono">{colorInfo.saturation}%</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">明度：</span>
+          <span className="font-mono">{colorInfo.value}%</span>
+        </div>
+        {/* <div className="flex justify-between">
+          <span className="text-muted-foreground">RGB：</span>
+          <span className="font-mono text-xs">({colorInfo.rgb})</span>
+        </div> */}
       </div>
     </div>
   );

@@ -289,12 +289,11 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
 
       // APIを使用してプリセットを保存
       await maskSave(presetData);
-      // 保存成功時にプリセット一覧を更新
+      // プリセット一覧を更新
       await onSaveSuccess();
       console.log('プリセットを保存しました');
     } catch (error) {
       console.error('プリセット保存エラー:', error);
-      // TODO: エラーメッセージを表示する
     }
   };
 
@@ -313,20 +312,25 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
       <div className="justify-items-center space-y-8">
-        <canvas
-          ref={canvasRef}
-          width={400}
-          height={400}
-          className="cursor-crosshair"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        />
-        <canvas
-          ref={hiddenCanvasRef}
-          style={{ display: 'none' }}
-        />
+        <div className="relative">
+          <canvas
+            ref={canvasRef}
+            width={400}
+            height={400}
+            className="cursor-crosshair"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          />
+          <canvas
+            ref={hiddenCanvasRef}
+            style={{ display: 'none' }}
+          />
+          <div className="absolute top-1 left-1">
+            <ColorInfoPanel colorInfo={colorInfo}/>
+          </div>
+        </div>
         <div className="w-full bg-card space-y-2">
           <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
           <div className="flex items-center gap-4">
@@ -340,7 +344,6 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
             />
             <span className="w-12 text-center">{currentValue}%</span>
           </div>
-          <ColorInfoPanel colorInfo={colorInfo}/>
         </div>
       </div>
 
