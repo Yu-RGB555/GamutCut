@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Image, PenToolIcon, UserCircle2 } from 'lucide-react'
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 
 export function Header() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -28,10 +30,16 @@ export function Header() {
           {/* ナビゲーション */}
           <nav className="flex space-x-2 md:space-x-8">
             <Link href="/work" className="text-foreground hover:text-mouseover font-semibold">
-              作品一覧
+              <div className="flex items-center">
+                <Image className="w-5 h-5 mr-1" />
+                <span>作品一覧</span>
+              </div>
             </Link>
             <Link href="/work/new" className="text-foreground hover:text-mouseover font-semibold">
-              作品投稿
+              <div className="flex items-center">
+                <PenToolIcon className="w-5 h-5 mr-1" />
+                <span>作品投稿</span>
+              </div>
             </Link>
           </nav>
 
@@ -39,7 +47,12 @@ export function Header() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <p className="text-foreground text-sm"><span className="font-semibold p-1">{user?.name}</span>さん</p>
+                <Avatar>
+                  <AvatarImage src={user?.avatar_url} />
+                  <AvatarFallback className="bg-background">
+                    <UserCircle2 className="w-full h-full" />
+                  </AvatarFallback>
+                </Avatar>
                 <Button
                   variant="destructive"
                   size="sm"
