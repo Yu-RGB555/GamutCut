@@ -13,6 +13,7 @@ export interface RegisterResponse {
     id: number;
     name: string;
     email: string;
+    avatar_url?: string;
   };
   errors?: string[];
 }
@@ -30,6 +31,7 @@ export interface LoginResponse {
     id: number;
     name: string;
     email: string;
+    avatar_url?: string;
   };
   errors?: string[];
 }
@@ -38,4 +40,5 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  avatar_url?: string;
 }
