@@ -1,8 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Lock, Download } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 import { ShapeTemplate, MaskWithScale } from '../types/gamut';
 
 interface MaskControlsProps {
@@ -13,8 +11,6 @@ interface MaskControlsProps {
   onDialogOpenChange: (open: boolean) => void;
   onMaskSelect: (mask: ShapeTemplate) => void;
   onMaskDelete: () => void;
-  onMaskExport: () => void;
-  onMaskSave: () => void;
   onMaskIndexChange: (index: number) => void;
   onScaleChange: (scale: number) => void;
 }
@@ -27,83 +23,16 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
   onDialogOpenChange,
   onMaskSelect,
   onMaskDelete,
-  onMaskExport,
-  onMaskSave,
   onMaskIndexChange,
   onScaleChange
 }) => {
-  const { isAuthenticated } = useAuth();
-
   return (
-    <div className="space-y-12">
-      <div className="bg-card">
-        <h3 className="text-card-foreground text-lg font-semibold mb-4">ガマットマスク</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <Dialog open={isDialogOpen} onOpenChange={onDialogOpenChange}>
-            <DialogTrigger asChild>
-              <Button variant="outline">マスクを追加</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>ガマットマスクの選択</DialogTitle>
-              </DialogHeader>
-              <div className="grid grid-cols-2 gap-4 p-4">
-                {shapeTemplates.map((template) => (
-                  <Button
-                    key={template.id}
-                    variant="outline"
-                    className="p-4 h-auto"
-                    onClick={() => onMaskSelect(template)}
-                  >
-                    {template.name}
-                  </Button>
-                ))}
-              </div>
-            </DialogContent>
-          </Dialog>
-
-          {selectedMask.length > 0 && (
-            <>
-              <Button
-                onClick={onMaskDelete}
-                variant="destructive"
-              >
-                マスクを削除
-              </Button>
-              <Button
-                onClick={onMaskExport}
-                className="bg-primary hover:bg-mouseover"
-              >
-                <Download className=" w-4 h-4" />
-                ダウンロード
-              </Button>
-              {isAuthenticated ? (
-                <Button
-                  onClick={onMaskSave}
-                  className="bg-primary hover:bg-mouseover"
-                >
-                  プリセットに保存
-                </Button>
-              ) : (
-                <Button
-                  disabled
-                  className="bg-gray-500 cursor-not-allowed relative"
-                >
-                  <p className="">プリセットに保存</p>
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted/60 opacity-80 rounded">
-                    <Lock className="text-white w-4 h-4 mr-2" />
-                    <span className="text-white font-semibold">会員限定</span>
-                  </div>
-                </Button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-
+    <div className="">
+      <h3 className="text-card-foreground text-lg font-semibold mb-4">ガマットマスク</h3>
+      {/* 拡大・縮小 */}
       {selectedMask.length > 0 && (
-        <div className="">
-          <h3 className="text-card-foreground text-lg font-semibold mb-4">拡大・縮小</h3>
+        <div className="bg-card p-4 mb-4 rounded-xl">
+          <h3 className="text-label text-base font-semibold mb-4">サイズ</h3>
           <div className="flex gap-2 mb-2">
             {selectedMask.map((mask, idx) => (
               <button
@@ -115,21 +44,69 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
               </button>
             ))}
           </div>
-
-          <div className="flex items-center my-4">
+          <div className="flex items-center my-4 gap-4">
             <input
               type="range"
-              min="0.25"
-              max="2"
+              min="0.2"
+              max="1.8"
               step="0.01"
               value={selectedMask[selectedMaskIndex]?.scale ?? 1}
               onChange={(e) => onScaleChange(parseFloat(e.target.value))}
-              className="mr-4"
+              className="w-1/3 h-2
+                accent-cyan-400
+                backdrop-blur-md
+                bg-white/30
+                rounded-lg
+                shadow-md
+                hover: cursor-pointer
+                [&::-webkit-slider-thumb]:w-6
+                [&::-webkit-slider-thumb]:h-6
+                [&::-webkit-slider-thumb]:bg-white/80
+                [&::-webkit-slider-thumb]:backdrop-blur-sm
+                [&::-webkit-slider-thumb]:border-2
+                [&::-webkit-slider-thumb]:border-cyan-400
+                [&::-webkit-slider-thumb]:shadow-lg
+                hover:[&::-webkit-slider-thumb]:bg-cyan-200
+                transition-all duration-200"
             />
-            <span>{((selectedMask[selectedMaskIndex]?.scale ?? 1) * 100).toFixed(0)}%</span>
+            <span className="text-center">{((selectedMask[selectedMaskIndex]?.scale ?? 1) * 100).toFixed(0)}%</span>
           </div>
         </div>
       )}
+
+      <div className="grid grid-cols-2 gap-4">
+        <Dialog open={isDialogOpen} onOpenChange={onDialogOpenChange}>
+          <DialogTrigger asChild>
+            <Button variant="outline">マスクを追加</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>ガマットマスクの選択</DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-4 p-4">
+              {shapeTemplates.map((template) => (
+                <Button
+                  key={template.id}
+                  variant="outline"
+                  className="p-4 h-auto"
+                  onClick={() => onMaskSelect(template)}
+                >
+                  {template.name}
+                </Button>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {selectedMask.length > 0 && (
+          <Button
+            onClick={onMaskDelete}
+            variant="destructive"
+          >
+            マスクを削除
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -38,7 +38,7 @@ export function Combobox() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant="secondary"
           role="combobox"
           aria-expanded={open}
           className="w-[200px] justify-between font-light"
@@ -63,12 +63,13 @@ export function Combobox() {
                     setValue(currentValue === value ? "" : currentValue)
                     setOpen(false)
                   }}
+                  className="hover:cursor-pointer"
                 >
                   {framework.label}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === framework.value ? "opacity-100" : "opacity-0"
+                      value === framework.value ? "text-label opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

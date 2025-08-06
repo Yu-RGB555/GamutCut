@@ -39,11 +39,11 @@ export default function Home() {
   // プリセット一覧の表示コンテンツの制御
   const renderPresetContent = () => {
     if (!isAuthenticated) {
-      return <span>プリセットを利用するにはログインが必要です</span>;
+      return <div className="text-white text-center">Myマスクを利用するにはログインが必要です</div>;
     }
 
     if (isAuthenticated && presets.length === 0) {
-      return <span>保存されたマスクがありません</span>;
+      return <div className="text-white text-center">Myマスクがありません</div>;
     }
 
     return <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -58,13 +58,13 @@ export default function Home() {
       {isLoading ? (
         <div className="text-center">読み込み中...</div>
       ) : (
-        <>
+        <div className="grid grid-cols-1 gap-y-32">
           <MaskMaking onSaveSuccess={fetchPresets} />
-          <div className="grid grid-cols-1 gap-y-4">
-            <h3 className="text-card-foreground text-left text-lg font-semibold">プリセット一覧</h3>
+          <div className="space-y-8">
+            <h3 className="text-label text-left text-lg font-semibold">Myマスク一覧</h3>
             {renderPresetContent()}
           </div>
-        </>
+        </div>
       )}
     </div>
   );

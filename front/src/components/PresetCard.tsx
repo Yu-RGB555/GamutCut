@@ -77,7 +77,7 @@ export function PresetCard({ preset }: PresetCardProps) {
   }, [preset]);
 
   return (
-    <div className="bg-card border p-4 rounded-lg">
+    <div className="bg-background border p-4 rounded-lg">
       <div className="flex flex-col">
         <p className="text-gray-300 font-medium">{preset.name}</p>
         <canvas

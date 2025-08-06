@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useRouter } from "next/navigation";
 import { ShapeTemplate, ColorInfo, MaskWithScale } from '@/types/gamut';
 import { Preset } from '@/types/preset';
 import { maskSave } from '@/lib/api';
 import { MaskControls } from './MaskControls';
+import { ExportControls } from './ExportControls';
 import { ColorInfoPanel } from './ColorInfoPanel';
 import { ColorWheelDrawer } from '@/lib/colorWheelDrawer';
 import { MaskDrawer } from '@/lib/MaskDrawer';
@@ -310,7 +310,7 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
   }, [currentValue, selectedMask]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 ">
       <div className="justify-items-center space-y-8">
         <div className="relative">
           <canvas
@@ -330,19 +330,41 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
           <div className="absolute top-1 left-1">
             <ColorInfoPanel colorInfo={colorInfo}/>
           </div>
-        </div>
-        <div className="w-full bg-card space-y-2">
-          <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
-          <div className="flex items-center gap-4">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={currentValue}
-              onChange={(e) => setCurrentValue(parseInt(e.target.value))}
-              className=""
+          <div className="justify-items-end mt-2">
+            <ExportControls
+              selectedMaskLength={selectedMask.length}
+              onMaskExport={handleMaskExport}
+              onMaskSave={handleMaskSave}
             />
-            <span className="w-12 text-center">{currentValue}%</span>
+          </div>
+          <div className="w-full space-y-2">
+            <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={currentValue}
+                onChange={(e) => setCurrentValue(parseInt(e.target.value))}
+                className="w-1/3 h-2
+                  accent-cyan-400
+                  backdrop-blur-md
+                  bg-white/30
+                  rounded-lg
+                  shadow-md
+                  hover: cursor-pointer
+                  [&::-webkit-slider-thumb]:w-6
+                  [&::-webkit-slider-thumb]:h-6
+                  [&::-webkit-slider-thumb]:bg-white/80
+                  [&::-webkit-slider-thumb]:backdrop-blur-sm
+                  [&::-webkit-slider-thumb]:border-2
+                  [&::-webkit-slider-thumb]:border-cyan-400
+                  [&::-webkit-slider-thumb]:shadow-lg
+                  hover:[&::-webkit-slider-thumb]:bg-cyan-200
+                  transition-all duration-200"
+              />
+              <span className="text-center">{currentValue}%</span>
+            </div>
           </div>
         </div>
       </div>
@@ -357,10 +379,8 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
           onDialogOpenChange={setIsDialogOpen}
           onMaskSelect={handleMaskSelect}
           onMaskDelete={handleMaskDelete}
-          onMaskExport={handleMaskExport}
           onMaskIndexChange={setSelectedMaskIndex}
           onScaleChange={handleScaleChange}
-          onMaskSave={handleMaskSave}
         />
       </div>
     </div>

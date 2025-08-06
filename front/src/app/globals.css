@@ -43,7 +43,7 @@
   --foreground: #87EE0C;                       /* メインテキスト色 */
   --text-selection: #7c96eb ;                  /* テキスト選択時*/
   --error: #db4a43;                            /* エラーメッセージ */
-  --card: #171717;                             /* カード背景色 */
+  --card: #202020;                             /* カード背景色 */
   --card-foreground: #dfdfdf;                  /* カードテキスト */
   --label: #dfdfdf;                            /* ラベル */
   --mouseover: #4C7F0E;                        /* マウスオーバー */
@@ -71,6 +71,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* カスタムクラス */
+.h-250 {
+  min-height: 250px;
 }
 
   /* オートフィル対応 */
