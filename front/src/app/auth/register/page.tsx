@@ -135,6 +135,7 @@ export default function Register() {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="username"
                   placeholder="メールアドレス"
                   value={formData.email}
                   onChange={handleInputChange}
@@ -149,6 +150,7 @@ export default function Register() {
                   id="password"
                   name="password"
                   type="password"
+                  autoComplete="new-password"
                   placeholder="半角英数字6文字以上"
                   value={formData.password}
                   onChange={handleInputChange}
@@ -163,6 +165,7 @@ export default function Register() {
                   id="password_confirmation"
                   name="password_confirmation"
                   type="password"
+                  autoComplete="new-password"
                   placeholder="半角英数字6文字以上"
                   value={formData.password_confirmation}
                   onChange={handleInputChange}
