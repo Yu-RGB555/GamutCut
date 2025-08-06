@@ -160,7 +160,7 @@ export default function Register() {
                   <Label htmlFor="password">パスワード（確認用）</Label>
                 </div>
                 <Input
-                  id="password"
+                  id="password_confirmation"
                   name="password_confirmation"
                   type="password"
                   placeholder="半角英数字6文字以上"
