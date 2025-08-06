@@ -22,21 +22,20 @@ export default function Home() {
       const presetData = await getPresets();
       setPresets(presetData);
     } catch (error) {
-      console.error('プリセット取得エラー:', error);
+      console.error('Myマスク取得エラー:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 初回マウント時にプリセットを取得(ログイン時のみ)
+  // 認証状態が変わった時にMyマスクを取得
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
     if(isAuthenticated){
       fetchPresets();
     }
-  }, []);
+  }, [isAuthenticated]);
 
-  // プリセット一覧の表示コンテンツの制御
+  // Myマスク一覧の表示コンテンツの制御
   const renderPresetContent = () => {
     if (!isAuthenticated) {
       return <div className="text-white text-center">Myマスクを利用するにはログインが必要です</div>;
@@ -48,7 +47,11 @@ export default function Home() {
 
     return <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {presets.map((preset) => (
-        <PresetCard key={preset.id} preset={preset} />
+        <PresetCard
+          key={preset.id}
+          preset={preset}
+          onDeleteSuccess={fetchPresets}
+        />
       ))}
     </div>
   };

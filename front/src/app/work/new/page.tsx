@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Preset } from "@/types/preset";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useAlert } from "@/contexts/AlertContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +33,7 @@ type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
 
 export default function PostWorks() {
   const router = useRouter();
+  const { showAlert } = useAlert();
   const {isAuthenticated} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
@@ -105,7 +107,8 @@ export default function PostWorks() {
 
       submitData.append('work[set_mask_data]', JSON.stringify(presetData?.mask_data));
 
-      await postWork(submitData);
+      const response = await postWork(submitData);
+      showAlert(response.message);
       router.push('/work');
     } catch (error) {
       console.log('Work submission error:', error);

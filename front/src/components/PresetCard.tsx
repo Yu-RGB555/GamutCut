@@ -1,16 +1,21 @@
 import React, { useRef, useEffect } from 'react';
+import { Trash2Icon } from 'lucide-react';
 import { Preset } from '@/types/preset';
 import { ColorWheelDrawer } from '@/lib/colorWheelDrawer';
 import { MaskDrawer } from '@/lib/MaskDrawer';
 import { Point } from '@/types/gamut';
+import { deletePreset } from '@/lib/api';
+import { useAlert } from '@/contexts/AlertContext';
 
 interface PresetCardProps {
   preset: Preset;
+  onDeleteSuccess?: () => void;
 }
 
-export function PresetCard({ preset }: PresetCardProps) {
+export function PresetCard({ preset, onDeleteSuccess }: PresetCardProps) {
+  const { showAlert } = useAlert();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const CARD_CANVAS_SIZE = 200;   // プレビュー用のキャンバスサイズ
+  const CARD_CANVAS_SIZE = 200;   // キャンバスサイズ(プレビュー用)
 
   // 描画インスタンス
   const colorWheelDrawer = new ColorWheelDrawer();
@@ -71,6 +76,21 @@ export function PresetCard({ preset }: PresetCardProps) {
     }
   };
 
+  // Myマスク削除
+  const removePreset = async (id: number) => {
+    try {
+      const response = await deletePreset(id);
+      showAlert(response.message);
+      // 親コンポーネントのMyマスク一覧を更新
+      if (onDeleteSuccess) {
+        onDeleteSuccess();
+      }
+    } catch (error) {
+      console.error('プリセット削除エラー:', error);
+      showAlert('プリセットの削除に失敗しました');
+    }
+  }
+
   // 初回レンダリング時に描画
   useEffect(() => {
     drawPreset();
@@ -79,14 +99,25 @@ export function PresetCard({ preset }: PresetCardProps) {
   return (
     <div className="bg-background border p-4 rounded-lg">
       <div className="flex flex-col">
-        <p className="text-gray-300 font-medium">{preset.name}</p>
+        <div className="flex justify-between w-full items-center">
+          <p className=" text-gray-300 font-medium">
+            {preset.name.length > 15
+              ? `${preset.name.slice(0, 15)}...`
+              : preset.name
+            }
+          </p>
+          <Trash2Icon
+            onClick={() => removePreset(preset.id)}
+            className="text-destructive w-5 h-5 hover:cursor-pointer"
+          />
+        </div>
         <canvas
           ref={canvasRef}
           width={CARD_CANVAS_SIZE}
           height={CARD_CANVAS_SIZE}
-          className="mb-2"
+          className="my-2"
         />
-        <p className="text-gray-300 text-xs">
+        <p className="text-gray-300 text-xs text-right">
           明度： {preset.mask_data.value}%
         </p>
       </div>

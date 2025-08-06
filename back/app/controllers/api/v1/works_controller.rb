@@ -39,7 +39,7 @@ class Api::V1::WorksController < ApplicationController
 
     if @work.save
       render json: {
-        message: '作品を投稿しました',
+        message: I18n.t('api.work.create.success'),
         work: {
           id: @work.id,
           title: @work.title,
@@ -50,7 +50,6 @@ class Api::V1::WorksController < ApplicationController
         }
       }, status: :created
     else
-      Rails.logger.info "Work validation failed: #{@work.errors.full_messages}"
       render json: {
         errors: @work.errors.full_messages
       }, status: :unprocessable_entity
@@ -101,7 +100,7 @@ class Api::V1::WorksController < ApplicationController
     # 通常の更新処理
     if @work.update(update_params)
       render json: {
-        message: '作品を更新しました',
+        message: I18n.t('api.work.update.success'),
         work: {
           id: @work.id,
           title: @work.title,
@@ -109,7 +108,6 @@ class Api::V1::WorksController < ApplicationController
         }
       }, status: :ok
     else
-      Rails.logger.info "Work validation failed: #{@work.errors.full_messages}"
       render json: {
         errors: @work.errors.full_messages
       }, status: :unprocessable_entity
@@ -118,7 +116,7 @@ class Api::V1::WorksController < ApplicationController
 
   def destroy
     @work.destroy
-    render json: { message: I18n.t('api.works.destroy.success') }
+    render json: { message: I18n.t('api.work.destroy.success') }
   end
 
   # 画像を取得してクライアントに返すプロキシメソッド

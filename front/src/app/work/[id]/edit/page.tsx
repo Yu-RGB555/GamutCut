@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAlert } from "@/contexts/AlertContext";
 import { Preset } from "@/types/preset";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -45,6 +46,7 @@ const createFileFromBackend = async (workId: number, filename: string, filesize?
 
 export default function EditWorks() {
   const router = useRouter();
+  const { showAlert } = useAlert();
   const params = useParams();
   const { isAuthenticated, user } = useAuth();
   const id = params?.id;
@@ -235,7 +237,8 @@ export default function EditWorks() {
 
       submitData.append('work[set_mask_data]', JSON.stringify(presetData?.mask_data));
 
-      await updateWork(submitData, Number(id));
+      const response = await updateWork(submitData, Number(id));
+      showAlert(response.message);
       router.push(`/work/${id}`);
     } catch (error) {
       console.error('投稿エラー:', error);
@@ -313,13 +316,13 @@ export default function EditWorks() {
         </div>
         <div className="flex items-center gap-x-2">
           {/* <Button variant="default">更新</Button> */}
-          <Button
+          {/* <Button
             variant="outline"
             onClick={(e) => handleSubmit(e, true)}
             disabled={isLoading}
           >
             下書き保存
-          </Button>
+          </Button> */}
         </div>
       </div>
       <form onSubmit={(e) => handleSubmit(e, false)}>
