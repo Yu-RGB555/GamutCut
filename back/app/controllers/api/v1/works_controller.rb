@@ -118,7 +118,7 @@ class Api::V1::WorksController < ApplicationController
 
   def destroy
     @work.destroy
-    render json: { message: '作品が削除されました' }
+    render json: { message: I18n.t('api.works.destroy.success') }
   end
 
   # 画像を取得してクライアントに返すプロキシメソッド

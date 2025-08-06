@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Work } from "@/types/work";
 import { deleteWork, showWork } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAlert } from "@/contexts/AlertContext";
 import { PresetPreview } from "@/components/PresetPreview";
 
 export default function ShowWorks() {
@@ -14,6 +15,7 @@ export default function ShowWorks() {
   const params = useParams();
   const id = params?.id;
   const { user } = useAuth();
+  const { showAlert } = useAlert();
   const [work, setWork] = useState<Work | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,10 +44,12 @@ export default function ShowWorks() {
   const handleDelete = async (id: number) => {
     if (window.confirm('本当に削除しますか？')) {
       try {
-        await deleteWork(id);
+        const response = await deleteWork(id);
+        showAlert(response.message);
         router.push('/work');
       } catch (error) {
         console.error(error);
+        showAlert('作品の削除に失敗しました');
       }
     }
   }
@@ -68,6 +72,22 @@ export default function ShowWorks() {
 
   return (
     <div className="m-16">
+      {/* アラート(デバッグ用) */}
+      {/* <div className="mb-4 p-4 bg-card rounded">
+        <p className="text-sm text-label mb-2">アラートテスト用（開発中のみ）</p>
+        <div className="flex gap-2">
+          <Button size="sm" onClick={() => showAlert('成功メッセージのテストです')}>
+            成功アラート
+          </Button>
+          <Button size="sm" variant="destructive" onClick={() => showAlert('エラーメッセージのテストです')}>
+            エラーアラート
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => showAlert('情報メッセージのテストです')}>
+            情報アラート
+          </Button>
+        </div>
+      </div> */}
+
       <div className="flex justify-between">
         <div className="flex items-center">
         </div>

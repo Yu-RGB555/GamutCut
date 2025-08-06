@@ -44,3 +44,21 @@ ja:
         illustration_image: "イラスト作品"
         set_mask_data: "作品で使用したマスク"
         description: "作品説明"
+  api:
+    registrations:
+      create:
+        success: "ユーザーが正常に作成されました"
+        failure: "ユーザーの作成に失敗しました"
+    works:
+      create:
+        success: "作品が投稿されました"
+        failure: "作品を投稿できませんでした"
+      destroy:
+        success: "作品が削除されました"
+        failure: "作品を削除できませんでした"
+    presets:
+      create:
+        success: "Myマスクに保存されました"
+        failure: "Myマスクに保存できませんでした"
+      destroy:
+        success: "Myマスクから削除されました"

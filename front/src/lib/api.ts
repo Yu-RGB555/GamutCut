@@ -79,9 +79,8 @@ export async function getWorks(): Promise<Work[]> {
     },
   });
 
-  // ⚠️ JSONをパースせずにテキストで受け取る
+  // JSONをパースせずにテキストで受け取る
   const text = await response.text();
-  // console.log('APIレスポンス（text）:', text);
 
   if(!response.ok){
     throw new Error('作品一覧の取得に失敗しました');
@@ -148,20 +147,18 @@ export async function updateWork(submitData: FormData, workId: number) {
 }
 
 // 作品削除
-export async function deleteWork(workId: number): Promise<void>{
-  const token = localStorage.getItem('authToken');
+export async function deleteWork(workId: number): Promise<{ message: string }>{
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: getCommonHeaders(true, true),
     credentials: 'include',
   });
 
   if (!response.ok) {
     throw new Error('作品の削除に失敗しました');
   }
+
+  return response.json();
 }
 
 // 作品の画像をBlobとして取得（バックエンド経由）
