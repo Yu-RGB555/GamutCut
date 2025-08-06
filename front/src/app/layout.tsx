@@ -3,6 +3,8 @@ import './globals.css'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { AuthProvider } from '@/contexts/AuthContext';
+import { AlertProvider } from '@/contexts/AlertContext';
+import AlertContainer from '@/components/AlertContainer';
 
 export const metadata: Metadata = {
   title: 'GamutCut - ガマットマスク制作サイト',
@@ -14,10 +16,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ja">
       <body>
         <AuthProvider>
-          <Header />
-            <main className="min-h-[1000px]">
-              {children}
-            </main>
+          <AlertProvider>
+            <Header />
+              <main className="min-h-[1000px]">
+                {children}
+              </main>
+            <AlertContainer />
+          </AlertProvider>
         </AuthProvider>
         <Footer />
       </body>

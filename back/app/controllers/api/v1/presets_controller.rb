@@ -36,7 +36,7 @@ class Api::V1::PresetsController < ApplicationController
   def destroy
     @preset = current_user.presets.find(params[:id])
     @preset.destroy
-    head :no_content
+    render json: { message: I18n.t('api.presets.destroy') }
   end
 
   private
