@@ -51,11 +51,19 @@ export default function ShowWorks() {
   }
 
     if (isLoading) {
-    return <div>読み込み中...</div>;
+    return <div className="flex min-h-[500px] justify-center items-center">
+      <div className="text-center font-semibold">
+        読み込み中...
+      </div>
+    </div>;
   }
 
   if (!work) {
-    return <div>作品が見つかりません</div>;
+    return <div className="flex min-h-[500px] justify-center items-center">
+      <div className="text-white text-center font-semibold">
+        作品が見つかりません...
+      </div>
+    </div>;
   }
 
   return (

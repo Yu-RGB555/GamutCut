@@ -39,9 +39,9 @@ export default function WorksList() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {works.map((work) => (
             <Link key={work.id} href={`/work/${work.id}`}>
-              <div className="bg-card rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-background rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 {/* 作品画像エリア */}
-                <div className="aspect-video bg-card flex items-center justify-center">
+                <div className="aspect-video bg-background flex items-center justify-center">
                   {work.illustration_image_url ? (
                     <img
                       src={work.illustration_image_url}

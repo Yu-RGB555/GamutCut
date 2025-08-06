@@ -45,7 +45,7 @@ export function Header() {
           </div>
 
           {/* ナビゲーション */}
-          <nav className="flex space-x-2 md:space-x-8">
+          <nav className="flex space-x-4 md:space-x-8">
             <Link href="/work" className="text-foreground hover:text-mouseover font-semibold">
               <div className="flex items-center">
                 <Image className="w-5 h-5 mr-1" />
