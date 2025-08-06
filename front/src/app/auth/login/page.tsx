@@ -104,6 +104,7 @@ export default function Login() {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="username"
                   placeholder="メールアドレス"
                   value={formData.email}
                   onChange={handleInputChange}
@@ -118,6 +119,7 @@ export default function Login() {
                   id="password"
                   name="password"
                   type="password"
+                  autoComplete="current-password"
                   placeholder="半角英数字6文字以上"
                   value={formData.password}
                   onChange={handleInputChange}
