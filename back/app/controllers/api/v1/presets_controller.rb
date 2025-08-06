@@ -25,6 +25,7 @@ class Api::V1::PresetsController < ApplicationController
         id: @preset.id,
         name: @preset.name,
         mask_data: @preset.mask_data,
+        message: I18n.t('api.preset.create.success'),
         created_at: @preset.created_at,
         updated_at: @preset.updated_at
       }, status: :created
@@ -36,7 +37,7 @@ class Api::V1::PresetsController < ApplicationController
   def destroy
     @preset = current_user.presets.find(params[:id])
     @preset.destroy
-    render json: { message: I18n.t('api.presets.destroy') }
+    render json: { message: I18n.t('api.preset.destroy.success') }
   end
 
   private

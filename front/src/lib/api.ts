@@ -74,9 +74,7 @@ export async function loginUser(userData: LoginRequest): Promise<LoginResponse> 
 export async function getWorks(): Promise<Work[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getCommonHeaders(false, true),
   });
 
   // JSONをパースせずにテキストで受け取る
@@ -98,9 +96,7 @@ export async function getWorks(): Promise<Work[]> {
 export async function showWork(workId: number): Promise<Work> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getCommonHeaders(false, true),
   });
 
   if (!response.ok) {
@@ -130,7 +126,7 @@ export async function postWork(formData: FormData) {
 };
 
 // 作品更新
-export async function updateWork(submitData: FormData, workId: number) {
+export async function updateWork(submitData: FormData, workId: number): Promise<{ message: string}> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'PATCH',
     headers: getCommonHeaders(true, false),
@@ -139,7 +135,7 @@ export async function updateWork(submitData: FormData, workId: number) {
 
   if (!response.ok) {
     const data = await response.json();
-    const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || '投稿作品の更新に失敗しました';
+    const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message;
     throw new Error(errorMessage);
   }
 
@@ -175,40 +171,47 @@ export async function getWorkImageBlob(workId: number): Promise<Blob> {
   return response.blob();
 }
 
-// プリセット保存
-export async function maskSave(presetData: Preset) {
-  const token = localStorage.getItem('authToken');
+// Myマスク保存
+export async function maskSave(presetData: Preset): Promise<{ message: string}> {
   const response = await fetch(`${API_BASE_URL}/api/v1/presets`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: getCommonHeaders(true, true),
     body: JSON.stringify(presetData)
   });
 
   if (!response.ok) {
-    throw new Error('プリセットの保存に失敗しました');
+    throw new Error('マスクの保存に失敗しました');
   }
 
   return response.json();
 }
 
-// プリセット一覧取得
+// Myマスク削除
+export async function deletePreset(presetId: number): Promise<{ message: string}> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/presets/${presetId}`, {
+    method: 'DELETE',
+    headers: getCommonHeaders(true, true),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('マスクの削除に失敗しました')
+  }
+
+  return response.json();
+}
+
+// Myマスク一覧取得
 export async function getPresets(): Promise<Preset[]> {
-  const token = localStorage.getItem('authToken');
   const response = await fetch(`${API_BASE_URL}/api/v1/presets`, {
     method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: getCommonHeaders(true, true),
   });
 
   const text = await response.text();
 
   if (!response.ok) {
-    throw new Error('プリセット一覧の取得に失敗しました');
+    throw new Error('Myマスク一覧の取得に失敗しました');
   }
 
   try {

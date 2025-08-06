@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useAlert } from '@/contexts/AlertContext';
 import { ShapeTemplate, ColorInfo, MaskWithScale } from '@/types/gamut';
 import { Preset } from '@/types/preset';
 import { maskSave } from '@/lib/api';
@@ -9,13 +10,21 @@ import { ColorWheelDrawer } from '@/lib/colorWheelDrawer';
 import { MaskDrawer } from '@/lib/MaskDrawer';
 import { shapeTemplates } from '@/lib/shapeTemplates';
 import { hsvToRgb, getColorFromCoords } from '@/lib/colorUtils';
-import { getCenter, getScaledPoints, findClosestPoint, isPointInPolygon, toAbsolutePoints } from '@/lib/maskUtils';
+import {
+  getCenter,
+  getScaledPoints,
+  findClosestPoint,
+  isPointInPolygon,
+  toAbsolutePoints
+} from '@/lib/maskUtils';
 
 interface MaskMakingProps {
   onSaveSuccess: () => Promise<void>;
 }
 
 export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
+  const { showAlert } = useAlert();
+
   // キャンバスを参照
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hiddenCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -288,9 +297,10 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
       };
 
       // APIを使用してプリセットを保存
-      await maskSave(presetData);
+      const response = await maskSave(presetData);
       // プリセット一覧を更新
       await onSaveSuccess();
+      showAlert(response.message);
       console.log('プリセットを保存しました');
     } catch (error) {
       console.error('プリセット保存エラー:', error);
