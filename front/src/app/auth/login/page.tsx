@@ -17,15 +17,17 @@ import { Label } from "@/components/ui/label";
 import { loginUser } from '@/lib/api';
 import { LoginRequest } from '@/types/auth';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAlert } from '@/contexts/AlertContext';
 
 export default function Login() {
   const router = useRouter();
   const { login } = useAuth();
+  const { showAlert } = useAlert();
+  const [errors, setErrors] = useState<string[]>([]);
   const[formData, setFormData] = useState<LoginRequest>({
     email: '',
     password: ''
   });
-  const [errors, setErrors] = useState<string[]>([]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,7 +67,7 @@ export default function Login() {
 
       if (response.user && response.token) {
         login(response.user, response.token);
-        alert(response.message);
+        showAlert(response.message);
         router.push('/');
       }
     } catch (error) {
@@ -120,7 +122,7 @@ export default function Login() {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  placeholder="半角英数字6文字以上"
+                  placeholder="パスワード"
                   value={formData.password}
                   onChange={handleInputChange}
                   required
