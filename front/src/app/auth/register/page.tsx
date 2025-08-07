@@ -31,6 +31,7 @@ export default function Register() {
 
   // バリデーションエラー
   const [errors, setErrors] = useState<string[]>([]);
+  const [isCheck, setIsCheck] = useState(false);
 
   // フォーム入力値
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +42,11 @@ export default function Register() {
       [name]: value
     }));
   };
+
+  // チェックボックス
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsCheck(e.target.checked);
+  }
 
   // バリデーションエラー
   const validateForm = (): boolean => {
@@ -68,6 +74,10 @@ export default function Register() {
 
     if (formData.password !== formData.password_confirmation) {
       newErrors.push('パスワードが一致しません');
+    }
+
+    if (!isCheck) {
+      newErrors.push('利用規約とプライバシーポリシーへの同意が必要です')
     }
 
     setErrors(newErrors);
@@ -102,7 +112,7 @@ export default function Register() {
   };
 
   return (
-    <div className="my-8">
+    <div className="mt-8">
       <Card className="w-full max-w-sm mx-auto">
         <CardHeader>
           <CardTitle>GamutCut</CardTitle>
@@ -173,24 +183,34 @@ export default function Register() {
                 />
               </div>
             </div>
-            <div className="flex items-center justify-center my-1">
-              <input type="checkbox" id="legal" className="mr-2" defaultChecked={false}></input>
-              <Link
-                href="#"
-                className="text-foreground inline-block text-sm underline-offset-4 hover:underline"
-              >
-                利用規約
-              </Link>
-              <span>、</span>
-              <Link
-                href="#"
-                className="text-foreground inline-block text-sm underline-offset-4 hover:underline"
-              >
-                プライバシーポリシー
-              </Link>
-              <span className="card-foreground text-sm ml-1">に同意する</span>
+            <div className="flex items-center justify-center my-2">
+              <input
+                id="legal"
+                name="legal"
+                type="checkbox"
+                className="mr-2"
+                checked={isCheck}
+                onChange={handleCheckboxChange}
+                required
+              ></input>
+              <Label htmlFor="legal" className="text-sm leading-tight">
+                <Link
+                  href="/legal/terms_of_service"
+                  className="text-foreground underline-offset-4 hover:underline"
+                >
+                  利用規約
+                </Link>
+                <span>、</span>
+                <Link
+                  href="/legal/privacy_policy"
+                  className="text-foreground underline-offset-4 hover:underline"
+                >
+                  プライバシーポリシー
+                </Link>
+                <span>に同意する</span>
+              </Label>
             </div>
-            <CardFooter className="flex-col gap-2 mt-6">
+            <CardFooter className="flex-col gap-2 my-8">
               <Button type="submit" className="w-full py-5">
                 新規登録
               </Button>
@@ -205,7 +225,7 @@ export default function Register() {
               </div>
             </CardFooter>
           </form>
-          <div className="flex justify-between items-center w-full my-8">
+          <div className="flex justify-between items-center w-full py-8">
             <hr className="w-1/3 border-gray-300" />
             <span className="text-gray-300 text-sm">または</span>
             <hr className="w-1/3 border-gray-300" />
