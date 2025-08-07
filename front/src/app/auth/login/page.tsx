@@ -127,7 +127,7 @@ export default function Login() {
                 />
               </div>
             </div>
-            <CardFooter className="flex-col gap-2 mt-6">
+            <CardFooter className="flex-col gap-2 my-8">
               <Button type="submit" className="w-full py-5">
                 ログイン
               </Button>
@@ -141,7 +141,7 @@ export default function Login() {
               </div>
             </CardFooter>
           </form>
-          <div className="flex justify-between items-center w-full my-8">
+          <div className="flex justify-between items-center w-full py-8">
             <hr className="w-1/3 border-gray-300" />
             <span className="text-gray-300 text-sm">または</span>
             <hr className="w-1/3 border-gray-300" />
