@@ -16,22 +16,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerUser } from '@/lib/api';
 import { RegisterRequest } from "@/types/auth";
+import { loginUser } from '@/lib/api';
+import { LoginRequest } from '@/types/auth';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAlert } from '@/contexts/AlertContext';
 
 export default function Register() {
-  // ルーティング設定
   const router = useRouter();
-
-  // 送信フォームデータ
+  const { login } = useAuth();
+  const { showAlert } = useAlert();
+  const [errors, setErrors] = useState<string[]>([]);
+  const [isCheck, setIsCheck] = useState(false);
   const [formData, setFormData] = useState<RegisterRequest>({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
   });
-
-  // バリデーションエラー
-  const [errors, setErrors] = useState<string[]>([]);
-  const [isCheck, setIsCheck] = useState(false);
 
   // フォーム入力値
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,10 +67,10 @@ export default function Register() {
 
     if (!formData.password) {
       newErrors.push('パスワードを入力してください');
-    } else if (formData.password.length < 6) {
-      newErrors.push('パスワードは6文字以上で入力してください');
-    } else if (!/^[a-zA-Z0-9]+$/.test(formData.password)) {
-      newErrors.push('パスワードは半角英数字で入力してください');
+    } else if (formData.password.length < 8) {
+      newErrors.push('パスワードは8文字以上で入力してください');
+    } else if (!/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(formData.password)) {
+      newErrors.push('パスワードは半角英数字と記号で入力してください');
     }
 
     if (formData.password !== formData.password_confirmation) {
@@ -94,9 +95,23 @@ export default function Register() {
     setErrors([]);
 
     try{
-      const response = await registerUser(formData);
-      alert(response.message);
-      router.push('/auth/login');
+      await registerUser(formData);
+
+      // 自動ログイン
+      const loginData: LoginRequest = {
+        email: formData.email,
+        password: formData.password
+      };
+
+      const loginResult = await loginUser(loginData);
+
+      if (loginResult.token && loginResult.user) {
+        login(loginResult.user, loginResult.token);
+        showAlert(loginResult.message);
+        router.push('/');
+      } else {
+        throw new Error('ログイン情報が不正です');
+      }
     } catch(error) {
       if (error instanceof Error) {
         try {
@@ -161,7 +176,7 @@ export default function Register() {
                   name="password"
                   type="password"
                   autoComplete="new-password"
-                  placeholder="半角英数字6文字以上"
+                  placeholder="8文字以上（半角英数字・記号使用可）"
                   value={formData.password}
                   onChange={handleInputChange}
                   required
@@ -176,7 +191,7 @@ export default function Register() {
                   name="password_confirmation"
                   type="password"
                   autoComplete="new-password"
-                  placeholder="半角英数字6文字以上"
+                  placeholder="8文字以上（半角英数字・記号）"
                   value={formData.password_confirmation}
                   onChange={handleInputChange}
                   required

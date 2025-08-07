@@ -7,7 +7,7 @@ class User < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 20 }
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, presence: true, length: { minimum: 6 }, format: { with: /\A[a-zA-Z0-9]+\z/ }, if: :password_required?
+  validates :password, presence: true, length: { minimum: 8 }, format: { with: /\A[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+\z/ }, if: :password_required?
   validates :bio, length: { maximum: 300 }
 
   def self.from_omniauth(auth)
