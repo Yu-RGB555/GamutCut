@@ -7,7 +7,7 @@ class Api::SessionsController < ApplicationController
     if user && user.valid_password?(params[:user][:password])
       token = generate_jwt_token(user)
       render json: {
-        message: "ログインに成功しました",
+        message: I18n.t('api.sessions.create.success'),
         token: token,
         user: {
           id: user.id,
@@ -21,7 +21,7 @@ class Api::SessionsController < ApplicationController
       Rails.logger.info "Login failed - sending error: #{error_message}"
 
       render json: {
-        errors: [error_message]
+        message: error_message
       }, status: :unauthorized
     end
   end

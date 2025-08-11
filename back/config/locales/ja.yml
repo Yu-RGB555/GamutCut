@@ -48,6 +48,9 @@ ja:
     registrations:
       create:
         success: "ユーザーが正常に作成されました"
+    sessions:
+      create:
+        success: "ログインに成功しました"
     work:
       create:
         success: "作品が投稿されました"
