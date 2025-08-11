@@ -7,7 +7,7 @@ class Api::RegistrationsController < ApplicationController
     if user.save
       token = generate_jwt_token(user)
       render json: {
-        message: "ユーザーが正常に作成されました",
+        message: I18n.t('api.registrations.create.success'),
         token: token,
         user: {
           id: user.id,
@@ -21,7 +21,7 @@ class Api::RegistrationsController < ApplicationController
       Rails.logger.info "Login failed - sending error: #{error_message}"
 
       render json: {
-        errors: [error_message]
+        message: error_message
       }, status: :unprocessable_entity
     end
   end

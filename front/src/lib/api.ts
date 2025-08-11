@@ -60,11 +60,10 @@ export async function loginUser(userData: LoginRequest): Promise<LoginResponse> 
   });
 
   const data = await response.json();
+  console.log('data：', data);
 
   if(!response.ok) {
-    // エラーレスポンスの構造に合わせて修正
-    const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || 'ログインに失敗しました';
-    throw new Error(errorMessage);
+    throw new Error(data.message);
   }
 
   return data;
