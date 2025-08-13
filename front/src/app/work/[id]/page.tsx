@@ -4,6 +4,13 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  UserCircle2Icon,
+  HeartIcon,
+  BookmarkIcon,
+  Share2Icon
+} from "lucide-react";
 import { Work } from "@/types/work";
 import { deleteWork, showWork } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
@@ -124,12 +131,26 @@ export default function ShowWorks() {
             <PresetPreview maskData={work.set_mask_data} size={300} />
           </div>
         </div>
-        <div className="grid grid-cols gap-6">
-          <div>
-            <Label className="text-label text-2xl font-semibold mb-2">{work.title}</Label>
-            {/* <p className="text-label">{work.user.avatar_url}<span>{work.user.name}</span></p> */}
-            <p className="text-label">{work.user.name}</p>
-          </div>
+        <div className="grid grid-cols gap-8">
+          <Label className="text-label text-4xl font-semibold">{work.title}</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="flex items-center">
+                <Avatar className="w-10 h-10 mr-2 hover:cursor-pointer">
+                  <AvatarImage src={work.user.avatar_url} />
+                  <AvatarFallback className="bg-background">
+                    <UserCircle2Icon className="w-full h-full"/>
+                  </AvatarFallback>
+                </Avatar>
+                <p className="text-label text-xl mr-8 hover:cursor-pointer hover:underline">
+                  {work.user.name}
+                </p>
+                <div className="flex gap-4 mx-4">
+                  <HeartIcon className="text-error"/>
+                  <BookmarkIcon />
+                  <Share2Icon className="text-white rounded-sm hover:bg-muted"/>
+                </div>
+              </div>
+            </div>
           {/* <div className="text-label font-semibold mb-2"> タグ </div> */}
           <div className="text-label">{work.description}</div>
         </div>

@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <AlertProvider>
             <Header />
-              <main className="min-h-[1000px]">
+              <main className="mt-24 min-h-[1000px]">
                 {children}
               </main>
             <AlertContainer />

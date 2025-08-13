@@ -1,7 +1,8 @@
 'use client';
 
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import {
@@ -12,7 +13,7 @@ import {
   BookmarkIcon,
   Edit2Icon,
   InfoIcon
-} from 'lucide-react'
+} from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import {
   Sheet,
@@ -27,14 +28,46 @@ import {
 export function Header() {
   const { user, logout, isAuthenticated } = useAuth();
   const router = useRouter();
+  const [showBorder, setShowBorder] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const handleLogout = () => {
     logout();
     router.push('/');
   }
 
+  useEffect(() => {
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // ボーダーの表示制御
+      setShowBorder(currentScrollY > 100);
+
+      // ヘッダーの表示制御
+      if (currentScrollY <= 500) {
+        setIsVisible(true);
+      } else {
+        if (currentScrollY > lastScrollY) {
+          setIsVisible(false);
+        } else {
+          setIsVisible(true);
+        }
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [lastScrollY]);
+
   return (
-    <header className="bg-background shadow-sm border-b">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 bg-background shadow-sm transition-all duration-300 ease-in-out
+        ${showBorder ? "border-b" : ""}
+        ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+    >
       <div className="mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* ロゴ・サイト名 */}
