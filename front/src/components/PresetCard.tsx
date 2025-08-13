@@ -10,9 +10,10 @@ import { useAlert } from '@/contexts/AlertContext';
 interface PresetCardProps {
   preset: Preset;
   onDeleteSuccess?: () => void;
+  showDeleteButton?: boolean;
 }
 
-export function PresetCard({ preset, onDeleteSuccess }: PresetCardProps) {
+export function PresetCard({ preset, onDeleteSuccess, showDeleteButton = true }: PresetCardProps) {
   const { showAlert } = useAlert();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const CARD_CANVAS_SIZE = 200;   // キャンバスサイズ(プレビュー用)
@@ -106,10 +107,12 @@ export function PresetCard({ preset, onDeleteSuccess }: PresetCardProps) {
               : preset.name
             }
           </p>
-          <Trash2Icon
-            onClick={() => removePreset(preset.id)}
-            className="text-destructive w-5 h-5 hover:cursor-pointer"
-          />
+          {showDeleteButton && (
+            <Trash2Icon
+              onClick={() => removePreset(preset.id)}
+              className="text-destructive w-5 h-5 hover:cursor-pointer"
+            />
+          )}
         </div>
         <canvas
           ref={canvasRef}
