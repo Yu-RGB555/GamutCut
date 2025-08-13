@@ -18,9 +18,10 @@ interface PresetSelectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (preset: Preset) => void;
+  showDeleteButton?: boolean; // 削除ボタン表示フラグ
 }
 
-export function PresetSelectDialog({ open, onOpenChange, onSelect }: PresetSelectDialogProps) {
+export function PresetSelectDialog({ open, onOpenChange, onSelect, showDeleteButton = true }: PresetSelectDialogProps) {
   const router = useRouter();
   const [presets, setPresets] = useState<Preset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +71,7 @@ export function PresetSelectDialog({ open, onOpenChange, onSelect }: PresetSelec
                     onOpenChange(false);
                   }}
                 >
-                  <PresetCard preset={preset} />
+                  <PresetCard preset={preset} showDeleteButton={showDeleteButton} />
                 </div>
               ))}
             </div>

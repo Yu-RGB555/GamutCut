@@ -238,6 +238,7 @@ export default function PostWorks() {
                   open={isPresetDialogOpen}
                   onOpenChange={setIsPresetDialogOpen}
                   onSelect={setPresetData}
+                  showDeleteButton={false}
                 />
               </div>
             </div>
