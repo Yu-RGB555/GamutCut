@@ -298,12 +298,14 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
 
       // APIを使用してプリセットを保存
       const response = await maskSave(presetData);
-      // プリセット一覧を更新
-      await onSaveSuccess();
       showAlert(response.message);
       console.log('プリセットを保存しました');
+
+      // プリセット一覧を更新（エラーが発生しなかった場合のみ）
+      await onSaveSuccess();
     } catch (error) {
       console.error('プリセット保存エラー:', error);
+      showAlert('マスクの保存に失敗しました');
     }
   };
 
