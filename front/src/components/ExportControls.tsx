@@ -25,6 +25,7 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
       <div className="grid grid-cols-2 gap-4">
         {isAuthenticated ? (
           <Button
+            type="button"
             onClick={onMaskSave}
             className="bg-primary hover:bg-mouseover"
           >
@@ -45,6 +46,7 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
           </Button>
         )}
         <Button
+          type="button"
           onClick={onMaskExport}
           className="bg-primary hover:bg-mouseover"
         >
