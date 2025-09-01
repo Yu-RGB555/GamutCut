@@ -6,22 +6,7 @@ class Api::V1::WorksController < ApplicationController
   def index
     @works = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).where(is_public: 'published').order(created_at: :desc)
 
-    render json: {
-      works: @works.map do |work|
-        {
-          id: work.id,
-          title: work.title,
-          illustration_image_url: work.illustration_image.attached? ? minio_direct_url(work.illustration_image) : nil,
-          set_mask_data: work.set_mask_data,
-          user: {
-            id: work.user.id,
-            name: work.user.name,
-            avatar_url: work.user.avatar_url
-          },
-          created_at: work.created_at.strftime("%Y年%-m月%-d日 %H:%M")
-        }
-      end
-    }
+    render json: { works: WorkIndexResource.new(@works) }
   end
 
   def create
@@ -30,24 +15,18 @@ class Api::V1::WorksController < ApplicationController
     if params[:work][:illustration_image].present?
       # アップロードされたファイルオブジェクトを直接参照
       file = params[:work][:illustration_image]
+
       # ファイル情報を保存
       @work.filename = file.original_filename
       @work.filesize = file.size
+
       # ActiveStorageにファイルを添付
       @work.illustration_image.attach(file)
     end
 
     if @work.save
       render json: {
-        message: I18n.t('api.work.create.success'),
-        work: {
-          id: @work.id,
-          title: @work.title,
-          description: @work.description,
-          illustration_image_url: @work.illustration_image.attached? ? url_for(@work.illustration_image) : nil,
-          filename: @work.filename,
-          filesize: @work.filesize
-        }
+        message: I18n.t('api.work.create.success')
       }, status: :created
     else
       render json: {
@@ -57,23 +36,9 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def show
-    @work = Work.find_by(id: params[:id])
+    @work = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).find_by(id: params[:id])
 
-    render json: {
-      id: @work.id,
-      title: @work.title,
-      illustration_image_url: minio_direct_url(@work.illustration_image),
-      filename: @work.filename,
-      filesize: @work.filesize,
-      set_mask_data: @work.set_mask_data,
-      description: @work.description,
-      user: {
-        id: @work.user.id,
-        name: @work.user.name,
-        avatar_url: @work.user.avatar_url
-      },
-      created_at: @work.created_at.strftime("%Y年%-m月%-d日 %H:%M")
-    }
+    render json: WorkShowResource.new(@work)
   end
 
   def update
@@ -100,12 +65,7 @@ class Api::V1::WorksController < ApplicationController
     # 通常の更新処理
     if @work.update(update_params)
       render json: {
-        message: I18n.t('api.work.update.success'),
-        work: {
-          id: @work.id,
-          title: @work.title,
-          description: @work.description
-        }
+        message: I18n.t('api.work.update.success')
       }, status: :ok
     else
       render json: {
