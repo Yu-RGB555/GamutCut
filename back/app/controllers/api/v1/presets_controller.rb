@@ -4,17 +4,7 @@ class Api::V1::PresetsController < ApplicationController
   def index
     @presets = current_user.presets
 
-    render json: {
-      presets: @presets.map do |preset|
-        {
-          id: preset.id,
-          name: preset.name,
-          mask_data: preset.mask_data,
-          created_at: preset.created_at,
-          updated_at: preset.updated_at
-        }
-      end
-    }
+    render json: { presets: PresetIndexResource.new(@presets) }
   end
 
   def create
@@ -22,15 +12,12 @@ class Api::V1::PresetsController < ApplicationController
 
     if @preset.save
       render json: {
-        id: @preset.id,
-        name: @preset.name,
-        mask_data: @preset.mask_data,
-        message: I18n.t('api.preset.create.success'),
-        created_at: @preset.created_at,
-        updated_at: @preset.updated_at
+        message: I18n.t('api.preset.create.success')
       }, status: :created
     else
-      render json: { errors: @preset.errors.full_messages }, status: :unprocessable_entity
+      render json: {
+        errors: @preset.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
