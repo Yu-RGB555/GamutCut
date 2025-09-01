@@ -29,12 +29,19 @@ module MinioUrlHelper
 
           "#{endpoint}/#{bucket}/#{blob.key}"
         else
-          # 本番環境
-          Rails.application.routes.url_helpers.url_for(attachment)
+          # S3(本番環境)の場合はattachment.urlを使用（署名付きURLが生成される）
+          attachment.url
         end
       else
-        # フォールバック(通常のActive Storage URL)
-        Rails.application.routes.url_helpers.url_for(attachment)
+        # フォールバック
+        # まず attachment.url を試す
+        begin
+          attachment.url
+        rescue => e
+          # attachment.url でもエラーの場合はserviceのurlメソッドを使用
+          Rails.logger.warn "Failed to generate URL for attachment: #{e.message}"
+          service.url(blob.key, expires_in: 1.hour)
+        end
       end
     end
   end
