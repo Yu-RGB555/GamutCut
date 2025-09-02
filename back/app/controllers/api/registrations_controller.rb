@@ -6,16 +6,14 @@ class Api::RegistrationsController < ApplicationController
 
     if user.save
       token = generate_jwt_token(user)
-      render json: {
+
+      response_data = {
         message: I18n.t('api.registrations.create.success'),
         token: token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          avatar_url: user.avatar_url
-        }
-      }, status: :created
+        user: user
+      }
+
+      render json: AuthResource.new(response_data), status: :created
     else
       error_message = I18n.t('errors.messages.invalid_credentials')
       Rails.logger.info "Login failed - sending error: #{error_message}"
@@ -33,7 +31,10 @@ class Api::RegistrationsController < ApplicationController
   end
 
   def generate_jwt_token(user)
-    payload = { user_id: user.id, exp: 24.hours.from_now.to_i }
+    payload = {
+      user_id: user.id,
+      exp: 24.hours.from_now.to_i
+    }
     JWT.encode(payload, Rails.application.credentials.secret_key_base)
   end
 end
