@@ -6,16 +6,13 @@ class Api::SessionsController < ApplicationController
 
     if user && user.valid_password?(params[:user][:password])
       token = generate_jwt_token(user)
-      render json: {
+      response_data = {
         message: I18n.t('api.sessions.create.success'),
         token: token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          avatar_url: user.avatar_url
-        }
-      }, status: :ok
+        user: user
+      }
+
+      render json: AuthResource.new(response_data), status: :ok
     else
       error_message = I18n.t('errors.messages.invalid_credentials')
       Rails.logger.info "Login failed - sending error: #{error_message}"
