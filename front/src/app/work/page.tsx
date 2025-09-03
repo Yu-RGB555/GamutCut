@@ -6,6 +6,13 @@ import { Search } from "@/components/ui/search";
 import Link from "next/link";
 import { Work } from "@/types/work";
 import { getWorks } from "@/lib/api";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  UserCircle2Icon,
+  HeartIcon,
+  BookmarkIcon,
+  MessageSquareTextIcon
+} from "lucide-react";
 
 export default function WorksList() {
   const [works, setWorks] = useState<Work[]>([]);
@@ -55,9 +62,34 @@ export default function WorksList() {
 
                 {/* 作品情報エリア */}
                 <div className="p-4 border-t">
-                  <h3 className="text-card-foreground font-semibold text-xl mb-2">{work.title}</h3>
-                  <p className="text-white text-base font-normal">{work.user.name}</p>
-                  <p className="text-gray-400 text-xs">{work.created_at}</p>
+                  <div className="grid gap-2">
+                    <h3 className="text-card-foreground font-semibold text-xl">
+                      {work.title.length > 23
+                        ? `${work.title.slice(0, 23)}...`
+                        : work.title
+                      }
+                    </h3>
+                    <div className="flex items-center">
+                      <Avatar className="w-5 h-5 mr-2 hover:cursor-pointer">
+                        <AvatarImage src={work.user.avatar_url} />
+                        <AvatarFallback className="bg-background">
+                          <UserCircle2Icon className="w-full h-full"/>
+                        </AvatarFallback>
+                      </Avatar>
+                      <p className="text-gray-400 text-base font-normal">
+                        {work.user.name.length > 14
+                          ? `${work.user.name.slice(0, 14)}...`
+                          : work.user.name
+                        }
+                      </p>
+                    </div>
+                    <p className="text-gray-400 text-xs">{work.created_at}</p>
+                    <div className="flex gap-4 justify-end">
+                      <MessageSquareTextIcon className="text-label" />
+                      <HeartIcon className="text-error"/>
+                      <BookmarkIcon />
+                    </div>
+                  </div>
                 </div>
               </div>
             </Link>
