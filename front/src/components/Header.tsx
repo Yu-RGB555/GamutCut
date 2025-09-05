@@ -110,7 +110,7 @@ export function Header() {
                     <SheetHeader className="mt-4 border-b">
                       <SheetTitle className="w-65 rounded-sm hover:bg-muted transition-colors">
                         <Link
-                          href="/mypage"
+                          href="#"
                           className="flex items-center p-3"
                         >
                           <Avatar className="mr-3 w-12 h-12">
