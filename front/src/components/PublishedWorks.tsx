@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { Work } from "@/types/work";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -15,6 +16,7 @@ interface PublishedWorksProps {
 }
 
 export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
+  const { user } = useAuth();
   const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,9 +87,9 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
       <div className="px-8 pb-8 mb-32">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {works.map((work) => (
-            <Link key={work.id} href={`/work/${work.id}`}>
-              <div className="bg-background rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                {/* 作品画像エリア */}
+            <div key={work.id} className="bg-background rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              {/* 作品画像エリア - 作品詳細へのリンク */}
+              <Link href={`/work/${work.id}`}>
                 <div className="aspect-video bg-background flex items-center justify-center">
                   {work.illustration_image_url ? (
                     <img
@@ -99,18 +101,28 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
                     <span className="text-gray-500">作品 {work.id}</span>
                   )}
                 </div>
+              </Link>
 
-                {/* 作品情報エリア */}
-                <div className="p-4 border-t">
-                  <div className="grid gap-2">
-                    <h3 className="text-card-foreground font-semibold text-xl">
+              {/* 作品情報エリア */}
+              <div className="p-4 border-t">
+                <div className="grid gap-2">
+                  {/* 作品タイトル - 作品詳細へのリンク */}
+                  <Link href={`/work/${work.id}`}>
+                    <h3 className="text-card-foreground font-semibold text-xl hover:underline">
                       {work.title.length > 23
                         ? `${work.title.slice(0, 23)}...`
                         : work.title
                       }
                     </h3>
+                  </Link>
+
+                  {/* ユーザー情報 - ユーザープロフィールへのリンク */}
+                  <Link
+                    href={user?.id === work.user.id ? "/mypage" : `/users/${work.user.id}`}
+                    className="text-label underline-offset-4 hover:cursor-pointer hover:underline"
+                  >
                     <div className="flex items-center">
-                      <Avatar className="w-5 h-5 mr-2 hover:cursor-pointer">
+                      <Avatar className="w-5 h-5 mr-2">
                         <AvatarImage src={work.user.avatar_url} />
                         <AvatarFallback className="bg-background">
                           <UserCircle2Icon className="w-full h-full"/>
@@ -123,14 +135,15 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
                         }
                       </p>
                     </div>
-                    <p className="text-gray-400 text-xs">{work.created_at}</p>
-                    <div className="flex gap-4 justify-end">
-                      <HeartIcon className="text-error"/>
-                    </div>
+                  </Link>
+
+                  <p className="text-gray-400 text-xs">{work.created_at}</p>
+                  <div className="flex gap-4 justify-end">
+                    <HeartIcon className="text-error"/>
                   </div>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

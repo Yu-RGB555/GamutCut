@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -133,22 +134,27 @@ export default function ShowWorks() {
         </div>
         <div className="grid grid-cols gap-8">
           <Label className="text-label text-4xl font-semibold">{work.title}</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="flex items-center">
-                <Avatar className="w-10 h-10 mr-2 hover:cursor-pointer">
-                  <AvatarImage src={work.user.avatar_url} />
-                  <AvatarFallback className="bg-background">
-                    <UserCircle2Icon className="w-full h-full"/>
-                  </AvatarFallback>
-                </Avatar>
-                <p className="text-label text-xl mr-8 hover:cursor-pointer hover:underline">
-                  {work.user.name}
-                </p>
-                <div className="flex gap-4 mx-4">
-                  <HeartIcon className="text-error"/>
-                  <BookmarkIcon />
-                  <Share2Icon className="text-white rounded-sm hover:bg-muted"/>
+            <div className="flex items-center">
+              <Link
+                  href={user?.id === work.user.id ? "/mypage" : `/users/${work.user.id}`}
+                  className="text-label underline-offset-4 hover:cursor-pointer hover:underline"
+              >
+                <div className="flex items-center">
+                  <Avatar className="w-10 h-10 mr-2 hover:cursor-pointer">
+                    <AvatarImage src={work.user.avatar_url} />
+                    <AvatarFallback className="bg-background">
+                      <UserCircle2Icon className="w-full h-full"/>
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-label text-xl mr-8 hover:cursor-pointer hover:underline">
+                    {work.user.name}
+                  </p>
                 </div>
+              </Link>
+              <div className="flex gap-4 mx-4">
+                <HeartIcon className="text-error"/>
+                <BookmarkIcon />
+                <Share2Icon className="text-white rounded-sm hover:bg-muted"/>
               </div>
             </div>
           {/* <div className="text-label font-semibold mb-2"> タグ </div> */}
