@@ -16,6 +16,15 @@ Rails.application.routes.draw do
       delete 'users/sign_out', to: 'sessions#destroy'
     end
 
+    # ユーザー関連エンドポイント（認証関連以外）
+    resources :users, only: [:show] do
+      member do
+        get :works        # /api/users/:id/works - 指定ユーザーの作品一覧
+        get :liked_works  # /api/users/:id/liked_works - いいねした作品一覧
+        get :bookmarks    # /api/users/:id/bookmarks - ブックマークした作品一覧
+      end
+    end
+
     namespace :v1 do
       resources :works, only: [:index, :show, :create, :update, :destroy] do
         member do
