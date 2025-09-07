@@ -86,7 +86,7 @@ export default function PostWorks() {
     router.push('/');
   };
 
-  const handleSubmit = async (e: React.FormEvent, isDraft: boolean = false) => {
+  const handleSubmit = async (e: React.FormEvent, isDraft: boolean) => {
     e.preventDefault();
 
     setIsLoading(true);
@@ -173,7 +173,7 @@ export default function PostWorks() {
             </Button> */}
           </div>
         </div>
-        <form onSubmit={(e) => handleSubmit(e, false)}>
+        <form>
           <div className="flex flex-col">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               <div>
@@ -270,8 +270,20 @@ export default function PostWorks() {
               </div>
             </div>
           </div>
-            <div className="flex justify-end mt-10">
-              <Button type="submit" disabled={isLoading}>
+            <div className="flex justify-end gap-4 mt-10">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={(e) => handleSubmit(e, true)}  // 直接true(下書き)を渡す
+                disabled={isLoading}
+              >
+                {isLoading? '保存中...' : '下書き保存'}
+              </Button>
+              <Button
+                type="button"
+                onClick={(e) => handleSubmit(e, false)} // 直接false(公開)を渡す
+                disabled={isLoading}
+              >
                 {isLoading? '投稿中...' : '投稿'}
               </Button>
             </div>

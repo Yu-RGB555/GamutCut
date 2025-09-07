@@ -7,15 +7,14 @@ import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   UserCircle2Icon,
-  HeartIcon,
 } from "lucide-react";
 
-interface PublishedWorksProps {
+interface DraftWorksProps {
   isActive: boolean;
   userId: number;
 }
 
-export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
+export function DraftWorks({ isActive, userId }: DraftWorksProps) {
   const { user } = useAuth();
   const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(false);
@@ -29,7 +28,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
 
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/works?is_public=0`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/works?is_public=2`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -78,7 +77,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
   if (works.length === 0) {
     return (
       <div className="flex justify-center items-center py-8">
-        <div className="text-gray-500">公開作品がありません</div>
+        <div className="text-gray-500">下書きがありません</div>
       </div>
     );
   }
@@ -136,11 +135,6 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
                       </p>
                     </div>
                   </Link>
-
-                  <p className="text-gray-400 text-xs">{work.created_at}</p>
-                  <div className="flex gap-4 justify-end">
-                    <HeartIcon className="text-error"/>
-                  </div>
                 </div>
               </div>
             </div>

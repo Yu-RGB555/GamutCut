@@ -19,7 +19,7 @@ class Api::UsersController < ApplicationController
 
     # 作品表示制御
     if @user == current_user
-      # 自分の作品一覧
+      # 自分の作品一覧（公開作品・下書き両対応）
       user_works = @user.works.where(is_public: is_public)
     else
       # 他人の作品一覧（公開作品のみ）

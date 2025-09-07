@@ -1,15 +1,15 @@
 'use client';
 
 import { useAuth } from "@/contexts/AuthContext";
-import { PublishedWorks } from "@/components/PublishedWorks";
+import { DraftWorks } from "@/components/DraftWorks";
 import { MyPageLayout } from "@/components/MyPageLayout";
 
-export default function MyPage() {
+export default function DraftsPage() {
   const { user } = useAuth();
 
   return (
     <MyPageLayout>
-      <PublishedWorks
+      <DraftWorks
         isActive={true}
         userId={user?.id || 0}
       />

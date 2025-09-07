@@ -4,7 +4,7 @@ class WorkShowResource < BaseResource
   # 単一オブジェクトの場合はroot_keyは不要
   # root_key :work
 
-  attributes :id, :title, :set_mask_data, :description, :filename, :filesize
+  attributes :id, :title, :set_mask_data, :description, :is_public, :filename, :filesize
 
   # カスタム属性: illustration_image_url
   attribute :illustration_image_url do |work|
