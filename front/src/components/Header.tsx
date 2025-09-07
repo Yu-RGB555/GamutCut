@@ -31,10 +31,17 @@ export function Header() {
   const [showBorder, setShowBorder] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
+    setIsSheetOpen(false);
     router.push('/');
+  }
+
+  const handleLinkClick = (href: string) => {
+    setIsSheetOpen(false);
+    router.push(href);
   }
 
   useEffect(() => {
@@ -97,7 +104,7 @@ export function Header() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <Sheet>
+                <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                   <SheetTrigger>
                     <Avatar className="w-10 h-10 hover:cursor-pointer hover:opacity-80 transition-opacity">
                       <AvatarImage src={user?.avatar_url} />
@@ -108,10 +115,10 @@ export function Header() {
                   </SheetTrigger>
                   <SheetContent className="flex flex-col bg-card border-none w-80">
                     <SheetHeader className="mt-4 border-b">
-                      <SheetTitle className="w-65 rounded-sm hover:bg-muted transition-colors">
-                        <Link
-                          href="/mypage"
-                          className="flex items-center p-3"
+                      <SheetTitle className="w-65">
+                        <button
+                          onClick={() => handleLinkClick('/mypage')}
+                          className="flex items-center p-3 w-full text-left  rounded-sm hover:bg-muted hover:cursor-pointer transition-colors"
                         >
                           <Avatar className="mr-3 w-12 h-12">
                             <AvatarImage src={user?.avatar_url} />
@@ -128,29 +135,38 @@ export function Header() {
                             </p>
                             <p className="text-sm text-muted-foreground">マイページ</p>
                           </div>
-                        </Link>
+                        </button>
                       </SheetTitle>
                     </SheetHeader>
 
                     <div className="flex-1 px-8 py-4">
                       <ul className="space-y-2">
                         <li>
-                          <Link href="#" className="flex items-center w-full p-3 rounded-lg hover:bg-muted transition-colors">
+                          <button
+                            onClick={() => handleLinkClick('/mypage/drafts')}
+                            className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
+                          >
                             <Edit2Icon className="w-6 h-6 mr-3" />
                             <span className="text-xl font-medium">下書き</span>
-                          </Link>
+                          </button>
                         </li>
                         <li>
-                          <Link href="#" className="flex items-center w-full p-3 rounded-lg hover:bg-muted transition-colors">
+                          <button
+                            onClick={() => handleLinkClick('/mypage/bookmarks')}
+                            className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
+                          >
                             <BookmarkIcon className="w-6 h-6 mr-3" />
                             <span className="text-xl font-medium">ブックマーク</span>
-                          </Link>
+                          </button>
                         </li>
                         <li>
-                          <Link href="#" className="flex items-center w-full p-3 rounded-lg hover:bg-muted transition-colors">
+                          <button
+                            onClick={() => handleLinkClick('#')}
+                            className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
+                          >
                             <InfoIcon className="w-6 h-6 mr-3" />
                             <span className="text-xl font-medium">使い方</span>
-                          </Link>
+                          </button>
                         </li>
                       </ul>
                     </div>

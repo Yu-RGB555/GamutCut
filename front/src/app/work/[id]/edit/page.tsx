@@ -66,6 +66,7 @@ export default function EditWorks() {
   const [isLoadingFile, setIsLoadingFile] = useState(false); // ファイル読み込み状態
   const [isAuthChecked, setIsAuthChecked] = useState(false); // 認証チェック完了フラグ
   const [isImageRemoved, setIsImageRemoved] = useState(false); // 画像削除フラグ
+  const [isPublic, setIsPublic] = useState(true);
 
   // 認証チェック
   useEffect(() => {
@@ -92,7 +93,6 @@ export default function EditWorks() {
       try {
         setIsPageLoading(true);
         const workData = await showWork(Number(id));
-        console.log(workData);
 
         // 所有者チェック
         if (workData.user.id !== user.id) {
@@ -105,6 +105,11 @@ export default function EditWorks() {
           title: workData.title,
           description: workData.description
         });
+
+        if(workData.is_public === "draft"){
+          setIsPublic(false);
+        }
+        console.log('isPublic: ', workData.is_public);
 
         if(workData.set_mask_data){
           setPresetData({
@@ -211,7 +216,7 @@ export default function EditWorks() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent, isDraft: boolean = false) => {
+  const handleSubmit = async (e: React.FormEvent, isDraft:boolean) => {
     e.preventDefault();
 
     setIsLoading(true);
@@ -325,7 +330,7 @@ export default function EditWorks() {
           </Button> */}
         </div>
       </div>
-      <form onSubmit={(e) => handleSubmit(e, false)}>
+      <form>
         <div className="flex flex-col">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             <div>
@@ -413,11 +418,45 @@ export default function EditWorks() {
             </div>
           </div>
         </div>
-          <div className="flex justify-end mt-10">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading? '投稿中...' : '更新'}
-            </Button>
-          </div>
+        <div className="flex justify-end mt-10 gap-4">
+          {isPublic ? (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoading}
+                onClick={(e)=>handleSubmit(e, true)}
+              >
+                {isLoading? '保存中...' : '下書きに戻す'}
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                onClick={(e)=>handleSubmit(e, false)}
+              >
+                {isLoading? '更新中...' : '更新'}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoading}
+                onClick={(e)=>handleSubmit(e, true)}
+              >
+                {isLoading? '保存中...' : '下書き保存'}
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                onClick={(e)=>handleSubmit(e, false)}
+              >
+                {isLoading? '投稿中...' : '公開する'}
+              </Button>
+            </>
+          )}
+        </div>
       </form>
     </div>
     </>
