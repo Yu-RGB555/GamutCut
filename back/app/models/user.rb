@@ -4,6 +4,8 @@ class User < ApplicationRecord
   has_many :works, dependent: :restrict_with_exception  # 作品がある場合は退会不可
   has_many :presets, dependent: :destroy
   has_many :social_accounts, dependent: :destroy
+  has_many :likes, dependent: :destroy
+  has_many :liked_works, through: :likes, source: :work
 
   validates :name, presence: true, length: { maximum: 20 }
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
