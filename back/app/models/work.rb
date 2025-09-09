@@ -1,6 +1,8 @@
 class Work < ApplicationRecord
   belongs_to :user
   belongs_to :preset, optional: true  # プリセットが削除されても作品は残る
+  has_many :likes, dependent: :destroy
+  has_many :liked_users, through: :likes, source: :user
 
   has_one_attached :illustration_image
 
