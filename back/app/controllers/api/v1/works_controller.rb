@@ -1,12 +1,18 @@
 class Api::V1::WorksController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy]
+  before_action :authenticate_user!, only: [:create, :update, :destroy, :like]
+  before_action :authenticate_user_optional!, only: [:index, :show]
   before_action :set_work, only: [:update, :destroy]
+  before_action :set_any_work, only: [:like]
   before_action :check_owner, only: [:update, :destroy]
 
   def index
-    @works = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).where(is_public: 'published').order(created_at: :desc)
+    @works = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob])
+                .where(is_public: 'published')
+                .order(created_at: :desc)
 
-    render json: { works: WorkIndexResource.new(@works) }
+    render json: {
+      works: WorkIndexResource.new(@works, current_user: current_user).serializable_hash
+    }
   end
 
   def create
@@ -38,7 +44,7 @@ class Api::V1::WorksController < ApplicationController
   def show
     @work = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).find_by(id: params[:id])
 
-    render json: WorkShowResource.new(@work)
+    render json: WorkShowResource.new(@work, current_user: current_user)
   end
 
   def update
@@ -105,10 +111,67 @@ class Api::V1::WorksController < ApplicationController
     end
   end
 
+  # POST /api/v1/works/:id/like
+  def like
+    # 既にいいねしているかチェック
+    existing_like = current_user.likes.find_by(work: @work)
+
+    if request.delete?
+      # DELETE の場合はいいねを削除
+      if existing_like
+        existing_like.destroy
+        render json: {
+          liked: false,
+          likes_count: @work.likes.count
+        }
+      else
+        # いいねしていない状態で、URL直叩きされた場合の対策
+        render json: { error: '対象の作品はいいねされていません' }, status: :not_found
+      end
+    else
+      # POST の場合はいいねを追加
+      if existing_like
+        # いいねしている状態で、URL直叩きされた場合の対策
+        render json: {
+          message: '既にいいね済みです',
+          liked: true,
+          likes_count: @work.likes.count
+        }
+      else
+        like = current_user.likes.build(work: @work)
+        if like.save
+          render json: {
+            liked: true,
+            likes_count: @work.likes.count
+          }
+        else
+          render json: { errors: like.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+    end
+  end
+
   private
 
+  # オプショナル認証: ApplicationControllerの認証結果をそのまま利用
+  # 未ログインでもアクセス可能、ログイン時はcurrent_userを利用
+  def authenticate_user_optional!
+    # ApplicationControllerで既に認証処理が完了している
+    # @current_userが設定されていればログイン中、nilなら未ログイン
+    # 認証に失敗してもエラーにしない（未ログイン状態として処理継続）
+    true
+  end
+
+  # 自身の作品からのみ取得（更新・削除用）
   def set_work
     @work = current_user.works.find(params[:id])
+  end
+
+  # 全ての公開作品から対象の作品を取得（いいね・ブックマーク用）
+  def set_any_work
+    @work = Work.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: '作品が見つかりません' }, status: :not_found
   end
 
   def check_owner

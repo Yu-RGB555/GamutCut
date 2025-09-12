@@ -73,7 +73,7 @@ export async function loginUser(userData: LoginRequest): Promise<LoginResponse> 
 export async function getWorks(): Promise<Work[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'GET',
-    headers: getCommonHeaders(false, true),
+    headers: getCommonHeaders(true, true), // 認証ヘッダーを含める
   });
 
   // JSONをパースせずにテキストで受け取る
@@ -95,7 +95,7 @@ export async function getWorks(): Promise<Work[]> {
 export async function showWork(workId: number): Promise<Work> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'GET',
-    headers: getCommonHeaders(false, true),
+    headers: getCommonHeaders(true, true), // 認証ヘッダーを含める
   });
 
   if (!response.ok) {
@@ -219,4 +219,21 @@ export async function getPresets(): Promise<Preset[]> {
   } catch (error) {
     throw new Error('APIレスポンスがJSONではありません');
   }
+}
+
+// いいね追加・削除
+export async function toggleLike(workId: number, isLiked: boolean): Promise<{ liked: boolean; likes_count: number; message: string }> {
+  const method = isLiked ? 'DELETE' : 'POST';
+
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/like`, {
+    method,
+    headers: getCommonHeaders(true, true),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('いいね処理に失敗しました');
+  }
+
+  return response.json();
 }

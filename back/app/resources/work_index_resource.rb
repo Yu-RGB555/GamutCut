@@ -24,12 +24,29 @@ class WorkIndexResource < BaseResource
     }
   end
 
+  # いいね数
+  attribute :likes_count do |work|
+    work.likes.count
+  end
+
+  # いいねした作品
+  attribute :is_liked_by_current_user do |work|
+    current_user = @current_user
+    current_user ? current_user.likes.exists?(work: work) : false
+  end
+
   # 相対時間での作成日時
   attribute :created_at do |work|
     self.time_ago_in_words_japanese(work.created_at)
   end
 
   private
+
+  # initializeをオーバーライドしてcurrent_userを保存
+  def initialize(resource, current_user: nil, **options)
+    @current_user = current_user
+    super(resource, **options)
+  end
 
   # 日本語での相対時間表示
   def time_ago_in_words_japanese(time)

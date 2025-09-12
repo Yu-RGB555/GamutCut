@@ -19,9 +19,9 @@ Rails.application.routes.draw do
     # ユーザー関連エンドポイント（認証関連以外）
     resources :users, only: [:show] do
       member do
-        get :works        # /api/users/:id/works - 指定ユーザーの作品一覧
-        get :liked_works  # /api/users/:id/liked_works - いいねした作品一覧
-        get :bookmarks    # /api/users/:id/bookmarks - ブックマークした作品一覧
+        get :works        # /api/users/:id/works - マイページ（公開済み作品一覧）
+        get :liked_works  # /api/users/:id/liked_works - マイページ（いいねした作品一覧）
+        get :bookmarks    # /api/users/:id/bookmarks - マイページ（ブックマークした作品一覧）
       end
     end
 
@@ -29,6 +29,8 @@ Rails.application.routes.draw do
       resources :works, only: [:index, :show, :create, :update, :destroy] do
         member do
           get :image  # 画像取得用エンドポイント
+          post :like    # いいね追加
+          delete :like  # いいね削除
         end
       end
       resources :presets, only: [:index, :create, :update, :destroy]
