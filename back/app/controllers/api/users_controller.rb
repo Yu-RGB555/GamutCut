@@ -12,7 +12,7 @@ class Api::UsersController < ApplicationController
     render json: { user: UserResource.new(@user) }
   end
 
-  # マイページで表示する作品（GET /api/users/:id/works）
+  # マイページ（公開作品・下書きタブ）で表示する作品（GET /api/users/:id/works）
   def works
     # タブ項目「公開作品」「下書き」の判定
     is_public = params[:is_public]
@@ -29,12 +29,21 @@ class Api::UsersController < ApplicationController
     # 公開作品一覧（ユーザー情報を含ませる）
     works_with_user = user_works.includes(:user).order(created_at: :desc)
 
-    render json: { works: WorkIndexResource.new(works_with_user) }
+    render json: { works: WorkIndexResource.new(works_with_user).serializable_hash }
   end
 
   # GET /api/users/:id/liked_works
   def liked_works
-    # いいねした作品の取得実装
+    # マイページのいいね一覧（他人からのアクセスは制限する）
+    if @user != current_user
+      render json: { error: 'アクセス権限がありません' }, status: :forbidden
+      return
+    end
+
+    # いいねした作品一覧を取得（公開作品のみ）
+    liked_works = @user.liked_works.where(is_public: 'published').includes(:user).order('likes.created_at DESC')
+
+    render json: { works: WorkIndexResource.new(liked_works, current_user: current_user).serializable_hash }
   end
 
   # GET /api/users/:id/bookmarks

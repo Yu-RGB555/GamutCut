@@ -8,12 +8,12 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { LikeButton } from "@/components/LikeButton";
 import { UserCircle2Icon } from "lucide-react";
 
-interface PublishedWorksProps {
+interface LikesListProps {
   isActive: boolean;
   userId: number;
 }
 
-export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
+export function LikesList({ isActive, userId }: LikesListProps) {
   const { user } = useAuth();
   const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
 
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/works?is_public=0`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/liked_works`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

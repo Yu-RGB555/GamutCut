@@ -10,6 +10,7 @@ import {
   PenToolIcon,
   UserCircle2,
   LogOutIcon,
+  HeartIcon,
   BookmarkIcon,
   Edit2Icon,
   InfoIcon
@@ -152,11 +153,20 @@ export function Header() {
                         </li>
                         <li>
                           <button
+                            onClick={() => handleLinkClick('/mypage/likes')}
+                            className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
+                          >
+                            <HeartIcon className="w-6 h-6 mr-3" />
+                            <span className="text-xl font-medium">いいね一覧</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button
                             onClick={() => handleLinkClick('/mypage/bookmarks')}
                             className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
                           >
                             <BookmarkIcon className="w-6 h-6 mr-3" />
-                            <span className="text-xl font-medium">ブックマーク</span>
+                            <span className="text-xl font-medium">ブックマーク一覧</span>
                           </button>
                         </li>
                         <li>
