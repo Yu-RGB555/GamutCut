@@ -1,13 +1,17 @@
 'use client';
 
+import { useAuth } from "@/contexts/AuthContext";
 import { MyPageLayout } from "@/components/MyPageLayout";
+import { LikesList } from "@/components/LikesList";
 
 export default function LikesPage() {
+  const { user } = useAuth();
   return (
     <MyPageLayout>
-      <div className="flex justify-center items-center py-8">
-        <div className="text-gray-500">いいね機能は未実装です</div>
-      </div>
+      <LikesList
+        isActive={true}
+        userId={user?.id || 0}
+      />
     </MyPageLayout>
   );
 }
