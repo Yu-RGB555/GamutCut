@@ -5,10 +5,10 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { LikeButton } from "@/components/LikeButton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   UserCircle2Icon,
-  HeartIcon,
   BookmarkIcon,
   Share2Icon
 } from "lucide-react";
@@ -152,7 +152,11 @@ export default function ShowWorks() {
                 </div>
               </Link>
               <div className="flex gap-4 mx-4">
-                <HeartIcon className="text-error"/>
+                <LikeButton
+                  workId={work.id}
+                  initialLiked={work.is_liked_by_current_user}
+                  initialLikesCount={work.likes_count}
+                />
                 <BookmarkIcon />
                 <Share2Icon className="text-white rounded-sm hover:bg-muted"/>
               </div>

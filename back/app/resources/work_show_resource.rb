@@ -6,6 +6,16 @@ class WorkShowResource < BaseResource
 
   attributes :id, :title, :set_mask_data, :description, :is_public, :filename, :filesize
 
+  # いいね関連の情報
+  attribute :likes_count do |work|
+    work.likes.count
+  end
+
+  attribute :is_liked_by_current_user do |work|
+    current_user = @current_user
+    current_user ? current_user.likes.exists?(work: work) : false
+  end
+
   # カスタム属性: illustration_image_url
   attribute :illustration_image_url do |work|
     if work.illustration_image.attached?
@@ -27,5 +37,13 @@ class WorkShowResource < BaseResource
   # フォーマット済みの作成日時
   attribute :created_at do |work|
     work.created_at.strftime("%Y年%-m月%-d日 %H:%M")
+  end
+
+  private
+
+  # initializeをオーバーライドしてcurrent_userを保存
+  def initialize(resource, current_user: nil, **options)
+    @current_user = current_user
+    super(resource, **options)
   end
 end

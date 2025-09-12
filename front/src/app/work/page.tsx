@@ -7,6 +7,7 @@ import { Search } from "@/components/ui/search";
 import Link from "next/link";
 import { Work } from "@/types/work";
 import { getWorks } from "@/lib/api";
+import { LikeButton } from "@/components/LikeButton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   UserCircle2Icon,
@@ -20,13 +21,10 @@ export default function WorksList() {
   const [works, setWorks] = useState<Work[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log('Current user:', user); // デバッグ用
-
   useEffect(() => {
     const fetchWorks = async () => {
       try{
         const worksData = await getWorks();
-        console.log('workData:', worksData);
         setWorks(worksData);
       } catch (error) {
         console.error(error);
@@ -101,9 +99,19 @@ export default function WorksList() {
                   <p className="text-gray-400 text-xs">{work.created_at}</p>
                   <div className="flex gap-4 justify-end">
                     <MessageSquareTextIcon className="text-label" />
-                    <HeartIcon className="text-error"/>
+                    <LikeButton
+                      workId={work.id}
+                      initialLiked={work.is_liked_by_current_user}
+                      initialLikesCount={work.likes_count}
+                    />
                     <BookmarkIcon />
                   </div>
+                  {/* デバッグ用表示 - 開発時のみ */}
+                  {/* {process.env.NODE_ENV === 'development' && (
+                    <div className="text-xs text-red-500 mt-2">
+                      Debug: is_liked = {String(work.is_liked_by_current_user)}
+                    </div>
+                  )} */}
                 </div>
               </div>
             </div>
