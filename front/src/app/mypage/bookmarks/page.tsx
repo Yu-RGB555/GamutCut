@@ -1,13 +1,17 @@
 'use client';
 
+import { useAuth } from "@/contexts/AuthContext";
 import { MyPageLayout } from "@/components/MyPageLayout";
+import { BookmarksList } from "@/components/BookmarksList";
 
 export default function BookmarksPage() {
+  const { user } = useAuth();
   return (
     <MyPageLayout>
-      <div className="flex justify-center items-center py-8">
-        <div className="text-gray-500">ブックマーク機能は未実装です</div>
-      </div>
+      <BookmarksList
+        isActive={true}
+        userId={user?.id || 0}
+      />
     </MyPageLayout>
   );
 }

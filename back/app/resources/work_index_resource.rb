@@ -35,6 +35,12 @@ class WorkIndexResource < BaseResource
     current_user ? current_user.likes.exists?(work: work) : false
   end
 
+  # ブックマークした作品
+  attribute :is_bookmarked_by_current_user do |work|
+    current_user = @current_user
+    current_user ? current_user.bookmarks.exists?(work: work) : false
+  end
+
   # 相対時間での作成日時
   attribute :created_at do |work|
     self.time_ago_in_words_japanese(work.created_at)

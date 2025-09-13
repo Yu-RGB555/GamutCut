@@ -6,10 +6,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { LikeButton } from "@/components/LikeButton";
+import { BookmarkButton } from "@/components/BookmarkButton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   UserCircle2Icon,
-  BookmarkIcon,
   Share2Icon
 } from "lucide-react";
 import { Work } from "@/types/work";
@@ -157,7 +157,10 @@ export default function ShowWorks() {
                   initialLiked={work.is_liked_by_current_user}
                   initialLikesCount={work.likes_count}
                 />
-                <BookmarkIcon />
+                <BookmarkButton
+                  workId={work.id}
+                  initialBookmarked={work.is_bookmarked_by_current_user}
+                />
                 <Share2Icon className="text-white rounded-sm hover:bg-muted"/>
               </div>
             </div>

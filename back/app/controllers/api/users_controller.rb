@@ -48,7 +48,17 @@ class Api::UsersController < ApplicationController
 
   # GET /api/users/:id/bookmarks
   def bookmarks
-    # ブックマークした作品の取得実装
+    # マイページのブックマーク一覧（他人からのアクセスは制限する）
+		if @user != current_user
+			render json: { error: 'アクセス権限がありません' }, status: :forbidden
+			return
+		end
+
+		bookmarked_works = @user.bookmarked_works.where(is_public: 'published').includes(:user).order('bookmarks.created_at DESC')
+
+		render json: {
+      works: WorkIndexResource.new(bookmarked_works, current_user: current_user).serializable_hash
+    }
   end
 
   private

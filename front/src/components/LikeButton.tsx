@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { HeartIcon } from "lucide-react";
 import { toggleLike } from "@/lib/api";
@@ -39,7 +39,7 @@ export function LikeButton({ workId, initialLiked = false, initialLikesCount = 0
       className={`flex items-center gap-1 p-2 rounded-lg transition-colors ${
         !user
           ? 'opacity-50 cursor-not-allowed'
-          : 'hover:bg-gray-100 cursor-pointer'
+          : 'hover:cursor-pointer'
       }`}
     >
       <HeartIcon

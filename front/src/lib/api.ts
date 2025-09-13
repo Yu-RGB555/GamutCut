@@ -237,3 +237,20 @@ export async function toggleLike(workId: number, isLiked: boolean): Promise<{ li
 
   return response.json();
 }
+
+// ブックマーク追加・削除
+export async function toggleBookmark(workId: number, isBookmarked: boolean): Promise<{ bookmarked: boolean; message: string }> {
+  const method = isBookmarked ? 'DELETE' : 'POST';
+
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/bookmark`, {
+    method,
+    headers: getCommonHeaders(true, true),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('ブックマーク処理に失敗しました');
+  }
+
+  return response.json();
+}
