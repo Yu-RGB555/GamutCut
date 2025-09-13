@@ -11,6 +11,7 @@ export interface Work{
   is_public: string;
   likes_count?: number;
   is_liked_by_current_user?: boolean;
+  is_bookmarked_by_current_user?: boolean;
   user: {
     id: number;
     name: string;

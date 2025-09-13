@@ -6,14 +6,21 @@ class WorkShowResource < BaseResource
 
   attributes :id, :title, :set_mask_data, :description, :is_public, :filename, :filesize
 
-  # いいね関連の情報
+  # いいね数
   attribute :likes_count do |work|
     work.likes.count
   end
 
+  # いいねした産駒品
   attribute :is_liked_by_current_user do |work|
     current_user = @current_user
     current_user ? current_user.likes.exists?(work: work) : false
+  end
+
+  # ブックマークした作品
+  attribute :is_bookmarked_by_current_user do |work|
+    current_user = @current_user
+    current_user ? current_user.bookmarks.exists?(work: work) : false
   end
 
   # カスタム属性: illustration_image_url

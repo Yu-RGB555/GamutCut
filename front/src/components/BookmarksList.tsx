@@ -2,47 +2,86 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Combobox } from "@/components/ui/combobox";
-import { Search } from "@/components/ui/search";
-import Link from "next/link";
 import { Work } from "@/types/work";
-import { getWorks } from "@/lib/api";
-import { LikeButton } from "@/components/LikeButton";
-import { BookmarkButton } from "@/components/BookmarkButton";
+import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import {
-  UserCircle2Icon,
-  MessageSquareTextIcon
-} from "lucide-react";
+import { BookmarkButton } from "./BookmarkButton";
+import { UserCircle2Icon } from "lucide-react";
 
-export default function WorksList() {
+interface BookmarksListProps {
+  isActive: boolean;
+  userId: number;
+}
+
+export function BookmarksList({ isActive, userId }: BookmarksListProps) {
   const { user } = useAuth();
   const [works, setWorks] = useState<Work[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const getWorks = async () => {
+    if (!isActive || !userId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/bookmarks`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('作品の取得に失敗しました');
+      }
+
+      const data = await response.json();
+      setWorks(data.works || []);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '予期せぬエラーが発生しました');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchWorks = async () => {
-      try{
-        const worksData = await getWorks();
-        setWorks(worksData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (isActive) {
+      getWorks();
+    }
+  }, [isActive, userId]);
 
-    fetchWorks();
-  }, []);
+  if (!isActive) {
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-gray-500">読み込み中...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
+
+  if (works.length === 0) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-gray-500">ブックマークした作品がありません</div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="flex justify-center py-8 px-8">
-        <Search></Search>
-      </div>
-      <div className="flex justify-end py-8 px-8">
-        <Combobox></Combobox>
-      </div>
       <div className="px-8 pb-8 mb-32">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {works.map((work) => (
@@ -95,31 +134,19 @@ export default function WorksList() {
                       </p>
                     </div>
                   </Link>
+
                   <p className="text-gray-400 text-xs">{work.created_at}</p>
                   <div className="flex gap-4 justify-end">
-                    <MessageSquareTextIcon className="text-label" />
-                    <LikeButton
-                      workId={work.id}
-                      initialLiked={work.is_liked_by_current_user}
-                      initialLikesCount={work.likes_count}
-                    />
                     <BookmarkButton
                       workId={work.id}
                       initialBookmarked={work.is_bookmarked_by_current_user}
                     />
                   </div>
-                  {/* デバッグ用表示 - 開発時のみ */}
-                  {/* {process.env.NODE_ENV === 'development' && (
-                    <div className="text-xs text-red-500 mt-2">
-                      Debug: is_liked = {String(work.is_liked_by_current_user)}
-                    </div>
-                  )} */}
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
   );
 }

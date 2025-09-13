@@ -31,6 +31,8 @@ Rails.application.routes.draw do
           get :image  # 画像取得用エンドポイント
           post :like    # いいね追加
           delete :like  # いいね削除
+          post :bookmark    # ブックマーク追加
+          delete :bookmark  # ブックマーク削除
         end
       end
       resources :presets, only: [:index, :create, :update, :destroy]

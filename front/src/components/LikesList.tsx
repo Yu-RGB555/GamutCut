@@ -76,7 +76,7 @@ export function LikesList({ isActive, userId }: LikesListProps) {
   if (works.length === 0) {
     return (
       <div className="flex justify-center items-center py-8">
-        <div className="text-gray-500">公開作品がありません</div>
+        <div className="text-gray-500">いいねした作品がありません</div>
       </div>
     );
   }

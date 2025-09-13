@@ -3,6 +3,8 @@ class Work < ApplicationRecord
   belongs_to :preset, optional: true  # プリセットが削除されても作品は残る
   has_many :likes, dependent: :destroy
   has_many :liked_users, through: :likes, source: :user
+  has_many :bookmarks, dependent: :destroy
+  has_many :bookmarked_works, through: :bookmarks, source: :user
 
   has_one_attached :illustration_image
 

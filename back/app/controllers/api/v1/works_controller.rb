@@ -1,8 +1,8 @@
 class Api::V1::WorksController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy, :like]
+  before_action :authenticate_user!, only: [:create, :update, :destroy, :like, :bookmark]
   before_action :authenticate_user_optional!, only: [:index, :show]
   before_action :set_work, only: [:update, :destroy]
-  before_action :set_any_work, only: [:like]
+  before_action :set_any_work, only: [:like, :bookmark]
   before_action :check_owner, only: [:update, :destroy]
 
   def index
@@ -111,7 +111,7 @@ class Api::V1::WorksController < ApplicationController
     end
   end
 
-  # POST /api/v1/works/:id/like
+  # POST（DELETE） /api/v1/works/:id/like
   def like
     # 既にいいねしているかチェック
     existing_like = current_user.likes.find_by(work: @work)
@@ -146,6 +146,41 @@ class Api::V1::WorksController < ApplicationController
           }
         else
           render json: { errors: like.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+    end
+  end
+
+  # POST（DELETE） /api/v1/works/:id/bookmark
+  def bookmark
+    # すでにブックマークしているかチェック
+    existing_bookmark = current_user.bookmarks.find_by(work: @work)
+
+    if request.delete?
+      # DELETE の場合
+      if existing_bookmark
+        existing_bookmark.destroy
+          render json: {
+            bookmarked: false
+          }
+      else
+        render json: { error: '対象の作品はブックマークされていません'}, status: :not_found
+      end
+    else
+      # POST の場合
+      if existing_bookmark
+        render json: {
+          message: '既にブックマーク済みです',
+          bookmarked: true
+        }
+      else
+        bookmark = current_user.bookmarks.build(work: @work)
+        if bookmark.save
+          render json: {
+            bookmarked: true
+          }
+        else
+          render json: { errors: bookmark.errors.full_messages }, status: :unprocessable_entity
         end
       end
     end
