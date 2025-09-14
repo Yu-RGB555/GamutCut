@@ -73,7 +73,7 @@ export async function loginUser(userData: LoginRequest): Promise<LoginResponse> 
 export async function getWorks(): Promise<Work[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'GET',
-    headers: getCommonHeaders(true, true), // 認証ヘッダーを含める
+    headers: getCommonHeaders(true, false),
   });
 
   // JSONをパースせずにテキストで受け取る
@@ -81,6 +81,44 @@ export async function getWorks(): Promise<Work[]> {
 
   if(!response.ok){
     throw new Error('作品一覧の取得に失敗しました');
+  }
+
+  try {
+    const data = JSON.parse(text);
+    return data.works;
+  } catch (error) {
+    throw new Error('APIレスポンスがJSONではありません');
+  }
+}
+
+// 検索機能付き作品一覧取得
+export async function getWorksWithSearch(searchQuery?: string): Promise<Work[]> {
+  const params = new URLSearchParams();
+
+  if (searchQuery && searchQuery.trim()) {
+    const trimmedQuery = searchQuery.trim();
+
+    // 複数キーワード検索に対応
+    if (trimmedQuery.includes(' ') || trimmedQuery.includes('　')) {
+      // スペースが含まれる場合は複合キーワード検索
+      params.set('q[multi_keyword_search]', trimmedQuery);
+    } else {
+      // 単一キーワードの場合
+      params.set('q[title_or_user_name_cont]', trimmedQuery);
+    }
+  }
+
+  const url = `${API_BASE_URL}/api/v1/works${params.toString() ? `?${params.toString()}` : ''}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: getCommonHeaders(true, false),
+  });
+
+  const text = await response.text();
+
+  if (!response.ok) {
+    throw new Error('作品検索に失敗しました');
   }
 
   try {
