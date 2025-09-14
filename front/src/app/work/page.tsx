@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Combobox } from "@/components/ui/combobox";
 import { Search } from "@/components/ui/search";
 import Link from "next/link";
 import { Work } from "@/types/work";
-import { getWorks } from "@/lib/api";
+import { getWorks, getWorksWithSearch } from "@/lib/api";
 import { LikeButton } from "@/components/LikeButton";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -17,34 +18,82 @@ import {
 
 export default function WorksList() {
   const { user } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [works, setWorks] = useState<Work[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
+  // URLパラメータから初期検索クエリを取得
   useEffect(() => {
-    const fetchWorks = async () => {
-      try{
-        const worksData = await getWorks();
-        setWorks(worksData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (searchParams) {
+      const queryFromUrl = searchParams.get('q') || '';
+      setSearchQuery(queryFromUrl);
+    }
+  }, [searchParams]);
 
-    fetchWorks();
-  }, []);
+  const fetchWorks = async (query?: string) => {
+    setIsLoading(true);
+    try {
+      const worksData = query
+        ? await getWorksWithSearch(query)
+        : await getWorks();
+      setWorks(worksData);
+    } catch (error) {
+      console.error('作品取得エラー:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 初期表示とURLパラメータ変更時の処理
+  useEffect(() => {
+    fetchWorks(searchQuery);
+  }, [searchQuery]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+
+    // URLパラメータを更新
+    const newParams = new URLSearchParams();
+    if (query.trim()) {
+      newParams.set('q', query.trim());
+    }
+
+    const newUrl = newParams.toString()
+      ? `/work?${newParams.toString()}`
+      : '/work';
+
+    router.replace(newUrl);
+  };
 
   return (
     <div>
       <div className="flex justify-center py-8 px-8">
-        <Search></Search>
+        <Search onSearch={handleSearch} defaultValue={searchQuery} />
       </div>
       <div className="flex justify-end py-8 px-8">
         <Combobox></Combobox>
       </div>
       <div className="px-8 pb-8 mb-32">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        {isLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="text-gray-500">検索中...</div>
+          </div>
+        ) : works.length === 0 ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="text-gray-500">
+              {searchQuery ? '検索結果が見つかりませんでした' : '作品がありません'}
+            </div>
+          </div>
+        ) : (
+          <>
+            {searchQuery && (
+              <div className="text-center mb-6 text-gray-600">
+                「{searchQuery}」の検索結果: {works.length}件
+              </div>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {works.map((work) => (
             <div key={work.id} className="bg-background rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               {/* 作品画像エリア - 作品詳細へのリンク */}
@@ -118,7 +167,9 @@ export default function WorksList() {
               </div>
             </div>
           ))}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

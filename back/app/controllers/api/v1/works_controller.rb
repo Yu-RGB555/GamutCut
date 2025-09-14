@@ -6,9 +6,13 @@ class Api::V1::WorksController < ApplicationController
   before_action :check_owner, only: [:update, :destroy]
 
   def index
-    @works = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob])
-                .where(is_public: 'published')
-                .order(created_at: :desc)
+    # Ransackを使用した検索・ソート機能
+    base_query = Work.where(is_public: 'published')
+    @q = base_query.ransack(search_params)
+
+    # 検索結果を取得（重複回避のため、最後にincludesを適用）
+    @works = @q.result.includes([:user, :illustration_image_attachment, :illustration_image_blob])
+              .order(created_at: :desc)
 
     render json: {
       works: WorkIndexResource.new(@works, current_user: current_user).serializable_hash
@@ -215,6 +219,20 @@ class Api::V1::WorksController < ApplicationController
         errors: ['この作品を編集する権限がありません']
       }, status: :forbidden
     end
+  end
+
+  # Ransack用に許可する検索パラメータ
+  def search_params
+    permitted_params = params[:q]&.permit(
+      :title_or_user_name_cont,
+      :title_or_user_name_multi_cont,
+      :title_cont,
+      :user_name_cont,
+      :multi_keyword_search,
+      :s
+    ) || {}
+
+    permitted_params
   end
 
   def work_params

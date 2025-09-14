@@ -14,6 +14,11 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 8 }, format: { with: /\A[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+\z/ }, if: :password_required?
   validates :bio, length: { maximum: 300 }
 
+  # Ransackで検索可能な属性を明示的に定義
+  def self.ransackable_attributes(auth_object = nil)
+    ["name", "created_at", "updated_at"]
+  end
+
   def self.from_omniauth(auth)
     Rails.logger.debug "auth_info: #{auth.info}"
     # ソーシャルアカウントから既存ユーザーを検索
