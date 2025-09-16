@@ -40,7 +40,6 @@ class Work < ApplicationRecord
 
     # 各キーワードに対して作品名またはユーザー名のいずれかにマッチする条件を作成
     conditions = keywords.map do |keyword|
-      sanitized_keyword = "%#{keyword}%"
       <<-SQL
         (works.title ILIKE ? OR users.name ILIKE ?)
       SQL
