@@ -17,6 +17,17 @@ import {
   isPointInPolygon,
   toAbsolutePoints
 } from '@/lib/maskUtils';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface MaskMakingProps {
   onSaveSuccess: () => Promise<void>;
@@ -47,6 +58,10 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
   const [selectedMask, setSelectedMask] = useState<MaskWithScale[]>([]); // 頂点座標(初期状態)、スケール
   const [selectedMaskIndex, setSelectedMaskIndex] = useState<number>(0); // 表示マスクのインデックス
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // プリセット名入力ダイアログの状態
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [presetName, setPresetName] = useState('');
 
   // ドラッグ関連の状態
   const [isDragging, setIsDragging] = useState(false);
@@ -261,8 +276,14 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
     setSelectedMask(selectedMask.slice(0, -1));
   };
 
-  // プリセット保存
-  const handleMaskSave = async () => {
+  // プリセット保存ダイアログを開く
+  const handleMaskSave = () => {
+    setPresetName('名称未設定');
+    setIsSaveDialogOpen(true);
+  };
+
+  // プリセット保存を実行する
+  const executePresetSave = async () => {
     try {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -289,7 +310,7 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
       // プリセットデータの作成
       const presetData: Preset = {
         id: Date.now(), // 一時的なID（API側で上書き）
-        name: `プリセット ${new Date().toLocaleString('ja-JP')}`,
+        name: presetName,
         mask_data: {
           value: currentValue,
           masks: currentMasks,
@@ -301,12 +322,20 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
       showAlert(response.message);
       console.log('プリセットを保存しました');
 
-      // プリセット一覧を更新（エラーが発生しなかった場合のみ）
+      // ダイアログを閉じて、プリセット一覧を更新
+      setIsSaveDialogOpen(false);
+      setPresetName('');
       await onSaveSuccess();
     } catch (error) {
       console.error('プリセット保存エラー:', error);
       showAlert('マスクの保存に失敗しました');
     }
+  };
+
+  // プリセット保存をキャンセル
+  const cancelPresetSave = () => {
+    setIsSaveDialogOpen(false);
+    setPresetName('');
   };
 
   // 拡大縮小
@@ -322,79 +351,120 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
   }, [currentValue, selectedMask]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 ">
-      <div className="justify-items-center space-y-8">
-        <div className="relative">
-          <canvas
-            ref={canvasRef}
-            width={400}
-            height={400}
-            className="cursor-crosshair"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-          />
-          <canvas
-            ref={hiddenCanvasRef}
-            style={{ display: 'none' }}
-          />
-          <div className="absolute top-1 left-1">
-            <ColorInfoPanel colorInfo={colorInfo}/>
-          </div>
-          <div className="justify-items-end mt-2">
-            <ExportControls
-              selectedMaskLength={selectedMask.length}
-              onMaskExport={handleMaskExport}
-              onMaskSave={handleMaskSave}
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 ">
+        <div className="justify-items-center space-y-8">
+          <div className="relative">
+            <canvas
+              ref={canvasRef}
+              width={400}
+              height={400}
+              className="cursor-crosshair"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
             />
-          </div>
-          <div className="w-full space-y-2">
-            <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
-            <div className="flex items-center gap-4">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={currentValue}
-                onChange={(e) => setCurrentValue(parseInt(e.target.value))}
-                className="w-1/3 h-2
-                  accent-cyan-400
-                  backdrop-blur-md
-                  bg-white/30
-                  rounded-lg
-                  shadow-md
-                  hover: cursor-pointer
-                  [&::-webkit-slider-thumb]:w-6
-                  [&::-webkit-slider-thumb]:h-6
-                  [&::-webkit-slider-thumb]:bg-white/80
-                  [&::-webkit-slider-thumb]:backdrop-blur-sm
-                  [&::-webkit-slider-thumb]:border-2
-                  [&::-webkit-slider-thumb]:border-cyan-400
-                  [&::-webkit-slider-thumb]:shadow-lg
-                  hover:[&::-webkit-slider-thumb]:bg-cyan-200
-                  transition-all duration-200"
+            <canvas
+              ref={hiddenCanvasRef}
+              style={{ display: 'none' }}
+            />
+            <div className="absolute top-1 left-1">
+              <ColorInfoPanel colorInfo={colorInfo}/>
+            </div>
+            <div className="justify-items-end mt-2">
+              <ExportControls
+                selectedMaskLength={selectedMask.length}
+                onMaskExport={handleMaskExport}
+                onMaskSave={handleMaskSave}
               />
-              <span className="text-center">{currentValue}%</span>
+            </div>
+            <div className="w-full space-y-2">
+              <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={currentValue}
+                  onChange={(e) => setCurrentValue(parseInt(e.target.value))}
+                  className="w-1/3 h-2
+                    accent-cyan-400
+                    backdrop-blur-md
+                    bg-white/30
+                    rounded-lg
+                    shadow-md
+                    hover: cursor-pointer
+                    [&::-webkit-slider-thumb]:w-6
+                    [&::-webkit-slider-thumb]:h-6
+                    [&::-webkit-slider-thumb]:bg-white/80
+                    [&::-webkit-slider-thumb]:backdrop-blur-sm
+                    [&::-webkit-slider-thumb]:border-2
+                    [&::-webkit-slider-thumb]:border-cyan-400
+                    [&::-webkit-slider-thumb]:shadow-lg
+                    hover:[&::-webkit-slider-thumb]:bg-cyan-200
+                    transition-all duration-200"
+                />
+                <span className="text-center">{currentValue}%</span>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* コントロールパネル */}
+        <div className="w-full max-w-2xl space-y-8">
+          <MaskControls
+            shapeTemplates={shapeTemplates}
+            selectedMask={selectedMask}
+            selectedMaskIndex={selectedMaskIndex}
+            isDialogOpen={isDialogOpen}
+            onDialogOpenChange={setIsDialogOpen}
+            onMaskSelect={handleMaskSelect}
+            onMaskDelete={handleMaskDelete}
+            onMaskIndexChange={setSelectedMaskIndex}
+            onScaleChange={handleScaleChange}
+          />
+        </div>
       </div>
 
-      {/* コントロールパネル */}
-      <div className="w-full max-w-2xl space-y-8">
-        <MaskControls
-          shapeTemplates={shapeTemplates}
-          selectedMask={selectedMask}
-          selectedMaskIndex={selectedMaskIndex}
-          isDialogOpen={isDialogOpen}
-          onDialogOpenChange={setIsDialogOpen}
-          onMaskSelect={handleMaskSelect}
-          onMaskDelete={handleMaskDelete}
-          onMaskIndexChange={setSelectedMaskIndex}
-          onScaleChange={handleScaleChange}
-        />
-      </div>
-    </div>
+      {/* プリセット名入力ダイアログ */}
+      <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Myマスクに保存</DialogTitle>
+            <DialogDescription>
+              プリセットの名前を入力してください
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="preset-name">プリセット名</Label>
+              <Input
+                id="preset-name"
+                value={presetName}
+                onChange={(e) => setPresetName(e.target.value)}
+                placeholder="名称未設定"
+                maxLength={50}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={cancelPresetSave}
+            >
+              キャンセル
+            </Button>
+            <Button 
+              onClick={executePresetSave}
+              disabled={!presetName.trim()}
+              className="bg-primary hover:bg-mouseover"
+            >
+              保存
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

@@ -238,6 +238,21 @@ export async function deletePreset(presetId: number): Promise<{ message: string}
   return response.json();
 }
 
+// Myマスク名更新
+export async function updatePreset(presetId: number, name: string): Promise<{ message: string}> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/presets/${presetId}`, {
+    method: 'PATCH',
+    headers: getCommonHeaders(true, true),
+    body: JSON.stringify({ name })
+  });
+
+  if (!response.ok) {
+    throw new Error('マスク名の更新に失敗しました');
+  }
+
+  return response.json();
+}
+
 // Myマスク一覧取得
 export async function getPresets(): Promise<Preset[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/presets`, {
