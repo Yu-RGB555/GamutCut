@@ -61,5 +61,8 @@ ja:
     preset:
       create:
         success: "Myマスクに保存されました"
+      update:
+        success: "Myマスクのタイトルが変更されました"
+        failure: "Myマスクのタイトルの更新に失敗しました"
       destroy:
         success: "Myマスクから削除されました"

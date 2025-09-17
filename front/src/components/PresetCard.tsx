@@ -1,11 +1,12 @@
-import React, { useRef, useEffect } from 'react';
-import { Trash2Icon } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { Trash2Icon, Edit2Icon, CheckIcon, XIcon } from 'lucide-react';
 import { Preset } from '@/types/preset';
 import { ColorWheelDrawer } from '@/lib/colorWheelDrawer';
 import { MaskDrawer } from '@/lib/MaskDrawer';
 import { Point } from '@/types/gamut';
-import { deletePreset } from '@/lib/api';
+import { deletePreset, updatePreset } from '@/lib/api';
 import { useAlert } from '@/contexts/AlertContext';
+import { Input } from '@/components/ui/input';
 
 interface PresetCardProps {
   preset: Preset;
@@ -16,6 +17,11 @@ interface PresetCardProps {
 export function PresetCard({ preset, onDeleteSuccess, showDeleteButton = true }: PresetCardProps) {
   const { showAlert } = useAlert();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // 編集状態を管理
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(preset.name);
+
   const CARD_CANVAS_SIZE = 200;   // キャンバスサイズ(プレビュー用)
 
   // 描画インスタンス
@@ -92,6 +98,48 @@ export function PresetCard({ preset, onDeleteSuccess, showDeleteButton = true }:
     }
   }
 
+  // 編集開始
+  const startEditing = () => {
+    setIsEditing(true);
+    setEditedName(preset.name);
+  };
+
+  // 編集キャンセル
+  const cancelEditing = () => {
+    setIsEditing(false);
+    setEditedName(preset.name);
+  };
+
+  // 名前保存
+  const saveName = async () => {
+    if (editedName.trim() === '') {
+      showAlert('Myマスクのタイトルを入力してください');
+      return;
+    }
+
+    try {
+      const response = await updatePreset(preset.id, editedName.trim());
+      showAlert(response.message);
+      setIsEditing(false);
+      // 親コンポーネントのMyマスク一覧を更新
+      if (onDeleteSuccess) {
+        onDeleteSuccess();
+      }
+    } catch (error) {
+      console.error('プリセット名更新エラー:', error);
+      showAlert('Myマスクのタイトルの更新に失敗しました');
+    }
+  };
+
+  // Enterキーで保存
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveName();
+    } else if (e.key === 'Escape') {
+      cancelEditing();
+    }
+  };
+
   // 初回レンダリング時に描画
   useEffect(() => {
     drawPreset();
@@ -100,18 +148,47 @@ export function PresetCard({ preset, onDeleteSuccess, showDeleteButton = true }:
   return (
     <div className="bg-background border p-4 rounded-lg">
       <div className="flex flex-col">
-        <div className="flex justify-between w-full items-center">
-          <p className=" text-gray-300 font-medium">
-            {preset.name.length > 15
-              ? `${preset.name.slice(0, 15)}...`
-              : preset.name
-            }
-          </p>
-          {showDeleteButton && (
-            <Trash2Icon
-              onClick={() => removePreset(preset.id)}
-              className="text-destructive w-5 h-5 hover:cursor-pointer"
-            />
+        <div className="flex justify-between w-full items-center mb-2">
+          {isEditing ? (
+            <div className="flex items-center gap-2 flex-1">
+              <Input
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="text-sm"
+                maxLength={50}
+                autoFocus
+              />
+              <CheckIcon
+                onClick={saveName}
+                className="text-green-500 w-4 h-4 hover:cursor-pointer flex-shrink-0"
+              />
+              <XIcon
+                onClick={cancelEditing}
+                className="text-gray-500 w-4 h-4 hover:cursor-pointer flex-shrink-0"
+              />
+            </div>
+          ) : (
+            <>
+              <p className="text-gray-300 font-medium flex-1 truncate">
+                {preset.name.length > 15
+                  ? `${preset.name.slice(0, 15)}...`
+                  : preset.name
+                }
+              </p>
+              <div className="flex gap-1">
+                <Edit2Icon
+                  onClick={startEditing}
+                  className="text-gray-400 w-4 h-4 hover:cursor-pointer hover:text-gray-200"
+                />
+                {showDeleteButton && (
+                  <Trash2Icon
+                    onClick={() => removePreset(preset.id)}
+                    className="text-destructive w-4 h-4 hover:cursor-pointer"
+                  />
+                )}
+              </div>
+            </>
           )}
         </div>
         <canvas

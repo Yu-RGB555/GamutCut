@@ -1,5 +1,5 @@
 class Api::V1::PresetsController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :index, :destroy]
+  before_action :authenticate_user!, only: [:create, :update, :index, :destroy]
 
   def index
     @presets = current_user.presets
@@ -21,6 +21,19 @@ class Api::V1::PresetsController < ApplicationController
     end
   end
 
+  def update
+    @preset = current_user.presets.find(params[:id])
+    if @preset.update(update_params)
+      render json: {
+        message: I18n.t('api.preset.update.success')
+      }, status: :ok
+    else
+      render json: {
+        message: I18n.t('api.preset.update.failure')
+      }, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     @preset = current_user.presets.find(params[:id])
     @preset.destroy
@@ -37,5 +50,9 @@ class Api::V1::PresetsController < ApplicationController
         { masks: [ { originalPoints: [ :x, :y ] }, :scale ] }
       ]
     )
+  end
+
+  def update_params
+    params.permit(:name)
   end
 end
