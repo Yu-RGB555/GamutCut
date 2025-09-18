@@ -63,4 +63,24 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem 'dotenv-rails'
+
+  # RSpec for Rails
+  gem 'rspec-rails'
+
+  # Factory Bot for test data
+  gem 'factory_bot_rails'
+
+  # Faker for generating fake data
+  gem 'faker'
+end
+
+group :test do
+  # Shoulda matchers for better RSpec syntax
+  gem 'shoulda-matchers'
+
+  # SimpleCov for code coverage
+  gem 'simplecov', require: false
+
+  # Database cleaner for test isolation
+  gem 'database_cleaner-active_record'
 end
