@@ -1,5 +1,7 @@
 # app/controllers/health_check_controller.rb
 class HealthCheckController < ApplicationController
+  skip_before_action :authenticate_user_from_token!
+
   def index
     render json: {
       status: 'ok',
