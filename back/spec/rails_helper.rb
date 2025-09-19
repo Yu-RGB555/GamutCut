@@ -1,9 +1,20 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
+
+# CRITICAL: Force test environment to prevent accidental data loss
+ENV['RAILS_ENV'] = 'test'
+
 require_relative '../config/environment'
-# Prevent database truncation if the environment is production
+
+# Prevent database truncation if the environment is production OR development
 abort("The Rails environment is running in production mode!") if Rails.env.production?
+abort("CRITICAL: Test is running in development environment! This could cause data loss!") if Rails.env.development?
+
+# Ensure we're actually in test environment
+unless Rails.env.test?
+  abort("CRITICAL: Rails environment is '#{Rails.env}' but should be 'test'. Aborting to prevent data loss!")
+end
+
 require 'rspec/rails'
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -36,7 +47,7 @@ end
 
 RSpec.configure do |config|
   # We're using FactoryBot instead of fixtures, so fixture_path is not needed
-  
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
@@ -72,12 +83,28 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::IntegrationHelpers, type: :request
 
-  # Database cleaner configuration
+  # Database cleaner configuration - SAFE SETTINGS
   config.before(:suite) do
+    # Only allow database cleaning in test environment
+    unless Rails.env.test?
+      abort("CRITICAL: Attempting to run database cleaner in '#{Rails.env}' environment!")
+    end
+
+    # Verify we're connected to test database
+    db_name = ActiveRecord::Base.connection.current_database
+    unless db_name.include?('test') || db_name.include?('_test')
+      abort("CRITICAL: Connected to database '#{db_name}' which doesn't appear to be a test database!")
+    end
+
     DatabaseCleaner.clean_with(:truncation)
   end
 
   config.before(:each) do
+    # Double-check environment before each test
+    unless Rails.env.test?
+      abort("CRITICAL: Test trying to run in '#{Rails.env}' environment!")
+    end
+
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.start
   end
