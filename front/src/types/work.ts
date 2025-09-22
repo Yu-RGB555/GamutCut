@@ -1,4 +1,5 @@
 import { MaskData } from "./mask";
+import { Tag } from "./tag";
 
 export interface Work{
   id: number;
@@ -12,6 +13,7 @@ export interface Work{
   likes_count?: number;
   is_liked_by_current_user?: boolean;
   is_bookmarked_by_current_user?: boolean;
+  tags?: Tag[]; // タグ配列を追加
   user: {
     id: number;
     name: string;
