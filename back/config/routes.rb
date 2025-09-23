@@ -35,6 +35,13 @@ Rails.application.routes.draw do
           delete :bookmark  # ブックマーク削除
         end
       end
+
+      resources :tags, only: [:index] do
+        collection do
+          get :popular # 人気タグ
+        end
+      end
+
       resources :presets, only: [:index, :create, :update, :destroy]
     end
   end
