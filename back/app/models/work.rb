@@ -5,6 +5,8 @@ class Work < ApplicationRecord
   has_many :liked_users, through: :likes, source: :user
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_works, through: :bookmarks, source: :user
+  has_many :work_tags, dependent: :destroy
+  has_many :tags, through: :work_tags
 
   has_one_attached :illustration_image
 
