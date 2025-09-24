@@ -20,7 +20,7 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def create
-    @work = current_user.works.build(work_params.except(:illustration_image))
+    @work = current_user.works.build(work_params.except(:illustration_image, :tags))
 
     if params[:work][:illustration_image].present?
       # アップロードされたファイルオブジェクトを直接参照
@@ -35,6 +35,11 @@ class Api::V1::WorksController < ApplicationController
     end
 
     if @work.save
+      # タグの処理
+      if params[:work][:tags].present?
+        attach_tags_to_work(@work, params[:work][:tags])
+      end
+
       render json: {
         message: I18n.t('api.work.create.success')
       }, status: :created
@@ -46,7 +51,7 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def show
-    @work = Work.includes([:user, :illustration_image_attachment, :illustration_image_blob]).find_by(id: params[:id])
+    @work = Work.includes([:user, :tags, :illustration_image_attachment, :illustration_image_blob]).find(params[:id])
 
     render json: WorkShowResource.new(@work, current_user: current_user)
   end
@@ -236,7 +241,7 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def work_params
-    permitted_params = params.require(:work).permit(:title, :description, :is_public, :illustration_image, :filename, :filesize, :set_mask_data, :remove_illustration_image)
+    permitted_params = params.require(:work).permit(:title, :description, :is_public, :illustration_image, :filename, :filesize, :set_mask_data, :remove_illustration_image, tags: [])
 
     # is_public(string)を数値に変換
     if permitted_params[:is_public].present?
@@ -255,5 +260,22 @@ class Api::V1::WorksController < ApplicationController
     end
 
     permitted_params
+  end
+
+  # タグを作品に関連付けるプライベートメソッド
+  def attach_tags_to_work(work, tag_names)
+    return unless tag_names.is_a?(Array)
+
+    tag_names.each do |tag_name|
+      next if tag_name.blank?
+
+      # find_or_create_byでタグを取得または作成
+      tag = Tag.find_or_create_by(name: tag_name.strip)
+
+      # 重複チェックして作品にタグを関連付け
+      unless work.tags.include?(tag)
+        work.tags << tag
+      end
+    end
   end
 end
