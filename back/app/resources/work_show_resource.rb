@@ -11,7 +11,7 @@ class WorkShowResource < BaseResource
     work.likes.count
   end
 
-  # いいねした産駒品
+  # いいねした作品
   attribute :is_liked_by_current_user do |work|
     current_user = @current_user
     current_user ? current_user.likes.exists?(work: work) : false
@@ -21,6 +21,16 @@ class WorkShowResource < BaseResource
   attribute :is_bookmarked_by_current_user do |work|
     current_user = @current_user
     current_user ? current_user.bookmarks.exists?(work: work) : false
+  end
+
+  # 付与したタグ
+  attribute :tags do |work|
+    work.tags.map do |tag|
+      {
+        id: tag.id,
+        name: tag.name
+      }
+    end
   end
 
   # カスタム属性: illustration_image_url
