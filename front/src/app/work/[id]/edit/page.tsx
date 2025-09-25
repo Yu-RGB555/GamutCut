@@ -17,6 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { TagInput } from "@/components/TagInput";
 import { X, AlertCircleIcon } from 'lucide-react';
 import { DropZone } from "@/components/ui/dropzone";
 import { Input } from "@/components/ui/input";
@@ -67,6 +68,7 @@ export default function EditWorks() {
   const [isAuthChecked, setIsAuthChecked] = useState(false); // 認証チェック完了フラグ
   const [isImageRemoved, setIsImageRemoved] = useState(false); // 画像削除フラグ
   const [isPublic, setIsPublic] = useState(true);
+  const [tags, setTags] = useState<string[]>([]);
 
   // 認証チェック
   useEffect(() => {
@@ -106,10 +108,14 @@ export default function EditWorks() {
           description: workData.description
         });
 
+        if (workData.tags) {
+          const tagNames = workData.tags.map((tag) => tag.name);
+          setTags(tagNames);
+        }
+
         if(workData.is_public === "draft"){
           setIsPublic(false);
         }
-        console.log('isPublic: ', workData.is_public);
 
         if(workData.set_mask_data){
           setPresetData({
@@ -228,6 +234,15 @@ export default function EditWorks() {
       submitData.append('work[title]', formData.title);
       submitData.append('work[description]', formData.description);
 
+      // タグ
+      if (tags.length > 0) {
+        tags.forEach((tag) => {
+          submitData.append('work[tags][]', tag);
+        });
+      } else {
+        submitData.append('work[tags][]', '');
+      }
+
       const publicStatus: PublicStatus = isDraft ? 2 : 0;
       submitData.append('work[is_public]', publicStatus.toString());
 
@@ -319,16 +334,6 @@ export default function EditWorks() {
         <div className="flex items-center">
           <h1 className="text-label text-4xl font-extrabold">作品編集</h1>
         </div>
-        <div className="flex items-center gap-x-2">
-          {/* <Button variant="default">更新</Button> */}
-          {/* <Button
-            variant="outline"
-            onClick={(e) => handleSubmit(e, true)}
-            disabled={isLoading}
-          >
-            下書き保存
-          </Button> */}
-        </div>
       </div>
       <form>
         <div className="flex flex-col">
@@ -403,10 +408,6 @@ export default function EditWorks() {
                 required
               />
             </div>
-            {/* <div>
-              <Label className="text-label font-semibold mb-2">タグ</Label>
-              <Input></Input>
-            </div> */}
             <div>
               <Label className="text-label font-semibold mb-2">作品説明</Label>
               <Textarea
@@ -414,6 +415,14 @@ export default function EditWorks() {
                 value={formData.description}
                 onChange={(e)=> handleInputChange('description', e.target.value)}
                 placeholder="最大300文字まで"
+              />
+            </div>
+            <div>
+              <TagInput
+                tags={tags}
+                onTagsChange={setTags}
+                maxTags={5}
+                maxTagLength={20}
               />
             </div>
           </div>

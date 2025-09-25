@@ -58,11 +58,10 @@ class Api::V1::WorksController < ApplicationController
 
   def update
     # work_paramsからremove_illustration_image(削除フラグ)を除外してupdate
-    update_params = work_params.except(:remove_illustration_image)
+    update_params = work_params.except(:remove_illustration_image, :tags)
 
     # 画像削除フラグがある場合の処理
     if params[:work][:remove_illustration_image] == 'true'
-      Rails.logger.info "Attempt to remove required illustration_image"
       render json: {
         errors: ['イラスト作品がアップロードされていません']
       }, status: :unprocessable_entity
@@ -79,6 +78,11 @@ class Api::V1::WorksController < ApplicationController
 
     # 通常の更新処理
     if @work.update(update_params)
+      # タグの更新処理（空配列でも処理する）
+      if params[:work][:tags]
+        update_tags_for_work(@work, params[:work][:tags])
+      end
+
       render json: {
         message: I18n.t('api.work.update.success')
       }, status: :ok
@@ -262,14 +266,14 @@ class Api::V1::WorksController < ApplicationController
     permitted_params
   end
 
-  # タグを作品に関連付けるプライベートメソッド
+  # タグを作品に関連付けるプライベートメソッド（作成時用）
   def attach_tags_to_work(work, tag_names)
     return unless tag_names.is_a?(Array)
 
     tag_names.each do |tag_name|
       next if tag_name.blank?
 
-      # find_or_create_byでタグを取得または作成
+      # find_or_create_byでタグを検索または作成
       tag = Tag.find_or_create_by(name: tag_name.strip)
 
       # 重複チェックして作品にタグを関連付け
@@ -277,5 +281,22 @@ class Api::V1::WorksController < ApplicationController
         work.tags << tag
       end
     end
+  end
+
+  # タグを更新するプライベートメソッド（更新時用）
+  def update_tags_for_work(work, tag_names)
+    return unless tag_names.is_a?(Array)
+
+    # 更新されたタグを検索または作成
+    new_tags = []
+    tag_names.each do |tag_name|
+      next if tag_name.blank?
+
+      tag = Tag.find_or_create_by(name: tag_name.strip)
+      new_tags << tag
+    end
+
+    # work_tagsテーブルの登録タグを上書き（既存タグを全て削除し、新しいタグに置き換える）
+    work.tags = new_tags
   end
 end
