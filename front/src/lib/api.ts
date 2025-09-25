@@ -101,7 +101,7 @@ export async function getWorksWithSearch(searchQuery?: string, tagName?: string)
 
     // 複数キーワード検索に対応
     if (trimmedQuery.includes(' ') || trimmedQuery.includes('　')) {
-      // スペースが含まれる場合は複合キーワード検索
+      // スペースが含まれる場合は複合キーワードとして検索
       params.set('q[multi_keyword_search]', trimmedQuery);
     } else {
       // 単一キーワードの場合

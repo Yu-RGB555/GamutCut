@@ -1,10 +1,12 @@
 import { SearchIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { useState, FormEvent } from "react"
+import { useState, FormEvent, useEffect } from "react"
 
 interface SearchProps {
   placeholder?: string;
   onSearch?: (query: string) => void;
+  onChange?: (query: string) => void;
+  value?: string;
   defaultValue?: string;
   className?: string;
 }
@@ -12,21 +14,46 @@ interface SearchProps {
 export function Search({
   placeholder = "作品タイトル、クリエイターで検索",
   onSearch,
+  onChange,
+  value,    // valueが提供されているかで制御/非制御を自動判定
   defaultValue = "",
   className = ""
 }: SearchProps) {
-  const [query, setQuery] = useState(defaultValue);
+  const [internalQuery, setInternalQuery] = useState(defaultValue);
+
+  // 制御コンポーネントか非制御コンポーネントかを判定
+  const isControlled = value !== undefined;
+  const currentValue = isControlled ? value : internalQuery;
+
+  // valueが変更された時に内部状態を同期（制御モード時）
+  useEffect(() => {
+    if (isControlled) {
+      setInternalQuery(value);
+    }
+  }, [value, isControlled]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = e.target.value;
+
+    if (!isControlled) {
+      setInternalQuery(newQuery);
+    }
+
+    if (onChange) {
+      onChange(newQuery);
+    }
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (onSearch) {
-      onSearch(query);
+      onSearch(currentValue);
     }
   };
 
   const handleIconClick = () => {
     if (onSearch) {
-      onSearch(query);
+      onSearch(currentValue);
     }
   };
 
@@ -36,8 +63,8 @@ export function Search({
         <Input
           type="text"
           placeholder={placeholder}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={currentValue}
+          onChange={handleInputChange}
           className="pl-10 pr-4"
         />
         <button

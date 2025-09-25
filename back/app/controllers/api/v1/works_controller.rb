@@ -36,7 +36,7 @@ class Api::V1::WorksController < ApplicationController
 
     if @work.save
       # タグの処理
-      if params[:work][:tags].present?
+      if params[:work][:tags]
         attach_tags_to_work(@work, params[:work][:tags])
       end
 
@@ -238,6 +238,8 @@ class Api::V1::WorksController < ApplicationController
       :title_cont,
       :user_name_cont,
       :multi_keyword_search,
+      :tags_name_eq,  # タグの完全一致検索
+      :tags_name_cont, # タグの部分一致検索
       :s
     ) || {}
 

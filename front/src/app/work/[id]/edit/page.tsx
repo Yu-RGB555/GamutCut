@@ -395,6 +395,7 @@ export default function EditWorks() {
                 onOpenChange={setIsPresetDialogOpen}
                 onSelect={setPresetData}
                 showDeleteButton={false}
+                showEditButton={false}
               />
             </div>
           </div>

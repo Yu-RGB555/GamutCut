@@ -23,9 +23,9 @@ class Work < ApplicationRecord
     ["title", "description", "created_at", "updated_at", "user_id", "is_public"]
   end
 
-  # Ransackで検索可能なユーザー情報は、Userモデルを介するために以下のように定義
+  # Ransackで検索可能な情報（ユーザーとタグ）を許可するためにモデルを指定
   def self.ransackable_associations(auth_object = nil)
-    ["user"]
+    ["user", "tags"]
   end
 
   # 複合キーワード検索用のカスタムスコープ
