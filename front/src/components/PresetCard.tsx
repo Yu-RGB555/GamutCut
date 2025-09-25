@@ -11,16 +11,18 @@ import { Input } from '@/components/ui/input';
 interface PresetCardProps {
   preset: Preset;
   onDeleteSuccess?: () => void;
+  showEditButton?: boolean;
   showDeleteButton?: boolean;
 }
 
-export function PresetCard({ preset, onDeleteSuccess, showDeleteButton = true }: PresetCardProps) {
+export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, showDeleteButton = true }: PresetCardProps) {
   const { showAlert } = useAlert();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 編集状態を管理
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(preset.name);
+  const [isComposing, setIsComposing] = useState(false); // IME変換中フラグ
 
   const CARD_CANVAS_SIZE = 200;   // キャンバスサイズ(プレビュー用)
 
@@ -133,11 +135,21 @@ export function PresetCard({ preset, onDeleteSuccess, showDeleteButton = true }:
 
   // Enterキーで保存
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isComposing) { // IME変換中でない場合のみ追加
       saveName();
     } else if (e.key === 'Escape') {
       cancelEditing();
     }
+  };
+
+  // IME変換開始
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  // IME変換終了
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
   };
 
   // 初回レンダリング時に描画
@@ -155,6 +167,8 @@ export function PresetCard({ preset, onDeleteSuccess, showDeleteButton = true }:
                 value={editedName}
                 onChange={(e) => setEditedName(e.target.value)}
                 onKeyDown={handleKeyDown}
+                onCompositionStart={handleCompositionStart} // IME変換開始
+                onCompositionEnd={handleCompositionEnd}     // IME変換終了
                 className="text-sm"
                 maxLength={50}
                 autoFocus
@@ -177,10 +191,12 @@ export function PresetCard({ preset, onDeleteSuccess, showDeleteButton = true }:
                 }
               </p>
               <div className="flex gap-1">
-                <Edit2Icon
-                  onClick={startEditing}
-                  className="text-gray-400 w-4 h-4 hover:cursor-pointer hover:text-gray-200"
-                />
+                {showEditButton && (
+                  <Edit2Icon
+                    onClick={startEditing}
+                    className="text-gray-400 w-4 h-4 hover:cursor-pointer hover:text-gray-200"
+                  />
+                )}
                 {showDeleteButton && (
                   <Trash2Icon
                     onClick={() => removePreset(preset.id)}
