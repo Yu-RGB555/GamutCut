@@ -25,6 +25,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PresetPreview } from "@/components/PresetPreview";
 import { PresetSelectDialog } from "@/components/PresetSelectDialog";
+import { TagInput } from "@/components/TagInput";
 import { postWork } from "@/lib/api";
 import { AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -42,6 +43,7 @@ export default function PostWorks() {
     title: '',
     description: '',
   });
+  const [tags, setTags] = useState<string[]>([]);
   const [presetData, setPresetData] = useState<Preset | null>(null);
   const [isPresetDialogOpen, setIsPresetDialogOpen] = useState(false);
   const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
@@ -105,6 +107,15 @@ export default function PostWorks() {
         submitData.append('work[illustration_image]', illustrationFile);
       }
 
+      if (tags.length > 0) {
+        tags.forEach((tag) => {
+          submitData.append(`work[tags][]`, tag);
+        });
+      } else {
+        submitData.append(`work[tags][]`, '');
+      }
+
+
       submitData.append('work[set_mask_data]', JSON.stringify(presetData?.mask_data));
 
       const response = await postWork(submitData);
@@ -163,14 +174,6 @@ export default function PostWorks() {
             <h1 className="text-label text-4xl font-extrabold">作品投稿</h1>
           </div>
           <div className="flex items-center gap-x-2">
-            {/* <Button variant="destructive">削除</Button> */}
-            {/* <Button
-              variant="outline"
-              onClick={(e) => handleSubmit(e, true)}
-              disabled={isLoading}
-            >
-              下書き保存
-            </Button> */}
           </div>
         </div>
         <form>
@@ -239,6 +242,7 @@ export default function PostWorks() {
                   onOpenChange={setIsPresetDialogOpen}
                   onSelect={setPresetData}
                   showDeleteButton={false}
+                  showEditButton={false}
                 />
               </div>
             </div>
@@ -255,10 +259,6 @@ export default function PostWorks() {
                   required
                 />
               </div>
-              {/* <div>
-                <Label className="text-label font-semibold mb-2">タグ</Label>
-                <Input></Input>
-              </div> */}
               <div>
                 <Label className="text-label font-semibold mb-2">作品説明</Label>
                 <Textarea
@@ -266,6 +266,14 @@ export default function PostWorks() {
                   value={formData.description}
                   onChange={(e)=> handleInputChange('description', e.target.value)}
                   placeholder="最大300文字まで"
+                />
+              </div>
+              <div>
+                <TagInput
+                  tags={tags}
+                  onTagsChange={setTags}
+                  maxTags={5}
+                  maxTagLength={20}
                 />
               </div>
             </div>
