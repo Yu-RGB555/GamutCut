@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { LikeButton } from "@/components/LikeButton";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   UserCircle2Icon,
   Share2Icon
@@ -164,7 +165,28 @@ export default function ShowWorks() {
                 <Share2Icon className="text-white rounded-sm hover:bg-muted"/>
               </div>
             </div>
-          {/* <div className="text-label font-semibold mb-2"> タグ </div> */}
+          {/* タグ表示エリア */}
+          {work.tags && work.tags.length > 0 && (
+            <div className="mt-4">
+              <Label className="text-label font-semibold mb-3 block">タグ</Label>
+              <div className="flex flex-wrap gap-2">
+                {work.tags.map((tag) => (
+                  <Link
+                    key={tag.id}
+                    href={`/work?tag=${encodeURIComponent(tag.name)}`}
+                    className="transition-transform hover:scale-105"
+                  >
+                    <Badge
+                      variant="outline"
+                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                    >
+                      {tag.name}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="text-label">{work.description}</div>
         </div>
         <div className="mb-40"></div>

@@ -22,6 +22,7 @@ export function TagInput({
 }: TagInputProps) {
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
+  const [isComposing, setIsComposing] = useState(false); // IME変換中フラグ
 
   const addTag = (tagName: string) => {
     const trimmedTag = tagName.trim();
@@ -59,10 +60,20 @@ export function TagInput({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isComposing) { // IME変換中でない場合のみ追加
       e.preventDefault();
       addTag(inputValue);
     }
+  };
+
+  // IME変換開始
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  // IME変換終了
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
   };
 
   const handleAddButtonClick = () => {
@@ -80,11 +91,11 @@ export function TagInput({
 
       {/* タグ表示エリア */}
       {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 border border-gray-300 rounded-md bg-gray-50 min-h-[50px]">
+        <div className="flex flex-wrap gap-2 p-3 min-h-[50px]">
           {tags.map((tag, index) => (
             <Badge
               key={index}
-              variant="secondary"
+              variant="outline"
               className="flex items-center gap-1 px-2 py-1"
             >
               {tag}
@@ -110,6 +121,8 @@ export function TagInput({
             setError('');
           }}
           onKeyDown={handleKeyDown}
+          onCompositionStart={handleCompositionStart} // IME変換開始
+          onCompositionEnd={handleCompositionEnd}     // IME変換終了
           placeholder="タグを入力してEnterキーまたは追加ボタンを押してください"
           maxLength={maxTagLength}
           disabled={tags.length >= maxTags}
