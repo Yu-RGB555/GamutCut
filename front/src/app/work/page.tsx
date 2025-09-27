@@ -25,6 +25,7 @@ function WorksListContent() {
   const [works, setWorks] = useState<Work[]>([]);
   const [popularTags, setPopularTags] = useState<Tag[]>([]);
   const [selectedTag, setSelectedTag] = useState<string>('');
+  const [sortTerm, setSortTerm] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isInitialized, setIsInitialized] = useState(false);
@@ -34,16 +35,18 @@ function WorksListContent() {
     if (searchParams) {
       const queryFromUrl = searchParams.get('q') || '';
       const tagFromUrl = searchParams.get('tag') || '';
+      const sortFromUrl = searchParams.get('sort') || '';
 
       setSearchQuery(queryFromUrl);
       setSelectedTag(tagFromUrl);
+      setSortTerm(sortFromUrl);
 
       // URLパラメータに基づいて即座に作品を取得
       const fetchInitialWorks = async () => {
         setIsLoading(true);
         try {
-          const worksData = queryFromUrl || tagFromUrl
-            ? await getWorksWithSearch(queryFromUrl, tagFromUrl)
+          const worksData = queryFromUrl || tagFromUrl || sortFromUrl
+            ? await getWorksWithSearch(queryFromUrl, tagFromUrl, sortFromUrl)
             : await getWorks();
           setWorks(worksData);
         } catch (error) {
@@ -71,11 +74,11 @@ function WorksListContent() {
     fetchPopularTags();
   }, []);
 
-  const fetchWorks = async (query?: string, tagName?: string) => {
+  const fetchWorks = async (query?: string, tagName?: string, sortTerm?: string) => {
     setIsLoading(true);
     try {
-      const worksData = query || tagName
-        ? await getWorksWithSearch(query, tagName)
+      const worksData = query || tagName || sortTerm
+        ? await getWorksWithSearch(query, tagName, sortTerm)
         : await getWorks();
       setWorks(worksData);
     } catch (error) {
@@ -88,9 +91,9 @@ function WorksListContent() {
   // 初期化完了後のstate変更時のみ作品を再取得
   useEffect(() => {
     if (isInitialized) {
-      fetchWorks(searchQuery, selectedTag);
+      fetchWorks(searchQuery, selectedTag, sortTerm);
     }
-  }, [searchQuery, selectedTag, isInitialized]);
+  }, [searchQuery, selectedTag, sortTerm, isInitialized]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -124,6 +127,28 @@ function WorksListContent() {
       newParams.set('tag', tagName);
       router.replace(`/work?${newParams.toString()}`);
     }
+  };
+
+  const handleSortChange = (sortValue: string) => {
+    setSortTerm(sortValue);
+
+    // URLパラメータを更新
+    const newParams = new URLSearchParams();
+    if (searchQuery.trim()) {
+      newParams.set('q', searchQuery.trim());
+    }
+    if (selectedTag) {
+      newParams.set('tag', selectedTag);
+    }
+    if (sortValue) {
+      newParams.set('sort', sortValue);
+    }
+
+    const newUrl = newParams.toString()
+      ? `/work?${newParams.toString()}`
+      : '/work';
+
+    router.replace(newUrl);
   };
 
   return (
@@ -163,7 +188,10 @@ function WorksListContent() {
       )}
 
       <div className="flex justify-end py-8 px-8">
-        <Combobox></Combobox>
+        <Combobox 
+          value={sortTerm} 
+          onChange={handleSortChange}
+        />
       </div>
       <div className="px-8 pb-8 mb-32">
         {isLoading ? (
