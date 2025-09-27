@@ -93,7 +93,7 @@ export async function getWorks(): Promise<Work[]> {
 }
 
 // 検索機能付き作品一覧取得
-export async function getWorksWithSearch(searchQuery?: string, tagName?: string): Promise<Work[]> {
+export async function getWorksWithSearch(searchQuery?: string, tagName?: string, sortTerm?: string): Promise<Work[]> {
   const params = new URLSearchParams();
 
   if (searchQuery && searchQuery.trim()) {
@@ -112,6 +112,11 @@ export async function getWorksWithSearch(searchQuery?: string, tagName?: string)
   // タグフィルタリング
   if (tagName && tagName.trim()) {
     params.set('q[tags_name_eq]', tagName.trim());
+  }
+
+  // 並べ替え
+  if (sortTerm) {
+    params.set('q[sort_term_name_eq]', sortTerm);
   }
 
   const url = `${API_BASE_URL}/api/v1/works${params.toString() ? `?${params.toString()}` : ''}`;
@@ -323,21 +328,6 @@ export async function getPopularTags(limit: number = 10): Promise<Tag[]> {
 
   if (!response.ok) {
     throw new Error('人気タグの取得に失敗しました');
-  }
-
-  const data = await response.json();
-  return data.tags || [];
-}
-
-// 全タグ一覧取得
-export async function getAllTags(): Promise<Tag[]> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/tags`, {
-    method: 'GET',
-    headers: getCommonHeaders(false, false),
-  });
-
-  if (!response.ok) {
-    throw new Error('タグ一覧の取得に失敗しました');
   }
 
   const data = await response.json();

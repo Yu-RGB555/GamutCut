@@ -10,9 +10,12 @@ class Api::V1::WorksController < ApplicationController
     base_query = Work.where(is_public: 'published')
     @q = base_query.ransack(search_params)
 
-    # 検索結果を取得（重複回避のため、最後にincludesを適用）
-    @works = @q.result.includes([:user, :illustration_image_attachment, :illustration_image_blob])
-              .order(created_at: :desc)
+    # 基本のクエリ結果を取得
+    works_query = @q.result.includes([:user, :illustration_image_attachment, :illustration_image_blob])
+
+    # 並び順の処理
+    sort_term = params.dig(:q, :sort_term_name_eq)
+    @works = apply_sort_order(works_query, sort_term)
 
     render json: {
       works: WorkIndexResource.new(@works, current_user: current_user).serializable_hash
@@ -240,6 +243,7 @@ class Api::V1::WorksController < ApplicationController
       :multi_keyword_search,
       :tags_name_eq,  # タグの完全一致検索
       :tags_name_cont, # タグの部分一致検索
+      :sort_term_name_eq, # 並べ替え
       :s
     ) || {}
 
@@ -300,5 +304,25 @@ class Api::V1::WorksController < ApplicationController
 
     # work_tagsテーブルの登録タグを上書き（既存タグを全て削除し、新しいタグに置き換える）
     work.tags = new_tags
+  end
+
+  # 並び順を適用するメソッド
+  def apply_sort_order(works_query, sort_term)
+    case sort_term
+    when 'evaluation'
+      # 人気順: いいね数の降順（LEFT JOINとCOUNTを使用）
+      works_query.left_joins(:likes)
+                .group('works.id')
+                .order('COUNT(likes.id) DESC, works.created_at DESC')
+    when 'upload_desc'
+      # 新しい順: 作成日時の降順
+      works_query.order(created_at: :desc)
+    when 'upload_asc'
+      # 古い順: 作成日時の昇順
+      works_query.order(created_at: :asc)
+    else
+      # デフォルト: 新しい順
+      works_query.order(created_at: :desc)
+    end
   end
 end

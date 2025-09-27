@@ -21,18 +21,41 @@ import {
 
 const frameworks = [
   {
-    value: "upload",
-    label: "アップロード順",
+    value: "evaluation",
+    label: "人気順",
   },
   {
-    value: "evaluation",
-    label: "評価順",
+    value: "upload_desc",
+    label: "新しい順",
+  },
+  {
+    value: "upload_asc",
+    label: "古い順",
   },
 ]
 
-export function Combobox() {
+interface ComboboxProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+  className?: string;
+}
+
+export function Combobox({ 
+  value = "", 
+  onChange, 
+  placeholder = "並べ替え",
+  className = ""
+}: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+
+  const handleSelect = (currentValue: string) => {
+    const newValue = currentValue === value ? "" : currentValue;
+    if (onChange) {
+      onChange(newValue);
+    }
+    setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -41,28 +64,23 @@ export function Combobox() {
           variant="secondary"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between font-light"
+          className={cn("w-[200px] justify-between font-light", className)}
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
-            : "並べ替え"}
+            : placeholder}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          {/* <CommandInput placeholder="Search framework..." className="h-9" /> */}
           <CommandList>
-            {/* <CommandEmpty>No framework found.</CommandEmpty> */}
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
                   key={framework.value}
                   value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
-                  }}
+                  onSelect={() => handleSelect(framework.value)}
                   className="hover:cursor-pointer"
                 >
                   {framework.label}
