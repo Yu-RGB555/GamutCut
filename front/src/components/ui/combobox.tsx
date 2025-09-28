@@ -41,9 +41,9 @@ interface ComboboxProps {
   className?: string;
 }
 
-export function Combobox({ 
-  value = "", 
-  onChange, 
+export function Combobox({
+  value = "",
+  onChange,
   placeholder = "並べ替え",
   className = ""
 }: ComboboxProps) {

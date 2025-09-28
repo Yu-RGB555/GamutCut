@@ -188,8 +188,8 @@ function WorksListContent() {
       )}
 
       <div className="flex justify-end py-8 px-8">
-        <Combobox 
-          value={sortTerm} 
+        <Combobox
+          value={sortTerm}
           onChange={handleSortChange}
         />
       </div>
