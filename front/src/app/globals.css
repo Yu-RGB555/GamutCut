@@ -69,7 +69,15 @@
   --border: #757575;                           /* ボーダー色（ライン用） */
   --btn-border: #87EE0C;                       /* ボーダー色（ボタン用） */
   --input: #dfdfdf;                            /* インプット枠線色 */
-  --ring: #97FF60;                             /* フォーカス時のリング色 */                             --sidebar: hsl(0 0% 98%);                             --sidebar-foreground: hsl(240 5.3% 26.1%);                             --sidebar-primary: hsl(240 5.9% 10%);                             --sidebar-primary-foreground: hsl(0 0% 98%);                             --sidebar-accent: hsl(240 4.8% 95.9%);                             --sidebar-accent-foreground: hsl(240 5.9% 10%);                             --sidebar-border: hsl(220 13% 91%);                             --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --ring: #97FF60;                             /* フォーカス時のリング色 */
+  --sidebar: #202020;
+  --sidebar-foreground: #87EE0C;
+  --sidebar-primary: hsl(240 5.9% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: #3B3D40;
+  --sidebar-accent-foreground: #87EE0C;
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 @layer base {

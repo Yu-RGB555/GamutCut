@@ -6,14 +6,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import {
-  Image,
-  PenToolIcon,
   UserCircle2,
   LogOutIcon,
   HeartIcon,
   BookmarkIcon,
   Edit2Icon,
-  InfoIcon
+  HelpCircleIcon
 } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import {
@@ -72,7 +70,7 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 bg-background shadow-sm transition-all duration-300 ease-in-out
+      className={`fixed top-0 left-0 right-0 z-40 bg-background shadow-sm transition-all duration-300 ease-in-out
         ${showBorder ? "border-b" : ""}
         ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
     >
@@ -85,23 +83,7 @@ export function Header() {
             </Link>
           </div>
 
-          {/* ナビゲーション */}
-          <nav className="flex space-x-2 md:space-x-8">
-            <Link href="/work" className="text-foreground hover:text-mouseover font-semibold">
-              <div className="flex items-center">
-                <Image className="w-5 h-5 mr-1" />
-                <span>作品一覧</span>
-              </div>
-            </Link>
-            <Link href="/work/new" className="text-foreground hover:text-mouseover font-semibold">
-              <div className="flex items-center">
-                <PenToolIcon className="w-5 h-5 mr-1" />
-                <span>作品投稿</span>
-              </div>
-            </Link>
-          </nav>
-
-          {/* 認証ボタン */}
+          {/* 認証・ユーザーメニューのみ */}
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
@@ -119,7 +101,7 @@ export function Header() {
                       <SheetTitle className="w-65">
                         <button
                           onClick={() => handleLinkClick('/mypage')}
-                          className="flex items-center p-3 w-full text-left  rounded-sm hover:bg-muted hover:cursor-pointer transition-colors"
+                          className="flex items-center p-3 w-full text-left rounded-sm hover:bg-muted hover:cursor-pointer transition-colors"
                         >
                           <Avatar className="mr-3 w-12 h-12">
                             <AvatarImage src={user?.avatar_url} />
@@ -174,7 +156,7 @@ export function Header() {
                             onClick={() => handleLinkClick('#')}
                             className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
                           >
-                            <InfoIcon className="w-6 h-6 mr-3" />
+                            <HelpCircleIcon className="w-6 h-6 mr-3" />
                             <span className="text-xl font-medium">使い方</span>
                           </button>
                         </li>
