@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 const tabs = [
@@ -17,6 +17,7 @@ interface MyPageLayoutProps {
 
 export function MyPageLayout({ children }: MyPageLayoutProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   // パスからアクティブなタブを判定
   const getActiveIndex = () => {
