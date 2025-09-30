@@ -23,7 +23,6 @@ import { BackButton } from "@/components/BackButton";
 export default function ShowWorks() {
   const router = useRouter();
   const params = useParams();
-  const searchParams = useSearchParams();
   const id = params?.id;
   const { user } = useAuth();
   const { showAlert } = useAlert();

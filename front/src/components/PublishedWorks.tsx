@@ -22,7 +22,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
   // マイページからの遷移用のfromパラメータを生成（戻るボタン用）
   const getFromParam = () => {
     if (pathname && pathname.startsWith('/mypage')) {
-      // 先頭の'/'を削除してパスをエンコード（例: '/mypage/drafts' → 'mypage/drafts'）
+      // 先頭の'/'を削除してパスをエンコード（'/mypage' → 'mypage'）
       return `?from=${encodeURIComponent(pathname.slice(1))}`;
     }
     return '';
