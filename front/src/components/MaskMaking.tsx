@@ -96,8 +96,12 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const displayX = e.clientX - rect.left;
+    const displayY = e.clientY - rect.top;
+
+    // 表示サイズからCanvas内部座標に変換
+    const x = (displayX / rect.width) * canvas.width;
+    const y = (displayY / rect.height) * canvas.height;
 
     // 頂点ドラッグ判定
     for (let maskIdx = 0; maskIdx < selectedMask.length; maskIdx++) {
@@ -130,8 +134,12 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const displayX = e.clientX - rect.left;
+    const displayY = e.clientY - rect.top;
+
+    // 表示サイズからCanvas内部座標に変換
+    const x = (displayX / rect.width) * canvas.width;
+    const y = (displayY / rect.height) * canvas.height;
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
@@ -157,7 +165,7 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
       });
     }
 
-    // 頂点ドラッグ処理
+    // 1. 頂点ドラッグ処理
     if (isDragging && dragMaskIndex !== -1 && dragPointIndex !== -1) {
       const updatedMasks = selectedMask.map((mask, idx) => {
         if (idx === dragMaskIndex) {
@@ -176,10 +184,11 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
         return mask;
       });
       setSelectedMask(updatedMasks);
+      canvas.style.cursor = 'grabbing';  // 頂点ドラッグ中のカーソル設定
       return; // 頂点ドラッグ時は他の処理をしない
     }
 
-    // 図形全体ドラッグ処理
+    // 2. 図形全体ドラッグ処理
     if (draggingMaskIndex !== -1 && lastMousePos) {
       const dx = x - lastMousePos.x;
       const dy = y - lastMousePos.y;
@@ -194,21 +203,37 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
       });
       setSelectedMask(updatedMasks);
       setLastMousePos({ x, y });
-      return;
+      canvas.style.cursor = 'all-scroll';  // マスク全体移動中のカーソル設定
+      return; // マスク全体移動中は他の処理をしない
     }
 
-    // カーソルスタイル変更
+    // カーソルスタイル変更（ドラッグ操作以外の場合）
     if (!isDragging) {
-      let found = false;
+      let foundPoint = false; // マスク頂点の判定
+      let foundMask = false;  // マスク領域の判定
+
       selectedMask.forEach(mask => {
         const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
         const pointIndex = findClosestPoint(x, y, scaledPoints);
-        if (pointIndex !== -1) found = true;
+        if (pointIndex !== -1) foundPoint = true;
+
+        // マスク内部判定
+        if (isPointInPolygon(x, y, scaledPoints)) {
+          foundMask = true;
+        }
       });
-      canvas.style.cursor = found ? 'pointer' : 'default';
+
+      if (foundPoint) {
+        canvas.style.cursor = 'grab';  // 頂点付近
+      } else if (foundMask) {
+        canvas.style.cursor = 'all-scroll';  // マスク内部
+      } else {
+        canvas.style.cursor = 'default';  // マスク外
+      }
     }
   };
 
+  // マウス操作の状態リセット
   const handleMouseUp = () => {
     setIsDragging(false);
     setDragPointIndex(-1);
@@ -352,14 +377,14 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 ">
-        <div className="justify-items-center space-y-8">
-          <div className="relative">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 mt-6 lg:mt-12">
+        <div className="justify-items-center space-y-4 lg:space-y-8">
+          <div className="relative w-full max-w-[400px]">
             <canvas
               ref={canvasRef}
               width={400}
               height={400}
-              className="cursor-crosshair"
+              className="bg-card rounded-md w-full h-auto max-w-[400px] max-h-[400px]"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -369,7 +394,7 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
               ref={hiddenCanvasRef}
               style={{ display: 'none' }}
             />
-            <div className="absolute top-1 left-1">
+            <div className="absolute top-0 left-0">
               <ColorInfoPanel colorInfo={colorInfo}/>
             </div>
             <div className="justify-items-end mt-2">
@@ -381,14 +406,14 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
             </div>
             <div className="w-full space-y-2">
               <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                 <input
                   type="range"
                   min="0"
                   max="100"
                   value={currentValue}
                   onChange={(e) => setCurrentValue(parseInt(e.target.value))}
-                  className="w-1/3 h-2
+                  className="w-full sm:w-1/3 h-2
                     accent-cyan-400
                     backdrop-blur-md
                     bg-white/30
@@ -412,7 +437,7 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
         </div>
 
         {/* コントロールパネル */}
-        <div className="w-full max-w-2xl space-y-8">
+        <div className="w-full max-w-2xl space-y-4 lg:space-y-8">
           <MaskControls
             shapeTemplates={shapeTemplates}
             selectedMask={selectedMask}
@@ -449,13 +474,13 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
             </div>
           </div>
           <DialogFooter>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={cancelPresetSave}
             >
               キャンセル
             </Button>
-            <Button 
+            <Button
               onClick={executePresetSave}
               disabled={!presetName.trim()}
               className="bg-primary hover:bg-mouseover"

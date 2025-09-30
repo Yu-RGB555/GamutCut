@@ -90,7 +90,7 @@ export function AppSidebar() {
       <SidebarContent>
         {/* メインナビゲーション */}
         <SidebarGroup>
-          <SidebarGroupLabel>メニュー</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-label">メニュー</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -110,7 +110,7 @@ export function AppSidebar() {
 
         {/* ユーティリティ */}
         <SidebarGroup>
-          <SidebarGroupLabel>その他</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-label">その他</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {utilityItems.map((item) => (
