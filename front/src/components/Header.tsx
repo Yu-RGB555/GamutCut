@@ -24,6 +24,30 @@ import {
   SheetTrigger,
 } from './ui/sheet';
 
+// ユーザーメニュー項目の定義
+const userMenuItems = [
+  {
+    title: "下書き",
+    url: "/mypage/drafts",
+    icon: Edit2Icon,
+  },
+  {
+    title: "いいね一覧",
+    url: "/mypage/likes",
+    icon: HeartIcon,
+  },
+  {
+    title: "ブックマーク一覧",
+    url: "/mypage/bookmarks",
+    icon: BookmarkIcon,
+  },
+  {
+    title: "使い方",
+    url: "#",
+    icon: HelpCircleIcon,
+  },
+];
+
 export function Header() {
   const { user, logout, isAuthenticated } = useAuth();
   const router = useRouter();
@@ -124,42 +148,17 @@ export function Header() {
 
                     <div className="flex-1 px-8 py-4">
                       <ul className="space-y-2">
-                        <li>
-                          <button
-                            onClick={() => handleLinkClick('/mypage/drafts')}
-                            className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
-                          >
-                            <Edit2Icon className="w-6 h-6 mr-3" />
-                            <span className="text-xl font-medium">下書き</span>
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            onClick={() => handleLinkClick('/mypage/likes')}
-                            className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
-                          >
-                            <HeartIcon className="w-6 h-6 mr-3" />
-                            <span className="text-xl font-medium">いいね一覧</span>
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            onClick={() => handleLinkClick('/mypage/bookmarks')}
-                            className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
-                          >
-                            <BookmarkIcon className="w-6 h-6 mr-3" />
-                            <span className="text-xl font-medium">ブックマーク一覧</span>
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            onClick={() => handleLinkClick('#')}
-                            className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
-                          >
-                            <HelpCircleIcon className="w-6 h-6 mr-3" />
-                            <span className="text-xl font-medium">使い方</span>
-                          </button>
-                        </li>
+                        {userMenuItems.map((item) => (
+                          <li key={item.title}>
+                            <button
+                              onClick={() => handleLinkClick(item.url)}
+                              className="flex items-center w-full p-3 rounded-lg hover:bg-muted hover:cursor-pointer transition-colors text-left"
+                            >
+                              <item.icon className="w-6 h-6 mr-3" />
+                              <span className="text-xl font-medium">{item.title}</span>
+                            </button>
+                          </li>
+                        ))}
                       </ul>
                     </div>
 
