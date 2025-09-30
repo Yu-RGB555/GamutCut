@@ -47,14 +47,14 @@ const SlideInAlert: React.FC<SlideInAlertProps> = ({
   if (!shouldRender) return null;
 
   return (
-    <div className="fixed top-24 left-4 z-50">
+    <div className="fixed top-24 right-4 z-50">
       <Alert
         className={`
           bg-card border-ring border-1 text-foreground shadow-lg min-w-80 max-w-md
           transform transition-all duration-300 ease-out
           ${isAnimating
             ? 'translate-x-0 opacity-100'
-            : '-translate-x-full opacity-0'
+            : 'translate-x-full opacity-0'
           }`
         }
       >

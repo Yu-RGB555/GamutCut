@@ -17,7 +17,7 @@ const AlertContainer: React.FC = () => {
       message={latestAlert.message}
       isVisible={true}
       onClose={() => hideAlert(latestAlert.id)}
-      duration={3000}
+      duration={3500}
     />
   );
 };
