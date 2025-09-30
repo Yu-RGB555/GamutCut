@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -18,15 +18,19 @@ import { deleteWork, showWork } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import { PresetPreview } from "@/components/PresetPreview";
+import { BackButton } from "@/components/BackButton";
 
 export default function ShowWorks() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = params?.id;
   const { user } = useAuth();
   const { showAlert } = useAlert();
   const [work, setWork] = useState<Work | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+
 
   useEffect(() => {
     if (!id) return;
@@ -80,7 +84,11 @@ export default function ShowWorks() {
   }
 
   return (
-    <div className="m-16">
+    <div className="mx-16 mt-12 mb-16">
+      {/* 戻るボタン */}
+      <div>
+        <BackButton />
+      </div>
       {/* アラート(デバッグ用) */}
       {/* <div className="mb-4 p-4 bg-card rounded">
         <p className="text-sm text-label mb-2">アラートテスト用（開発中のみ）</p>
@@ -96,8 +104,7 @@ export default function ShowWorks() {
           </Button>
         </div>
       </div> */}
-
-      <div className="flex justify-between">
+      <div className="flex justify-between items-start mb-6">
         <div className="flex items-center">
         </div>
         {user && work.user.id === user.id && (

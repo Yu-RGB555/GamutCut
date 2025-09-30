@@ -44,11 +44,11 @@ export default function Home() {
   }, [isAuthenticated]);
 
   return (
-    <div className="justify-items-center mx-16 mb-40 space-y-8">
+    <div className="justify-items-center mx-4 sm:mx-8 lg:mx-16 mb-40 space-y-8">
       {isLoading ? (
         <div className="text-center">読み込み中...</div>
       ) : (
-        <div className="grid grid-cols-1 gap-y-32">
+        <div className="grid grid-cols-1 gap-y-16 lg:gap-y-32">
           <MaskMaking onSaveSuccess={fetchPresetsAfterSave} />
           <div className="space-y-8">
             <h3 className="text-label text-left text-lg font-semibold">Myマスク一覧</h3>
