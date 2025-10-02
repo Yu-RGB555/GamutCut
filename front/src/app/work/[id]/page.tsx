@@ -19,6 +19,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import { PresetPreview } from "@/components/PresetPreview";
 import { BackButton } from "@/components/BackButton";
+import { CommentList } from "@/components/CommentList";
 
 export default function ShowWorks() {
   const router = useRouter();
@@ -195,6 +196,16 @@ export default function ShowWorks() {
           )}
           <div className="text-label">{work.description}</div>
         </div>
+
+        {/* コメントセクション */}
+        <div className="mt-20 pt-8">
+          <CommentList
+            workId={work.id}
+            isPreview={false}
+            incrementStep={5}  // 段階的表示の増分数
+          />
+        </div>
+
         <div className="mb-40"></div>
       </div>
     </div>

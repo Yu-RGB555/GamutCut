@@ -2,6 +2,7 @@ import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '
 import { Work } from '@/types/work';
 import { Preset } from '@/types/preset';
 import { Tag } from '@/types/tag';
+import { Comment, CommentDetail, CreateCommentRequest, CreateCommentResponse, DeleteCommentResponse } from '@/types/comment';
 
 // API_URLの取得
 const getApiBaseUrl = (): string => {
@@ -332,4 +333,69 @@ export async function getPopularTags(limit: number = 10): Promise<Tag[]> {
 
   const data = await response.json();
   return data.tags || [];
+}
+
+// === コメント関連のAPI ===
+
+// コメント一覧取得
+export async function getComments(workId: number): Promise<Comment[]> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments`, {
+    method: 'GET',
+    headers: getCommonHeaders(true, false),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('コメントの取得に失敗しました');
+  }
+
+  return response.json();
+}
+
+// コメント投稿
+export async function createComment(workId: number, commentData: CreateCommentRequest): Promise<CreateCommentResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments`, {
+    method: 'POST',
+    headers: getCommonHeaders(true, true),
+    body: JSON.stringify({ comment: commentData }),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message || 'コメントの投稿に失敗しました');
+  }
+
+  return response.json();
+}
+
+// コメント削除
+export async function deleteComment(workId: number, commentId: number): Promise<DeleteCommentResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments/${commentId}`, {
+    method: 'DELETE',
+    headers: getCommonHeaders(true, true),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message || 'コメントの削除に失敗しました');
+  }
+
+  return response.json();
+}
+
+// 単体コメント詳細取得（通知機能用）
+export async function getCommentDetail(commentId: number): Promise<CommentDetail> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/comments/${commentId}`, {
+    method: 'GET',
+    headers: getCommonHeaders(true, false),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('コメントの取得に失敗しました');
+  }
+
+  return response.json();
 }

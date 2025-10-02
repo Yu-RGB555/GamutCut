@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :liked_works, through: :likes, source: :work
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_works, through: :bookmarks, source: :work
+  has_many :comments, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 20 }
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
