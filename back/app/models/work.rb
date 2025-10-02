@@ -7,6 +7,7 @@ class Work < ApplicationRecord
   has_many :bookmarked_works, through: :bookmarks, source: :user
   has_many :work_tags, dependent: :destroy
   has_many :tags, through: :work_tags
+  has_many :comments, dependent: :destroy
 
   has_one_attached :illustration_image
 

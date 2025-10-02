@@ -27,6 +27,9 @@ Rails.application.routes.draw do
 
     namespace :v1 do
       resources :works, only: [:index, :show, :create, :update, :destroy] do
+        # 作品に紐づくコメント
+        resources :comments, only: [:index, :create, :update, :destroy]
+
         member do
           get :image  # 画像取得用エンドポイント
           post :like    # いいね追加
@@ -43,6 +46,9 @@ Rails.application.routes.draw do
       end
 
       resources :presets, only: [:index, :create, :update, :destroy]
+
+      # 通知機能用の単体コメント取得
+      resources :comments, only: [:show]
     end
   end
 end
