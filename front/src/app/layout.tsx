@@ -7,6 +7,7 @@ import { AlertProvider } from '@/contexts/AlertContext';
 import AlertContainer from '@/components/AlertContainer';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: 'GamutCut - ガマットマスク制作サイト',
@@ -19,23 +20,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-background">
         <AuthProvider>
           <AlertProvider>
-            <SidebarProvider>
-              <div className="flex min-h-screen min-w-screen">
-                {/* サイドバー */}
-                <AppSidebar />
+            <TooltipProvider>
+              <SidebarProvider>
+                <div className="flex min-h-screen min-w-screen">
+                  {/* サイドバー */}
+                  <AppSidebar />
 
-                {/* メインコンテンツエリア */}
-                <div className="flex-1 flex flex-col">
-                  <Header />
-                  <main className="flex-1 pt-16">
-                    <SidebarTrigger  className="fixed left-4 top-20 z-50 border border-md md:hidden"/>
-                    {children}
-                  </main>
-                  <Footer />
+                  {/* メインコンテンツエリア */}
+                  <div className="flex-1 flex flex-col">
+                    <Header />
+                    <main className="flex-1 pt-16">
+                      <SidebarTrigger  className="fixed left-4 top-20 z-50 border border-md md:hidden"/>
+                      {children}
+                    </main>
+                    <Footer />
+                  </div>
                 </div>
-              </div>
-              <AlertContainer />
-            </SidebarProvider>
+                <AlertContainer />
+              </SidebarProvider>
+            </TooltipProvider>
           </AlertProvider>
         </AuthProvider>
       </body>
