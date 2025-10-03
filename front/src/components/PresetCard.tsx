@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Trash2Icon, Edit2Icon, CheckIcon, XIcon } from 'lucide-react';
 import { Preset } from '@/types/preset';
@@ -7,6 +9,7 @@ import { Point } from '@/types/gamut';
 import { deletePreset, updatePreset } from '@/lib/api';
 import { useAlert } from '@/contexts/AlertContext';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface PresetCardProps {
   preset: Preset;
@@ -162,7 +165,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
       <div className="flex flex-col">
         <div className="flex justify-between w-full items-center mb-2">
           {isEditing ? (
-            <div className="flex items-center gap-2 flex-1">
+            <div className="flex items-center gap-1 flex-1">
               <Input
                 value={editedName}
                 onChange={(e) => setEditedName(e.target.value)}
@@ -173,22 +176,46 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
                 maxLength={50}
                 autoFocus
               />
-              <CheckIcon
-                onClick={saveName}
-                className="text-green-500 w-4 h-4 hover:cursor-pointer flex-shrink-0"
-              />
-              <XIcon
-                onClick={cancelEditing}
-                className="text-gray-500 w-4 h-4 hover:cursor-pointer flex-shrink-0"
-              />
+              <Tooltip>
+                <TooltipTrigger>
+                  <CheckIcon
+                    onClick={saveName}
+                    className="text-green-500 w-6 h-6 hover:cursor-pointer hover:bg-muted hover:rounded-full flex-shrink-0 p-1"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>更新</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger>
+                  <XIcon
+                    onClick={cancelEditing}
+                    className="text-gray-400 w-6 h-6 hover:cursor-pointer hover:bg-muted hover:rounded-full flex-shrink-0 p-1"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>キャンセル</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           ) : (
             <>
-              <p className="text-gray-300 font-medium flex-1 truncate">
-                {preset.name.length > 15
-                  ? `${preset.name.slice(0, 15)}...`
-                  : preset.name
-                }
+              <p className="text-gray-300 font-medium flex-1">
+                <Tooltip>
+                  <TooltipTrigger>
+                    {preset.name.length > 8 ? (
+                      <span>
+                        {`${preset.name.slice(0, 8)}...`}
+                      </span>
+                    ) : (
+                      preset.name
+                    )}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{preset.name}</p>
+                  </TooltipContent>
+                </Tooltip>
               </p>
               <div className="flex gap-1">
                 {showEditButton && (
