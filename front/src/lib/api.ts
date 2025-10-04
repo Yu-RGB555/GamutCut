@@ -2,7 +2,7 @@ import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '
 import { Work } from '@/types/work';
 import { Preset } from '@/types/preset';
 import { Tag } from '@/types/tag';
-import { Comment, CommentDetail, CreateCommentRequest, CreateCommentResponse, DeleteCommentResponse } from '@/types/comment';
+import { Comment, CommentDetail, CreateCommentRequest, CreateCommentResponse, DeleteCommentResponse, UpdateCommentRequest, UpdateCommentResponse } from '@/types/comment';
 
 // API_URLの取得
 const getApiBaseUrl = (): string => {
@@ -364,6 +364,23 @@ export async function createComment(workId: number, commentData: CreateCommentRe
   if (!response.ok) {
     const data = await response.json();
     throw new Error(data.message || 'コメントの投稿に失敗しました');
+  }
+
+  return response.json();
+}
+
+// コメント更新
+export async function updateComment(workId: number, commentId: number, commentData: UpdateCommentRequest): Promise<UpdateCommentResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments/${commentId}`, {
+    method: 'PATCH',
+    headers: getCommonHeaders(true, true),
+    body: JSON.stringify({ comment: commentData }),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message || 'コメントの更新に失敗しました');
   }
 
   return response.json();

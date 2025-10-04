@@ -41,7 +41,6 @@ export function CommentList({
         setDisplayCount(Math.max(previewLimit, displayCount));
       }
     } catch (error) {
-      console.error("Failed to fetch comments:", error);
       setError("コメントの取得に失敗しました");
     } finally {
       setLoading(false);
@@ -52,12 +51,9 @@ export function CommentList({
     fetchComments();
   }, [workId]);
 
-  // 編集
-  const handleEditComment = async (commentId: number) => {
-    showAlert("編集機能は現在開発中です");
-  };
 
-  // 削除
+
+  // コメント削除
   const handleDeleteComment = async (commentId: number) => {
     if (!window.confirm("このコメントを削除しますか？")) {
       return;
@@ -105,6 +101,7 @@ export function CommentList({
     );
   }
 
+  // コメント一覧の取得失敗時
   if (error) {
     return (
       <div className="text-center py-8">
@@ -142,8 +139,9 @@ export function CommentList({
             <CommentItem
               key={comment.id}
               comment={comment}
+              workId={workId}
               currentUserId={user?.id}
-              onEdit={handleEditComment}
+              onCommentUpdated={fetchComments}
               onDelete={handleDeleteComment}
               showActions={!isPreview}
             />

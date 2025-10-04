@@ -70,13 +70,13 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="コメントを入力"
-        className="text-white border-none min-h-[100px] resize-none"
-        maxLength={1000}
+        className="text-white min-h-[100px] resize-none"
+        maxLength={500}
         disabled={isSubmitting}
       />
       <div className="flex justify-between items-center">
         <span className="text-xs text-muted-foreground">
-          {content.length}/1000
+          {content.length}/500
         </span>
         <div className="flex items-center gap-2">
           {content && (

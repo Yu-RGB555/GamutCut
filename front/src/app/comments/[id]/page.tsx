@@ -183,13 +183,11 @@ export default function CommentDetailPage() {
         <div className="p-4 bg-muted/30 border-b">
           <h2 className="text-lg font-semibold">コメント詳細</h2>
         </div>
-        <CommentItem
+        {/* <CommentItem
           comment={comment}
           currentUserId={user?.id}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
           showActions={true}
-        />
+        /> */}
       </div>
     </div>
   );

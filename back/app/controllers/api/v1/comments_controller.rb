@@ -15,7 +15,7 @@ class Api::V1::CommentsController < ApplicationController
   # POST /api/v1/works/:work_id/comments
   def create
     @comment = @work.comments.build(comment_params)
-    @comment.user = current_user
+    @comment.user = current_user # コメント投稿者
 
     if @comment.save
       render json: {
