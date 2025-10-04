@@ -32,6 +32,15 @@ export interface CreateCommentResponse {
   comment: Comment;
 }
 
+export interface UpdateCommentRequest {
+  content: string;
+}
+
+export interface UpdateCommentResponse {
+  message: string;
+  comment: Comment;
+}
+
 export interface DeleteCommentResponse {
   message: string;
 }
