@@ -14,6 +14,7 @@ import {
   Share2Icon
 } from "lucide-react";
 import { Work } from "@/types/work";
+import { MaskData } from "@/types/mask";
 import { deleteWork, showWork } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
@@ -67,7 +68,7 @@ export default function ShowWorks() {
     }
   }
 
-  const handleCopyMask = (maskData: any) => {
+  const handleCopyMask = (maskData: MaskData) => {
     // マスクデータをlocalStorageに保存
     localStorage.setItem('copiedMaskData', JSON.stringify(maskData));
     showAlert('マスクをコピーしました。マスク作成画面に移ります。');
