@@ -78,10 +78,9 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
 
         return {
           id: index,
-          name: 'プリセットマスク',
-          points: [],
           originalPoints: scaledPoints,
-          scale: mask.scale
+          scale: mask.scale,
+          shape_type: mask.shape_type || 'unknown' // shape_typeを追加
         };
       });
       maskDrawer.drawMasks(ctx, masksWithRequired, CARD_CANVAS_SIZE, CARD_CANVAS_SIZE);
