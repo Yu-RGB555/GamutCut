@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useAlert } from '@/contexts/AlertContext';
 import { ShapeTemplate, ColorInfo, MaskWithScale } from '@/types/gamut';
 import { Preset } from '@/types/preset';
+import { MaskData } from '@/types/mask';
 import { maskSave } from '@/lib/api';
 import { MaskControls } from './MaskControls';
 import { ExportControls } from './ExportControls';
@@ -31,9 +32,10 @@ import { Label } from '@/components/ui/label';
 
 interface MaskMakingProps {
   onSaveSuccess: () => Promise<void>;
+  copiedMaskData?: MaskData | null;
 }
 
-export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
+export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   const { showAlert } = useAlert();
 
   // キャンバスを参照
@@ -259,7 +261,12 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
     const absPoints = toAbsolutePoints(mask.points, width, height);
     setSelectedMask([
       ...selectedMask,
-      { ...mask, originalPoints: absPoints, scale: 1 }
+      {
+        id: mask.id,
+        originalPoints: absPoints,
+        scale: 1,
+        shape_type: mask.shape_type
+      }
     ]);
     setSelectedMaskIndex(selectedMask.length);
     setIsDialogOpen(false);
@@ -327,8 +334,9 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
         }));
 
         return {
-          originalPoints: relativePoints, // 相対座標を保存
+          originalPoints: relativePoints, // 相対座標
           scale: 1, // スケールは相対座標化に含まれるため1にリセット
+          shape_type: mask.shape_type // 図形タイプ
         };
       });
 
@@ -369,6 +377,37 @@ export function MaskMaking({ onSaveSuccess }: MaskMakingProps) {
       idx === selectedMaskIndex ? { ...mask, scale } : mask
     ));
   };
+
+  // 初期マスクデータの復元
+  useEffect(() => {
+    if (copiedMaskData) {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+
+      // 相対座標を絶対座標に変換
+      const restoredMasks = copiedMaskData.masks.map((mask, index) => {
+        const absolutePoints = mask.originalPoints.map(point => ({
+          x: centerX + (point.x * canvas.width / 2),
+          y: centerY + (point.y * canvas.height / 2)
+        }));
+
+        return {
+          // MaskWithScale（gamut.ts）
+          id: Date.now() + index, // 一時的なID
+          originalPoints: absolutePoints,
+          scale: mask.scale || 1,
+          shape_type: mask.shape_type || 'unknown' // 図形タイプ
+        };
+      });
+
+      setSelectedMask(restoredMasks);
+      setCurrentValue(copiedMaskData.value);
+      setSelectedMaskIndex(restoredMasks.length > 0 ? restoredMasks.length - 1 : 0);
+    }
+  }, [copiedMaskData]);
 
   // 再描画トリガー
   useEffect(() => {

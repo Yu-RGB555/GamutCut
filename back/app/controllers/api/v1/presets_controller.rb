@@ -47,7 +47,7 @@ class Api::V1::PresetsController < ApplicationController
       :name,
       mask_data: [
         :value,
-        { masks: [ { originalPoints: [ :x, :y ] }, :scale ] }
+        { masks: [ { originalPoints: [ :x, :y ] }, :scale, :shape_type ] }
       ]
     )
   end

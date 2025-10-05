@@ -4,7 +4,7 @@ import { createCirclePoints } from "./maskUtils";
 export const shapeTemplates: ShapeTemplate[] = [
     {
       id: 1,
-      name: "三角形",
+      shape_type: "triangle",
       points: [
         { x: 0.5, y: 0.2 },
         { x: 0.7, y: 0.8 },
@@ -13,7 +13,7 @@ export const shapeTemplates: ShapeTemplate[] = [
     },
     {
       id: 2,
-      name: "四角形",
+      shape_type: "square",
       points: [
         { x: 0.3, y: 0.3 },
         { x: 0.7, y: 0.3 },
@@ -23,7 +23,7 @@ export const shapeTemplates: ShapeTemplate[] = [
     },
     {
       id: 3,
-      name: "円形",
+      shape_type: "circle",
       points: createCirclePoints(0.5, 0.5, 0.2, 36)
     }
   ];
