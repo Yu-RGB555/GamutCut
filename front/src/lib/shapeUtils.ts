@@ -7,7 +7,7 @@ export const getShapeDisplayName = (shapeType: string): string => {
 };
 
 // マスクデータから図形名を取得する関数
-export const getMaskDisplayName = (mask: any, index: number): string => {
+export const getMaskDisplayName = (mask: { shape_type?: string }, index: number): string => {
   // shape_typeがある場合は翻訳
   if (mask.shape_type) {
     return getShapeDisplayName(mask.shape_type);

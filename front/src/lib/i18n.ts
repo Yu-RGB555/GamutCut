@@ -56,7 +56,7 @@ const translations: Record<Locale, TranslationKeys> = {
   }
 };
 
-// 現在の言語（将来的にユーザー設定から取得）
+// 現在の言語（将来的にユーザー設定から取得するように対応）
 let currentLocale: Locale = 'ja';
 
 export const setLocale = (locale: Locale) => {
@@ -66,13 +66,13 @@ export const setLocale = (locale: Locale) => {
 export const getLocale = (): Locale => currentLocale;
 
 // 翻訳関数
-export const t = (key: string, params?: Record<string, any>): string => {
+export const t = (key: string, params?: Record<string, string | number>): string => {
   const keys = key.split('.');
-  let value: any = translations[currentLocale];
+  let value: unknown = translations[currentLocale];
 
   for (const k of keys) {
     if (value && typeof value === 'object' && k in value) {
-      value = value[k];
+      value = (value as Record<string, unknown>)[k];
     } else {
       return key; // キーが見つからない場合はキーをそのまま返す
     }
