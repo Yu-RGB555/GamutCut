@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ShapeTemplate, MaskWithScale } from '../types/gamut';
+import { getMaskDisplayName, getShapeDisplayName } from '@/lib/shapeUtils';
 
 interface MaskControlsProps {
   shapeTemplates: ShapeTemplate[];
@@ -40,7 +41,8 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
                 className={`px-2 py-1 font-bold rounded hover:cursor-pointer ${selectedMaskIndex === idx ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground text-muted'}`}
                 onClick={() => onMaskIndexChange(idx)}
               >
-                {mask.name}
+                {/* マスク名 */}
+                {getMaskDisplayName(mask, idx)}
               </button>
             ))}
           </div>
@@ -91,7 +93,8 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
                   className="p-4 h-auto"
                   onClick={() => onMaskSelect(template)}
                 >
-                  {template.name}
+                  {/* マスク名 */}
+                  {getShapeDisplayName(template.shape_type)}
                 </Button>
               ))}
             </div>

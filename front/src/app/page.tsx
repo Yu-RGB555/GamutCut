@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getPresets } from "@/lib/api";
 import { Preset } from "@/types/preset";
 import { MyMaskList } from "@/components/MyMaskList";
+import { MaskData } from "@/types/mask";
 // import { testApiConnection } from '@/lib/api';
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
   const [presets, setPresets] = useState<Preset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [copiedMaskData, setCopiedMaskData] = useState<MaskData | null>(null);
 
   // Myマスク一覧データ取得
   const fetchPresets = async (showLoading: boolean = true): Promise<void> => {
@@ -43,13 +45,30 @@ export default function Home() {
     }
   }, [isAuthenticated]);
 
+  // コピーされたマスクデータを確認（コピーして編集用）
+  useEffect(() => {
+    const stored = localStorage.getItem('copiedMaskData');
+    if (stored) {
+      try {
+        const maskData = JSON.parse(stored) as MaskData;
+        setCopiedMaskData(maskData);
+        localStorage.removeItem('copiedMaskData');  // 一度使用したら削除
+      } catch (error) {
+        console.error('コピーされたマスクデータの読み込みに失敗:', error);
+      }
+    }
+  }, []);
+
   return (
     <div className="justify-items-center mx-4 sm:mx-8 lg:mx-16 mb-40 space-y-8">
       {isLoading ? (
         <div className="text-center">読み込み中...</div>
       ) : (
         <div className="grid grid-cols-1 gap-y-16 lg:gap-y-32">
-          <MaskMaking onSaveSuccess={fetchPresetsAfterSave} />
+          <MaskMaking
+            onSaveSuccess={fetchPresetsAfterSave}
+            copiedMaskData={copiedMaskData} // コピーして編集用
+          />
           <div className="space-y-8">
             <h3 className="text-label text-left text-lg font-semibold">Myマスク一覧</h3>
             <MyMaskList

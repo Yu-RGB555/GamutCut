@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ import {
   Share2Icon
 } from "lucide-react";
 import { Work } from "@/types/work";
+import { MaskData } from "@/types/mask";
 import { deleteWork, showWork } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
@@ -66,6 +67,16 @@ export default function ShowWorks() {
       }
     }
   }
+
+  const handleCopyMask = (maskData: MaskData) => {
+    // マスクデータをlocalStorageに保存
+    localStorage.setItem('copiedMaskData', JSON.stringify(maskData));
+    showAlert('マスクをコピーしました。マスク作成画面に移ります。');
+    // 少し遅延を入れてからページ遷移
+    setTimeout(() => {
+      router.push('/');
+    }, 1000);
+  };
 
     if (isLoading) {
     return <div className="flex min-h-[500px] justify-center items-center">
@@ -137,7 +148,17 @@ export default function ShowWorks() {
           </div>
           <div className="grid gap-2">
             <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
-            <PresetPreview maskData={work.set_mask_data} size={300} />
+            <PresetPreview
+              maskData={work.set_mask_data}
+              size={250}
+            />
+            <Button
+              variant="outline"
+              className="mt-2"
+              onClick={() => handleCopyMask(work.set_mask_data)}
+            >
+              コピーして編集
+            </Button>
           </div>
         </div>
         <div className="grid grid-cols gap-8">
