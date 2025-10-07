@@ -36,9 +36,26 @@ export interface LoginResponse {
   errors?: string[];
 }
 
+// AuthContext・プロフィール情報取得用
 export interface User {
   id: number;
   name: string;
   email: string;
   avatar_url?: string;
+  bio?: string;
+  x_account_url?: string;
+}
+
+// プロフィール更新用
+export interface UpdateProfileRequest {
+  name?: string;
+  avatar?: File;
+  bio?: string;
+  x_account_url?: string;
+}
+
+export interface UpdateProfileResponse {
+  message: string;
+  user: User;
+  errors?: string[];
 }
