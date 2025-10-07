@@ -46,6 +46,9 @@ gem 'omniauth-twitter'
 
 gem 'omniauth-rails_csrf_protection'
 
+# Active Storage validations
+gem 'active_storage_validations'
+
 # JSONシリアライザ
 gem 'alba'
 

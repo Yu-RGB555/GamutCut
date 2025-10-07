@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UpdateProfileResponse, User } from '@/types/auth';
 import { Work } from '@/types/work';
 import { Preset } from '@/types/preset';
 import { Tag } from '@/types/tag';
@@ -145,7 +145,7 @@ export async function getWorksWithSearch(searchQuery?: string, tagName?: string,
 export async function showWork(workId: number): Promise<Work> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'GET',
-    headers: getCommonHeaders(true, true), // 認証ヘッダーを含める
+    headers: getCommonHeaders(true, true),
   });
 
   if (!response.ok) {
@@ -412,6 +412,54 @@ export async function getCommentDetail(commentId: number): Promise<CommentDetail
 
   if (!response.ok) {
     throw new Error('コメントの取得に失敗しました');
+  }
+
+  return response.json();
+}
+
+// プロフィール取得（認証済みユーザー自身のプロフィール）
+export async function getProfile(): Promise<User> {
+  const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+    method: 'GET',
+    headers: getCommonHeaders(true, true),
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    throw new Error('プロフィール情報の取得に失敗しました');
+  }
+
+  return response.json();
+}
+
+// プロフィール取得（特定ユーザーのプロフィール）
+export async function getUserProfile(userId: number): Promise<User> {
+  const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+    method: 'GET',
+    headers: getCommonHeaders(true, true),
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    throw new Error('プロフィール情報の取得に失敗しました');
+  }
+
+  return response.json();
+}
+
+// プロフィール更新（認証済みユーザー自身のプロフィール）
+export async function updateProfile(profileData: FormData): Promise<UpdateProfileResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+    method: 'PATCH',
+    headers: getCommonHeaders(true, false),
+    body: profileData,
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    const data = await response.json();
+    const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || 'プロフィールの更新に失敗しました';
+    throw new Error(errorMessage);
   }
 
   return response.json();

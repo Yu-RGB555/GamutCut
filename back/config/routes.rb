@@ -16,8 +16,12 @@ Rails.application.routes.draw do
       delete 'users/sign_out', to: 'sessions#destroy'
     end
 
-    # ユーザー関連エンドポイント（認証関連以外）
-    resources :users, only: [:show] do
+    # 認証済みユーザー自身のプロフィール関連
+    get '/users/profile', to: 'users#show_profile'
+    patch '/users/profile', to: 'users#update_profile'
+
+    # ユーザー関連エンドポイント（特定ユーザー情報取得用）
+    resources :users, only: [:show, :update] do
       member do
         get :works        # /api/users/:id/works - マイページ（公開済み作品一覧）
         get :liked_works  # /api/users/:id/liked_works - マイページ（いいねした作品一覧）

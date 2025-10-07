@@ -1,5 +1,5 @@
 class Api::UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:me, :liked_works, :bookmarks]
+  before_action :authenticate_user!, only: [:me, :show_profile, :update_profile, :liked_works, :bookmarks]
   before_action :set_user, only: [:show, :works, :liked_works, :bookmarks]
 
   # GET /api/users/me
@@ -7,7 +7,27 @@ class Api::UsersController < ApplicationController
     render json: { user: UserResource.new(current_user) }
   end
 
-  # プロフィール（GET /api/users/:id）
+  # プロフィール (GET /api/users/profile)
+  def show_profile
+    render json: UserResource.new(current_user).serializable_hash
+  end
+
+  # プロフィール更新（PATCH /api/users/profile）
+  def update_profile
+    if current_user.update(profile_params)
+      render json: {
+        message: "プロフィールを更新しました",
+        user: UserResource.new(current_user).serializable_hash
+      }
+    else
+      render json: {
+        message: "プロフィールの更新に失敗しました",
+        errors: current_user.errors.full_messages
+      }, status: :unprocessable_entity
+    end
+  end
+
+  # 特定ユーザープロフィール（GET /api/users/:id）
   def show
     render json: { user: UserResource.new(@user) }
   end
@@ -67,5 +87,9 @@ class Api::UsersController < ApplicationController
     @user = User.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'ユーザーが見つかりません' }, status: :not_found
+  end
+
+  def profile_params
+    params.require(:user).permit(:name, :avatar, :bio, :x_account_url)
   end
 end

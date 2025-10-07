@@ -68,6 +68,9 @@ export default function UserProfilePage() {
             <div className="text-center">
               <h1 className="text-2xl font-bold text-label">{user.name}</h1>
             </div>
+            <div>
+              <h2>{user.bio}</h2>
+            </div>
           </div>
         </div>
 

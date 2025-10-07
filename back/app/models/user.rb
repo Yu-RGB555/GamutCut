@@ -1,6 +1,10 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
 
+  # アバター（プロフィール画面用）
+  has_one_attached :avatar
+  ACCEPTED_CONTENT_TYPES = ['image/png', 'image/jpeg'].freeze
+
   has_many :works, dependent: :restrict_with_exception  # 作品がある場合は退会不可
   has_many :presets, dependent: :destroy
   has_many :social_accounts, dependent: :destroy
@@ -14,10 +18,33 @@ class User < ApplicationRecord
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 8 }, format: { with: /\A[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+\z/ }, if: :password_required?
   validates :bio, length: { maximum: 300 }
+  validates :avatar, content_type: ACCEPTED_CONTENT_TYPES  # アバターアイコン用
+  validates :avatar, size: { less_than: 2.megabytes }      # アバターアイコン用
 
   # Ransackで検索可能な属性を明示的に定義
   def self.ransackable_attributes(auth_object = nil)
     ["name", "created_at", "updated_at"]
+  end
+
+  # アバター画像のURLを取得（画像なし許容）
+  def avatar_url(size: nil)
+    if avatar.attached?
+      if size
+        Rails.application.routes.url_helpers.rails_representation_url(
+          avatar.variant(resize_to_limit: size), only_path: false
+        )
+      else
+        Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: false)
+      end
+    else
+      # デフォルトアバターまたは既存のavatar_urlカラムの値を返す
+      read_attribute(:avatar_url)
+    end
+  end
+
+  # サムネイル用のアバターURL取得
+  def avatar_thumbnail_url
+    avatar_url(size: [150, 150])
   end
 
   def self.from_omniauth(auth)

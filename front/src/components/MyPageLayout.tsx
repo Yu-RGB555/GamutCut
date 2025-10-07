@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 const tabs = [
@@ -17,7 +17,6 @@ interface MyPageLayoutProps {
 
 export function MyPageLayout({ children }: MyPageLayoutProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   // パスからアクティブなタブを判定
   const getActiveIndex = () => {
@@ -37,7 +36,11 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
       <div className="grid grid-cols-1 gap-8">
         <div className="grid justify-items-center align-items-center gap-8">
           <h3 className="text-xl font-semibold text-label">プロフィール</h3>
-          <Button>プロフィール設定</Button>
+          <Button>
+            <Link href='/mypage/profiles'>
+              プロフィール設定
+            </Link>
+          </Button>
         </div>
 
         {/* タブナビゲーション */}
