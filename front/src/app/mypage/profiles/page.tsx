@@ -26,7 +26,7 @@ interface FormErrors {
 
 export default function ProfilesPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, updateUser } = useAuth();
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -127,9 +127,9 @@ export default function ProfilesPage() {
     const newErrors: FormErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'ニックネームは必須です';
+      newErrors.name = 'ハンドルネームは必須です';
     } else if (formData.name.length > 20) {
-      newErrors.name = 'ニックネームは20文字以内で入力してください';
+      newErrors.name = 'ハンドルネームは20文字以内で入力してください';
     }
 
     if (formData.bio.length > 300) {
@@ -140,6 +140,7 @@ export default function ProfilesPage() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // プロフィール更新
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -164,6 +165,9 @@ export default function ProfilesPage() {
 
       setMessage({ type: 'success', text: response.message });
       setProfileUser(response.user);
+
+      // AuthContextのユーザー情報も更新
+      updateUser(response.user);
 
       // 3秒後にメッセージを消す
       setTimeout(() => setMessage(null), 3000);
@@ -237,9 +241,9 @@ export default function ProfilesPage() {
                 <button
                   type="button"
                   onClick={handleAvatarClick}
-                  className="absolute bottom-0 right-0 bg-primary border-white border-2 hover:bg-mouseover hover:cursor-pointer text-primary-foreground rounded-full p-2 shadow-lg transition-colors duration-200"
+                  className="absolute bottom-0 right-0 bg-muted border-white border-2 hover:bg-gradient-to-br hover:cursor-pointer from-gray-200 to-gray-300 text-primary-foreground rounded-full p-2 shadow-lg transition-colors duration-200"
                 >
-                  <Camera className="h-4 w-4" />
+                  <Camera className="text-gray-400 h-4 w-4" />
                 </button>
 
                 {/* アバター削除ボタン */}
@@ -247,7 +251,7 @@ export default function ProfilesPage() {
                   <button
                     type="button"
                     onClick={handleAvatarRemove}
-                    className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg transition-colors duration-200"
+                    className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white rounded-full p-1 shadow-lg transition-colors duration-200"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -276,10 +280,10 @@ export default function ProfilesPage() {
                 onChange={handleFileChange}
               />
 
-              {/* ニックネーム */}
+              {/* ハンドルネーム */}
               <div className="grid gap-2">
                 <Label className="text-white">
-                  ニックネーム
+                  ハンドルネーム
                   <span className="text-red-500 ml-1">*</span>
                 </Label>
                 <Input

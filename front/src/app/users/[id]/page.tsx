@@ -6,6 +6,7 @@ import { User } from "@/types/auth";
 import { PublishedWorks } from "@/components/PublishedWorks";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { UserCircle2Icon } from "lucide-react";
+import XLogo from "@/components/XLogo";
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -71,6 +72,11 @@ export default function UserProfilePage() {
             <div>
               <h2>{user.bio}</h2>
             </div>
+            { user.x_account_url &&
+              <XLogo
+                url={user.x_account_url}
+              />
+            }
           </div>
         </div>
 

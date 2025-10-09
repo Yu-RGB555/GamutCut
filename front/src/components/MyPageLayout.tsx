@@ -1,8 +1,12 @@
 'use client';
 
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { UserCircle2Icon } from "lucide-react";
+import XLogo from "./XLogo";
 
 const tabs = [
   { id: 1, label: "公開作品", href: "/mypage" },
@@ -17,6 +21,7 @@ interface MyPageLayoutProps {
 
 export function MyPageLayout({ children }: MyPageLayoutProps) {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   // パスからアクティブなタブを判定
   const getActiveIndex = () => {
@@ -31,14 +36,45 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
 
   const activeIndex = getActiveIndex();
 
+  if(!user) {
+    // 仮（※ログイン導線を敷く）
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="px-12">
       <div className="grid grid-cols-1 gap-8">
         <div className="grid justify-items-center align-items-center gap-8">
-          <h3 className="text-xl font-semibold text-label">プロフィール</h3>
+          {/* <h3 className="text-xl font-semibold text-label">プロフィール</h3> */}
+          {/* ユーザープロフィール */}
+          <div className="grid justify-items-center align-items-center gap-8">
+            <div className="flex flex-col items-center gap-4">
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={user.avatar_url} />
+                <AvatarFallback className="bg-background">
+                  <UserCircle2Icon className="w-full h-full"/>
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-center">
+                <h1 className="text-2xl font-bold text-label">{user.name}</h1>
+              </div>
+              <div>
+                <h2>{user.bio}</h2>
+              </div>
+              { user.x_account_url &&
+                <XLogo
+                  url={user.x_account_url}
+                />
+              }
+            </div>
+          </div>
           <Button>
             <Link href='/mypage/profiles'>
-              プロフィール設定
+              設定
             </Link>
           </Button>
         </div>
