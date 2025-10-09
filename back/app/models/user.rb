@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include MinioUrlHelper
+
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
 
   # アバター（プロフィール画面用）
@@ -30,11 +32,11 @@ class User < ApplicationRecord
   def avatar_url(size: nil)
     if avatar.attached?
       if size
-        Rails.application.routes.url_helpers.rails_representation_url(
-          avatar.variant(resize_to_limit: size), only_path: false
-        )
+        # リサイズが必要な場合はvariantを使用
+        minio_direct_url(avatar.variant(resize_to_limit: size))
       else
-        Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: false)
+        # リサイズ不要な場合は直接URL取得
+        minio_direct_url(avatar)
       end
     else
       # デフォルトアバターまたは既存のavatar_urlカラムの値を返す

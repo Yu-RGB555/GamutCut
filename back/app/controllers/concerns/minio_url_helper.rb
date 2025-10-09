@@ -34,11 +34,10 @@ module MinioUrlHelper
         end
       else
         # フォールバック
-        # まず attachment.url を試す
         begin
           attachment.url
         rescue => e
-          # attachment.url でもエラーの場合はserviceのurlメソッドを使用
+          # attachment.urlでエラーの場合は、serviceのurlメソッドを使用
           Rails.logger.warn "Failed to generate URL for attachment: #{e.message}"
           service.url(blob.key, expires_in: 1.hour)
         end

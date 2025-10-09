@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   login: (user: User, token: string) => void;
   logout: () => void;
+  updateUser: (userData: User) => void; // プロフィール更新
   isAuthenticated: boolean;
 }
 
@@ -39,12 +40,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
   };
 
+  // ユーザー情報を更新（プロフィール更新時等に使用）
+  const updateUser = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
   // userがnullまたはundefinedならfalseを返す
   const isAuthenticated = !!user;
 
   // 子コンポーネントにAuthContextの値を渡せる状態にする
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
