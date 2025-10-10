@@ -75,6 +75,9 @@ group :development, :test do
 
   # Faker for generating fake data
   gem 'faker'
+
+  # Letter Opener Web
+  gem 'letter_opener_web', '~> 3.0'
 end
 
 group :test do
