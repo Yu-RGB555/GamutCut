@@ -1,14 +1,18 @@
 Rails.application.routes.draw do
   devise_for :users, skip: [:registrations, :sessions]
 
-  # Health check endpoints
+  # ヘルスチェック
   get '/health', to: 'health_check#index'
   get '/health/detailed', to: 'health_check#detailed'
 
-  # Omniauthコールバック用ルーティング
+  # letter_opener_web用
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+
+  # Omniauthコールバック用
   get '/auth/:provider/callback', to: 'api/omniauth_callbacks#create'
 
   namespace :api do
+    # 認証関連
     devise_scope :user do
       get '/users/me', to: 'users#me'
       post 'users/sign_up', to: 'registrations#create'
