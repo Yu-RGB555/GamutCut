@@ -1,4 +1,4 @@
-// 新規登録用
+// === 新規登録用 ===
 export interface RegisterRequest {
   name: string;
   email: string;
@@ -18,7 +18,7 @@ export interface RegisterResponse {
   errors?: string[];
 }
 
-// ログイン用
+// === ログイン用 ===
 export interface LoginRequest {
   email: string;
   password: string;
@@ -46,7 +46,7 @@ export interface User {
   x_account_url?: string;
 }
 
-// プロフィール更新用
+// === プロフィール更新用 ===
 export interface UpdateProfileRequest {
   name?: string;
   avatar?: File;
@@ -57,5 +57,16 @@ export interface UpdateProfileRequest {
 export interface UpdateProfileResponse {
   message: string;
   user: User;
+  errors?: string[];
+}
+
+// === パスワード変更 ===
+export interface PasswordUpdateRequest {
+  password: string;
+  password_confirmation: string;
+}
+
+export interface PasswordUpdateResponse {
+  message: string;
   errors?: string[];
 }
