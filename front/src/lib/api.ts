@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UpdateProfileResponse, User } from '@/types/auth';
+import { LoginRequest, LoginResponse, PasswordUpdateRequest, PasswordUpdateResponse, RegisterRequest, RegisterResponse, UpdateProfileResponse, User } from '@/types/auth';
 import { Work } from '@/types/work';
 import { Preset } from '@/types/preset';
 import { Tag } from '@/types/tag';
@@ -20,15 +20,15 @@ const getCommonHeaders = (includeAuth: boolean = true, includeContentType: boole
     'Accept-Language': navigator.language || 'ja',
   };
 
-  if (includeContentType) {
-    headers['Content-Type'] = 'application/json';
-  }
-
   if (includeAuth) {
     const token = localStorage.getItem('authToken');
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
+  }
+
+  if (includeContentType) {
+    headers['Content-Type'] = 'application/json';
   }
 
   return headers;
@@ -459,6 +459,36 @@ export async function updateProfile(profileData: FormData): Promise<UpdateProfil
   if (!response.ok) {
     const data = await response.json();
     const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || 'プロフィールの更新に失敗しました';
+    throw new Error(errorMessage);
+  }
+
+  return response.json();
+}
+
+// パスワードリセット要求
+export async function passwordResets(email: string): Promise<{message: string}> {
+  const response = await fetch(`${API_BASE_URL}/api/password_resets`, {
+    method: 'POST',
+    headers: getCommonHeaders(false, true),
+    body: JSON.stringify({ user: { email }})
+  });
+
+  // エラーメッセージなし
+
+  return response.json();
+}
+
+// パスワード変更
+export async function passwordUpdate(token: string, passwordData: PasswordUpdateRequest): Promise<PasswordUpdateResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/password_resets/${token}`, {
+    method: 'PATCH',
+    headers: getCommonHeaders(false, true),
+    body: JSON.stringify({ user: passwordData })
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || 'パスワードの変更に失敗しました';
     throw new Error(errorMessage);
   }
 
