@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { passwordUpdate } from '@/lib/api';
 import { PasswordUpdateRequest } from '@/types/auth';
 import { useAlert } from '@/contexts/AlertContext';
 
-export default function PasswordReset() {
+function PasswordResetForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showAlert } = useAlert();
@@ -184,5 +184,21 @@ export default function PasswordReset() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function PasswordReset() {
+  return (
+    <Suspense fallback={
+      <div className="my-8">
+        <Card className="w-full max-w-sm mx-auto">
+          <CardContent className="pt-6">
+            <p className="text-center">読み込み中...</p>
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <PasswordResetForm />
+    </Suspense>
   );
 }
