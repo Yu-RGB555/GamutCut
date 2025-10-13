@@ -24,6 +24,10 @@ Rails.application.routes.draw do
     get '/users/profile', to: 'users#show_profile'
     patch '/users/profile', to: 'users#update_profile'
 
+    # パスワードリセット
+    post '/password_resets', to: 'password_resets#create'     # リセット要求（メール送信）
+    patch '/password_resets/:token', to: 'password_resets#update'  # パスワード更新
+
     # ユーザー関連エンドポイント（特定ユーザー情報取得用）
     resources :users, only: [:show, :update] do
       member do

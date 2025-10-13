@@ -135,7 +135,7 @@ export default function Login() {
               </Button>
               <div>
                 <Link
-                  href="#"
+                  href="/auth/forgot-password"
                   className="ml-auto inline-block text-foreground text-sm underline-offset-4 hover:underline"
                 >
                   パスワードをお忘れですか?

@@ -22,6 +22,7 @@ class User < ApplicationRecord
   validates :bio, length: { maximum: 300 }
   validates :avatar, content_type: ACCEPTED_CONTENT_TYPES  # アバターアイコン用
   validates :avatar, size: { less_than: 2.megabytes }      # アバターアイコン用
+  validates :reset_password_token, uniqueness: true, allow_nil: true
 
   # Ransackで検索可能な属性を明示的に定義
   def self.ransackable_attributes(auth_object = nil)
@@ -120,6 +121,41 @@ class User < ApplicationRecord
 
       user
     end
+  end
+
+  # === パスワードリセット機能 ===
+
+  # リセットトークンの生成
+  def generate_password_reset_token!
+    self.reset_password_token = SecureRandom.urlsafe_base64(32)
+    self.reset_password_sent_at = Time.current
+    save!(validate: false)
+  end
+
+  # 有効期限チェック
+  def password_reset_expired?
+    # 有効期限切れ（＝true）
+    reset_password_sent_at && reset_password_sent_at < 1.hours.ago
+  end
+
+  # パスワードリセット
+  def reset_password!(new_password)
+    # 有効期限切れの場合は無効
+    return false if password_reset_expired?
+
+    # パスワード更新
+    self.password = new_password
+
+    # トークンクリア
+    self.reset_password_token = nil
+    self.reset_password_sent_at = nil
+    save
+  end
+
+  # トークンを使用してユーザー検索（クラスメソッド）
+  def self.find_by_password_reset_token(token)
+    return nil if token.blank?
+    find_by(reset_password_token: token)
   end
 
   private
