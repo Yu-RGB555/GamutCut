@@ -71,9 +71,31 @@ Rails.application.configure do
   # caching is enabled.
   config.action_mailer.perform_caching = false
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  # メール配信設定
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+
+  # SMTP設定
+  config.action_mailer.smtp_settings = {
+    address: ENV['SMTP_ADDRESS'],
+    port: ENV['SMTP_PORT'],
+    domain: ENV['MAIL_DOMAIN'],
+    user_name: ENV['MAIL_USERNAME'],
+    password: ENV['MAIL_PASSWORD'],
+    authentication: ENV['SMTP_AUTHENTICATION'],
+    enable_starttls_auto: true,
+    open_timeout: 5,  # SMTP接続確立までの待機時間
+    read_timeout: 5   # データ送受信の待機時間
+  }
+
+  # メールのデフォルトURL設定
+  config.action_mailer.default_url_options = {
+    host: ENV['MAIL_HOST'] || 'gamutcut.onrender.com',
+    protocol: 'https'
+  }
+
+  # フロントエンドのURL設定
+  config.frontend_url = ENV['FRONTEND_URL']
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
