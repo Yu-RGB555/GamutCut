@@ -6,8 +6,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* サイト情報 */}
-          <div className="md:col-span-1">
-            <h3 className="text-lg font-bold text-foreground mb-4">GamutCut</h3>
+          <div className="md:col-1">
+            <img src='/app_logo.svg' className="w-1/2 h-auto" alt="GamutCut" />
             <p className="text-muted-foreground text-sm">
               着彩に悩むイラストレーターへ
             </p>
