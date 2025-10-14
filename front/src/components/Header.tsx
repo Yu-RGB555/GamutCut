@@ -102,8 +102,8 @@ export function Header() {
         <div className="flex justify-between items-center h-16">
           {/* ロゴ・サイト名 */}
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-foreground">
-              GamutCut
+            <Link href="/" className="text-2xl font-bold text-foreground flex items-center">
+              <img src='/app_logo.svg' className="w-1/2 h-auto" alt="GamutCut" />
             </Link>
           </div>
 

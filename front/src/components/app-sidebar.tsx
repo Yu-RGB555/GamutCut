@@ -83,7 +83,7 @@ export function AppSidebar() {
           onClick={() => handleNavigation("/")}
           className="text-xl font-bold text-foreground text-left hover:cursor-pointer"
         >
-          GamutCut
+          <img src='/app_logo.svg' className="w-1/2 h-auto" alt="GamutCut" />
         </button>
       </SidebarHeader>
 

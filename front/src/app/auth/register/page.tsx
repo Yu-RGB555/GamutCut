@@ -129,8 +129,10 @@ export default function Register() {
   return (
     <div className="mt-8">
       <Card className="w-full max-w-sm mx-auto">
-        <CardHeader>
-          <CardTitle>GamutCut</CardTitle>
+        <CardHeader className="flex flex-col items-center mb-4">
+          <CardTitle className="flex justify-center w-full">
+            <img src='/app_logo.svg' className="w-3/4 h-auto" alt="GamutCut" />
+          </CardTitle>
         </CardHeader>
           {errors.length > 0 && (
             <div className="px-6">
@@ -240,7 +242,7 @@ export default function Register() {
               </div>
             </CardFooter>
           </form>
-          <div className="flex justify-between items-center w-full py-8">
+          <div className="flex justify-between items-center w-full py-4">
             <hr className="w-1/3 border-gray-300" />
             <span className="text-gray-300 text-sm">または</span>
             <hr className="w-1/3 border-gray-300" />

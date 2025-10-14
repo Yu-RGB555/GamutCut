@@ -87,8 +87,10 @@ export default function Login() {
   return (
     <div className="my-8">
       <Card className="w-full max-w-sm mx-auto">
-        <CardHeader>
-          <CardTitle>GamutCut</CardTitle>
+        <CardHeader className="flex flex-col items-center mb-4">
+          <CardTitle className="flex justify-center w-full">
+            <img src='/app_logo.svg' className="w-3/4 h-auto" alt="GamutCut" />
+          </CardTitle>
         </CardHeader>
         {errors.length > 0 && (
           <div className="flex flex-col gap-6">
@@ -143,7 +145,7 @@ export default function Login() {
               </div>
             </CardFooter>
           </form>
-          <div className="flex justify-between items-center w-full py-8">
+          <div className="flex justify-between items-center w-full py-4">
             <hr className="w-1/3 border-gray-300" />
             <span className="text-gray-300 text-sm">または</span>
             <hr className="w-1/3 border-gray-300" />

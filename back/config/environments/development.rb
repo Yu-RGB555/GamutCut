@@ -41,7 +41,12 @@ Rails.application.configure do
   # caching is enabled.
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  # メール内に埋め込むURLのリンクを生成するためのオプション設定
+  # uer_mailer.rbでリンクの生成をしているので使用しない
+  # config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+
+  # フロントエンドのURL設定
+  config.frontend_url = ENV['FRONTEND_URL']
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

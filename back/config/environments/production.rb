@@ -89,10 +89,10 @@ Rails.application.configure do
   }
 
   # メールのデフォルトURL設定
-  config.action_mailer.default_url_options = {
-    host: ENV['MAIL_HOST'] || 'gamutcut.onrender.com',
-    protocol: 'https'
-  }
+  # config.action_mailer.default_url_options = {
+  #   host: ENV['MAIL_HOST'],
+  #   protocol: 'https'
+  # }
 
   # フロントエンドのURL設定
   config.frontend_url = ENV['FRONTEND_URL']
