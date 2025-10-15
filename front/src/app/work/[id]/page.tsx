@@ -10,8 +10,7 @@ import { BookmarkButton } from "@/components/BookmarkButton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
-  UserCircle2Icon,
-  Share2Icon
+  UserCircle2Icon
 } from "lucide-react";
 import { Work } from "@/types/work";
 import { MaskData } from "@/types/mask";
@@ -21,6 +20,7 @@ import { useAlert } from "@/contexts/AlertContext";
 import { PresetPreview } from "@/components/PresetPreview";
 import { BackButton } from "@/components/BackButton";
 import { CommentList } from "@/components/CommentList";
+import { ShareButton } from "@/components/ShareButton";
 
 export default function ShowWorks() {
   const router = useRouter();
@@ -190,7 +190,12 @@ export default function ShowWorks() {
                   workId={work.id}
                   initialBookmarked={work.is_bookmarked_by_current_user}
                 />
-                <Share2Icon className="text-white rounded-sm hover:bg-muted"/>
+                <ShareButton
+                  workId={work.id}
+                  workTitle={work.title}
+                  workDescription={work.description}
+                  userName={work.user.name}
+                />
               </div>
             </div>
           {/* タグ表示エリア */}
