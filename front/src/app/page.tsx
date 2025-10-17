@@ -7,6 +7,8 @@ import { getPresets } from "@/lib/api";
 import { Preset } from "@/types/preset";
 import { MyMaskList } from "@/components/MyMaskList";
 import { MaskData } from "@/types/mask";
+import { useNextStep } from 'nextstepjs';
+import { Button } from "@/components/ui/button";
 // import { testApiConnection } from '@/lib/api';
 
 export default function Home() {
@@ -17,6 +19,12 @@ export default function Home() {
   const [presets, setPresets] = useState<Preset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [copiedMaskData, setCopiedMaskData] = useState<MaskData | null>(null);
+
+  const { startNextStep, closeNextStep, currentTour, currentStep, setCurrentStep, isNextStepVisible } = useNextStep();
+
+  const handleStartTour = () => {
+    startNextStep("mainTour");
+  };
 
   // Myマスク一覧データ取得
   const fetchPresets = async (showLoading: boolean = true): Promise<void> => {
@@ -65,11 +73,26 @@ export default function Home() {
         <div className="text-center">読み込み中...</div>
       ) : (
         <div className="grid grid-cols-1 gap-y-16 lg:gap-y-32">
-          <MaskMaking
-            onSaveSuccess={fetchPresetsAfterSave}
-            copiedMaskData={copiedMaskData} // コピーして編集用
-          />
-          <div className="space-y-8">
+          {/* オンボーディング開始ボタン */}
+          <div className="text-center">
+            <Button
+              onClick={handleStartTour}
+              variant="ghost"
+              className="px-6 py-3 transition-colors"
+            >
+              ガイドツアー
+            </Button>
+          </div>
+          {/* マスク作成セクション */}
+          <div id="mask-making-section">
+            <MaskMaking
+              onSaveSuccess={fetchPresetsAfterSave}
+              copiedMaskData={copiedMaskData} // コピーして編集用
+            />
+          </div>
+
+          {/* Myマスク一覧セクション */}
+          <div id="my-mask-list-section" className="space-y-8">
             <h3 className="text-label text-left text-lg font-semibold">Myマスク一覧</h3>
             <MyMaskList
               myPresets={presets}
