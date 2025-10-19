@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Work } from "@/types/work";
 import Link from "next/link";
@@ -15,18 +14,8 @@ interface PublishedWorksProps {
 }
 
 export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
-  const pathname = usePathname();
   const { user } = useAuth();
   const [works, setWorks] = useState<Work[]>([]);
-
-  // マイページからの遷移用のfromパラメータを生成（戻るボタン用）
-  const getFromParam = () => {
-    if (pathname && pathname.startsWith('/mypage')) {
-      // 先頭の'/'を削除してパスをエンコード（'/mypage' → 'mypage'）
-      return `?from=${encodeURIComponent(pathname.slice(1))}`;
-    }
-    return '';
-  };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,7 +87,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
           {works.map((work) => (
             <div key={work.id} className="bg-background rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               {/* 作品画像エリア - 作品詳細へのリンク */}
-              <Link href={`/work/${work.id}${getFromParam()}`}>
+              <Link href={`/work/${work.id}`}>
                 <div className="aspect-video bg-background flex items-center justify-center">
                   {work.illustration_image_url ? (
                     <img
@@ -116,7 +105,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
               <div className="p-4 border-t">
                 <div className="grid gap-2">
                   {/* 作品タイトル - 作品詳細へのリンク */}
-                  <Link href={`/work/${work.id}${getFromParam()}`}>
+                  <Link href={`/work/${work.id}`}>
                     <h3 className="text-card-foreground font-semibold text-xl hover:underline">
                       {work.title.length > 23
                         ? `${work.title.slice(0, 23)}...`
