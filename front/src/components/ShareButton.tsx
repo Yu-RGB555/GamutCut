@@ -23,12 +23,13 @@ export function ShareButton({ workId, workTitle, workDescription, userName }: Sh
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { showAlert } = useAlert();
 
-  // 現在のページのURLを取得
+  // 作品詳細URLを取得
   const getCurrentUrl = () => {
     if (typeof window !== "undefined") {
-      return window.location.href;
+      const baseUrl = window.location.origin;
+      return `${baseUrl}/work/${workId}`;
     }
-    return `${process.env.NEXT_PUBLIC_APP_URL || 'https://localhost:3000'}/work/${workId}`;
+    return `${process.env.NEXT_PUBLIC_API_URL}/work/${workId}`;
   };
 
   // URLをクリップボードにコピーする関数

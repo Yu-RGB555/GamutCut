@@ -220,7 +220,7 @@ function WorksListContent() {
           {works.map((work) => (
             <div key={work.id} className="bg-background rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               {/* 作品画像エリア - 作品詳細へのリンク */}
-              <Link href={`/work/${work.id}${searchParams ? `?from=${encodeURIComponent(searchParams.toString())}` : ''}`}>
+              <Link href={`/work/${work.id}`}>
                 <div className="aspect-video bg-background flex items-center justify-center">
                   {work.illustration_image_url ? (
                     <img
@@ -238,7 +238,7 @@ function WorksListContent() {
               <div className="p-4 border-t">
                 <div className="grid gap-2">
                   {/* 作品タイトル - 作品詳細へのリンク */}
-                  <Link href={`/work/${work.id}${searchParams ? `?from=${encodeURIComponent(searchParams.toString())}` : ''}`}>
+                  <Link href={`/work/${work.id}`}>
                     <h3 className="text-card-foreground font-semibold text-xl hover:underline">
                       {work.title.length > 23
                         ? `${work.title.slice(0, 23)}...`
