@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Mail, AlertCircle } from 'lucide-react';
+import { Mail, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { BackButton } from '@/components/BackButton';
 
 export default function EmailChangePage() {
   const router = useRouter();
@@ -57,9 +58,6 @@ export default function EmailChangePage() {
     setErrors([]);
 
     try {
-      // TODO: メールアドレス変更API呼び出し
-      console.log('メールアドレス変更:', formData);
-
       // 仮の処理
       await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -102,38 +100,30 @@ export default function EmailChangePage() {
 
   return (
     <div className="container mx-auto max-w-2xl py-8 px-4">
-      {/* ヘッダー */}
-      <div className="mb-8">
-        <Link href="/settings" className="inline-flex items-center text-sm text-label hover:bg-muted mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          設定に戻る
-        </Link>
-        <h1 className="text-3xl font-bold text-label mb-2">メールアドレス変更</h1>
-        <p className="text-muted-foreground">登録されているメールアドレスを変更できます</p>
-      </div>
-
-      {/* エラー表示 */}
-      {errors.length > 0 && (
-        <Alert className="mb-6 border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-800">
-            {errors.map((error, index) => (
-              <p key={index}>{error}</p>
-            ))}
-          </AlertDescription>
-        </Alert>
-      )}
+      <BackButton />
 
       {/* フォーム */}
       <Card>
-        <CardHeader>
-          <CardTitle>新しいメールアドレスの設定</CardTitle>
-          <CardDescription>
-            セキュリティのため、現在のパスワードの入力が必要です
+        <CardHeader className="mb-8">
+          <CardTitle className="text-3xl font-bold text-label mb-2">メールアドレス変更</CardTitle>
+          <CardDescription className="text-label">
+            登録されているメールアドレスを変更できます
           </CardDescription>
         </CardHeader>
+
+        {/* エラー表示 */}
+        {errors.length > 0 && (
+          <Alert className="mb-6 border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              {errors.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </AlertDescription>
+          </Alert>
+        )}
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 mb-12">
             <div className="space-y-2">
               <Label htmlFor="newEmail">新しいメールアドレス</Label>
               <Input
@@ -150,8 +140,8 @@ export default function EmailChangePage() {
             <div className="space-y-2">
               <Label htmlFor="password">現在のパスワード</Label>
               <Input
-                id="password"
-                name="password"
+                id="current-password"
+                name="current-password"
                 type="password"
                 value={formData.password}
                 onChange={handleInputChange}
@@ -160,30 +150,38 @@ export default function EmailChangePage() {
               />
             </div>
 
-            <div className="flex gap-4">
-              <Button type="submit" disabled={loading} className="flex-1">
-                {loading ? '変更中...' : 'メールアドレスを変更'}
+            <div className="flex justify-end gap-4">
+              <Button
+                type="submit"
+                disabled={loading}
+                className=" w-16"
+              >
+                {loading ? '変更中...' : '変更'}
               </Button>
-              <Button type="button" variant="outline" onClick={() => router.push('/settings')}>
+              <Button
+                type="button"
+                variant="secondary"
+                className="px-3 py-2 text-sm font-light transition-colors"
+                onClick={() => router.push('/settings')}
+              >
                 キャンセル
               </Button>
             </div>
           </form>
+
+          {/* 注意事項 */}
+          <Alert className="mt-2 mb-4">
+            <AlertDescription className="text-label">
+              <strong>⚠️ 注意：</strong>
+              <ul className="mt-2 space-y-1 text-sm">
+                <li>• 新しいメールアドレスに確認メールが送信されます</li>
+                <li>• 確認が完了するまで、元のメールアドレスが有効です</li>
+                <li>• 変更後は新しいメールアドレスでログインしてください</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
-
-      {/* 注意事項 */}
-      <Alert className="mt-6">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          <strong>ご注意：</strong>
-          <ul className="mt-2 space-y-1 text-sm">
-            <li>• 新しいメールアドレスに確認メールが送信されます</li>
-            <li>• 確認が完了するまで、元のメールアドレスが有効です</li>
-            <li>• 変更後は新しいメールアドレスでログインしてください</li>
-          </ul>
-        </AlertDescription>
-      </Alert>
     </div>
   );
 }

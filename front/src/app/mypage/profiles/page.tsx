@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { BackButton } from '@/components/BackButton';
 
 interface FormErrors {
   name?: string;
@@ -195,12 +196,7 @@ export default function ProfilesPage() {
       <div className="bg-background shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center text-label hover:cursor-pointer transition-colors duration-200"
-            >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-            </button>
+            <BackButton />
             <h1 className="text-xl font-semibold text-label">プロフィール設定</h1>
             {/* スペーサー */}
             <div className="w-16"></div>

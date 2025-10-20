@@ -7,10 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Lock, AlertCircle, Mail } from 'lucide-react';
+import { AlertCircle, Mail } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { passwordResets } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { BackButton } from '@/components/BackButton';
 
 export default function PasswordChangePage() {
   const router = useRouter();
@@ -67,84 +68,67 @@ export default function PasswordChangePage() {
 
   return (
     <div className="container mx-auto max-w-2xl py-8 px-4">
-      {/* ヘッダー */}
-      <div className="mb-8">
-        <Link href="/settings" className="inline-flex items-center text-sm text-label hover:bg-muted mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          設定に戻る
-        </Link>
-        <h1 className="text-3xl font-bold text-label mb-2">パスワード変更</h1>
-        <p className="text-gray-600">アカウントのパスワードを変更できます</p>
-      </div>
+      <BackButton />
 
-      {/* エラー表示 */}
-      {errors.length > 0 && (
-        <Alert className="mb-6 border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-800">
-            {errors.map((error, index) => (
-              <p key={index}>{error}</p>
-            ))}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* メインカード */}
+      {/* フォーム */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lock className="h-5 w-5" />
-            パスワードリセット
+        <CardHeader className="mb-10">
+          <CardTitle className="text-3xl font-bold text-label">
+            パスワード変更
           </CardTitle>
-          <CardDescription>
-            セキュリティのため、パスワード変更はメール経由で行います
+          <CardDescription className="text-label">
+            アカウントのパスワードを変更できます<br />
+            {/* ※セキュリティのため、パスワード変更はメール経由で行います */}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="font-medium text-blue-800 mb-2">現在のメールアドレス</h3>
-            <p className="text-blue-700">{user?.email}</p>
-          </div>
 
-          <div className="space-y-4">
-            <p className="text-gray-700">
-              上記のメールアドレスにパスワードリセットの手順を送信します。
+        {/* エラー表示 */}
+        {errors.length > 0 && (
+          <Alert className="mb-6 border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              {errors.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <CardContent className="space-y-10">
+          <div className="bg-blue-200 border border-blue-200 rounded-lg p-4">
+            <p className="font-semibold text-blue-800 mb-2">現在のメールアドレス</p>
+            <p className="text-blue-800">{user?.email}</p>
+          </div>
+          <div className="grid gap-10">
+            <p className="flex justify-center text-label text-sm">
+              上記のメールアドレスにパスワードリセットの手順を送信します。<br />
               メール内のリンクをクリックして新しいパスワードを設定してください。
             </p>
-
-            <Button
-              onClick={handlePasswordReset}
-              disabled={loading}
-              className="w-full"
-            >
-              {loading ? 'メール送信中...' : 'パスワードリセットメールを送信'}
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push('/settings')}
-              className="w-full"
-            >
-              キャンセル
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                onClick={handlePasswordReset}
+                disabled={loading}
+                className="w-2/3"
+              >
+                {loading ? 'メール送信中...' : 'パスワードリセットメールを送信'}
+              </Button>
+            </div>
           </div>
+
+          {/* 注意事項 */}
+          <Alert className="mt-6">
+            <AlertDescription className="text-label">
+              <strong>⚠️ 注意：</strong>
+              <ul className="mt-2 space-y-1 text-sm">
+                <li>• パスワードリセットリンクの有効期限は1時間です</li>
+                <li>• リンクは一度のみ使用可能です</li>
+                <li>• メールが届かない場合は、迷惑メールフォルダをご確認ください</li>
+                <li>• メールアドレスを変更したい場合は、メールアドレス変更から行ってください</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
-
-      {/* 注意事項 */}
-      <Alert className="mt-6">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          <strong>ご注意：</strong>
-          <ul className="mt-2 space-y-1 text-sm">
-            <li>• パスワードリセットリンクの有効期限は24時間です</li>
-            <li>• リンクは一度のみ使用可能です</li>
-            <li>• メールが届かない場合は、迷惑メールフォルダをご確認ください</li>
-            <li>• メールアドレスを変更したい場合は、メールアドレス変更から行ってください</li>
-          </ul>
-        </AlertDescription>
-      </Alert>
     </div>
   );
 }
