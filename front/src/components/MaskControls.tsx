@@ -28,25 +28,26 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
   onScaleChange
 }) => {
   return (
-    <div className="">
-      <h3 className="text-card-foreground text-lg font-semibold mb-4">ガマットマスク</h3>
+    <div>
       {/* 拡大・縮小 */}
       {selectedMask.length > 0 && (
         <div className="bg-card p-4 mb-4 rounded-xl">
-          <h3 className="text-label text-base font-semibold mb-4">サイズ</h3>
+          <h3 className="text-label text-base font-semibold mb-4">ガマットマスク</h3>
           <div className="flex flex-wrap gap-2 mb-2">
+
+            {/* マスクの形状 */}
             {selectedMask.map((mask, idx) => (
               <button
                 key={idx}
                 className={`px-2 py-1 font-bold rounded hover:cursor-pointer ${selectedMaskIndex === idx ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground text-muted'}`}
                 onClick={() => onMaskIndexChange(idx)}
               >
-                {/* マスク名 */}
                 {getMaskDisplayName(mask, idx)}
               </button>
             ))}
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center my-4 gap-2 sm:gap-4">
+            <p className="text-label text-sm font-semibold">拡大・縮小</p>
             <input
               type="range"
               min="0.2"
@@ -79,7 +80,12 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Dialog open={isDialogOpen} onOpenChange={onDialogOpenChange}>
           <DialogTrigger asChild>
-            <Button variant="outline">マスクを追加</Button>
+            <Button
+              variant="outline"
+              id="step-2"
+            >
+              マスクを追加
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>

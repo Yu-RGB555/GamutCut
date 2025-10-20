@@ -30,27 +30,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       tour: 'mainTour',
       steps: [
         {
-          // GamutCutへようこそ！
-          // イラストの着彩にお困りではないですか？
-          // このサイトではガマットマスクを作成することができます！
-
-          // step1
+          // FirstStep（step:0）
           icon: <><BsPersonArmsUp className="text-primary" /></>,
           title: 'GamutCutへようこそ',
           content: <>ここではガマットマスクを作成できます。</>,
-          selector: '#mask-making-section',
-          side: 'bottom',
           showControls: true,
           showSkip: true,
-          pointerPadding: 10,
-          pointerRadius: 10,
         },
         {
-          // step2
+          // 2ndStep（step:1）
           icon: <><MdOutlineCollections className="text-primary"/></>,
-          title: 'Myマスク一覧',
-          content: <>保存したマスクはここに表示されます。<br />編集や削除も可能です。</>,
-          selector: '#my-mask-list-section',
+          title: 'マスク作成',
+          content: <>色相環上にマスクを設置します。（最大３つまで）<br />サイズや形状を調整できます。</>,
+          selector: '#step-2',
           side: 'top',
           showControls: true,
           showSkip: true,
@@ -58,7 +50,43 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           pointerRadius: 10,
         },
         {
-          // step3
+          // 3thStep（step:2）
+          icon: <><MdOutlineCollections className="text-primary"/></>,
+          title: 'ダウンロード',
+          content: <>作成したマスクはpng画像としてダウンロードできます。お使いのペイントソフトのスポイトツールで色を抽出するなどして、着彩にご利用ください。</>,
+          selector: '#step-3',
+          side: 'top',
+          showControls: true,
+          showSkip: true,
+          pointerPadding: 10,
+          pointerRadius: 10,
+        },
+        {
+          // 4thStep（step:3）
+          icon: <><MdOutlineCollections className="text-primary"/></>,
+          title: 'マスクの保存',
+          content: <>作成したマスクは名前をつけて保存することができます。<br /><span className="text-muted-foreground text-xs">※ご利用にはログインが必要です</span></>,
+          selector: '#step-4',
+          side: 'top',
+          showControls: true,
+          showSkip: true,
+          pointerPadding: 10,
+          pointerRadius: 10,
+        },
+        {
+          // 5thStep（step:4）
+          icon: <><MdOutlineCollections className="text-primary"/></>,
+          title: 'Myマスク一覧',
+          content: <>保存したマスクはここに表示されます。<br /><span className="text-muted-foreground text-xs">※ご利用にはログインが必要です</span></>,
+          selector: '#step-5',
+          side: 'top',
+          showControls: true,
+          showSkip: true,
+          pointerPadding: 10,
+          pointerRadius: 10,
+        },
+        {
+          // LastStep（step:5）
           icon: <><HiOutlineRocketLaunch className="text-primary"/></>,
           title: 'はじめてみましょう！',
           content: <>GamutCutの基本的な使い方は以上です。<br />素敵なマスクを作成してみてください！</>,
@@ -79,11 +107,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     setCurrentStep(step);
   }
 
-  // 最後のstep（ステップ数nの場合、LastStepは（n-1）番目のインデックスをセットする）
-  const isLastStep = currentStep === 2;
+  // 最後のstep（ステップ数nの場合、LastStepは（n-1）番目のインデックス）
+  const isLastStep = currentStep === 5;
 
   return (
     <html lang="ja">
+      <head>
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
+      </head>
       <body className="min-h-screen bg-background">
         <AuthProvider>
           <AlertProvider>
@@ -101,6 +134,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   // onComplete={(tourName) => console.log(`ツアー完了: ${tourName}`)}
                   // onSkip={(step, tourName) => console.log(`ツアースキップ: ステップ ${step} (ツアー: ${tourName})`)}
                   clickThroughOverlay={false}
+                  scrollToTop={false}
+                  noInViewScroll={true}
                 >
                   <SidebarProvider>
                     <div className="flex min-h-screen min-w-screen">

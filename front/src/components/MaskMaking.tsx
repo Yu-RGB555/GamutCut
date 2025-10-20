@@ -276,7 +276,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   const handleMaskExport = () => {
     const canvas = canvasRef.current; // 色相環用
     const hiddenCanvas = hiddenCanvasRef.current; // マスク用
-    if (!canvas || !hiddenCanvas || selectedMask.length === 0) return;
+
+    if (!canvas || !hiddenCanvas) return;
 
     const hiddenCtx = hiddenCanvas.getContext('2d');
     if (!hiddenCtx) return;
@@ -286,7 +287,10 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
     colorWheelDrawer.draw(hiddenCtx, hiddenCanvas.width, hiddenCanvas.height, currentValue);
 
-    maskDrawer.drawMasks(hiddenCtx, selectedMask, hiddenCanvas.width, hiddenCanvas.height);
+    if (selectedMask.length !== 0) {
+      // マスクが追加されている場合のみ、マスクを描画する
+      maskDrawer.drawMasks(hiddenCtx, selectedMask, hiddenCanvas.width, hiddenCanvas.height);
+    }
 
     // エクスポート
     hiddenCanvas.toBlob((blob) => {
@@ -419,6 +423,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 mt-6 lg:mt-12">
         <div className="justify-items-center space-y-4 lg:space-y-8">
           <div className="relative w-full max-w-[400px]">
+
+            {/* キャンバス（色相環用） */}
             <canvas
               ref={canvasRef}
               width={400}
@@ -429,6 +435,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
             />
+
+            {/* キャンバス（マスク用） */}
             <canvas
               ref={hiddenCanvasRef}
               style={{ display: 'none' }}
@@ -436,6 +444,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
             <div className="absolute top-0 left-0">
               <ColorInfoPanel colorInfo={colorInfo}/>
             </div>
+
+            {/* Myマスクに保存ボタン・ダウンロードボタン */}
             <div className="justify-items-end mt-2">
               <ExportControls
                 selectedMaskLength={selectedMask.length}
@@ -443,6 +453,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
                 onMaskSave={handleMaskSave}
               />
             </div>
+
+            {/* 明度調整スライダー */}
             <div className="w-full space-y-2">
               <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
@@ -475,7 +487,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
           </div>
         </div>
 
-        {/* コントロールパネル */}
+        {/* 色情報パネル */}
         <div className="w-full max-w-2xl space-y-4 lg:space-y-8">
           <MaskControls
             shapeTemplates={shapeTemplates}
@@ -491,7 +503,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         </div>
       </div>
 
-      {/* プリセット名入力ダイアログ */}
+      {/* マスクに名前をつけて保存ダイアログ */}
       <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
