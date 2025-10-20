@@ -20,7 +20,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [copiedMaskData, setCopiedMaskData] = useState<MaskData | null>(null);
 
-  const { startNextStep, closeNextStep, currentTour, currentStep, setCurrentStep, isNextStepVisible } = useNextStep();
+  const { startNextStep, closeNextStep } = useNextStep();
 
   const handleStartTour = () => {
     startNextStep("mainTour");
@@ -84,15 +84,15 @@ export default function Home() {
             </Button>
           </div>
           {/* マスク作成セクション */}
-          <div id="mask-making-section">
+          <div>
             <MaskMaking
               onSaveSuccess={fetchPresetsAfterSave}
-              copiedMaskData={copiedMaskData} // コピーして編集用
+              copiedMaskData={copiedMaskData} // 「コピーして編集」用
             />
           </div>
 
           {/* Myマスク一覧セクション */}
-          <div id="my-mask-list-section" className="space-y-8">
+          <div id="step-5" className="space-y-8">
             <h3 className="text-label text-left text-lg font-semibold">Myマスク一覧</h3>
             <MyMaskList
               myPresets={presets}
