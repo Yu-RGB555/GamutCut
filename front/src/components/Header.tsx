@@ -140,7 +140,7 @@ export function Header() {
                                 : user?.name
                               }
                             </p>
-                            <p className="text-sm text-muted-foreground">マイページ</p>
+                            <SheetDescription>マイページ</SheetDescription>
                           </div>
                         </button>
                       </SheetTitle>

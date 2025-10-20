@@ -133,19 +133,21 @@ export default function EmailChangePage() {
                 value={formData.newEmail}
                 onChange={handleInputChange}
                 placeholder="new@example.com"
+                autoComplete="email"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">現在のパスワード</Label>
+              <Label htmlFor="current-password">現在のパスワード</Label>
               <Input
                 id="current-password"
-                name="current-password"
+                name="password"
                 type="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="現在のパスワードを入力"
+                autoComplete="current-password"
                 required
               />
             </div>

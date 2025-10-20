@@ -68,7 +68,7 @@ export default function DeleteAccountPage() {
     <div className="container mx-auto max-w-2xl py-8 px-4">
       <BackButton />
 
-      {/* メインカード */}
+      {/* フォーム*/}
       <Card>
         <CardHeader className="mb-4">
           <CardTitle className="text-3xl font-bold text-destructive">
@@ -114,29 +114,33 @@ export default function DeleteAccountPage() {
           </div>
 
           {/* フォーム */}
-          <div className="space-y-4">
+          <form onSubmit={(e) => { e.preventDefault(); handleDeleteAccount(); }} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="confirmText">
                 確認テキスト（「{requiredText}」と入力してください）
               </Label>
               <Input
                 id="confirmText"
+                name="confirmText"
                 type="text"
                 value={confirmationText}
                 onChange={(e) => setConfirmationText(e.target.value)}
                 placeholder={requiredText}
+                autoComplete="off"
                 className={confirmationText === requiredText ? 'border-green-300' : ''}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">現在のパスワード</Label>
+              <Label htmlFor="current-password">現在のパスワード</Label>
               <Input
                 id="current-password"
+                name="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="現在のパスワードを入力"
+                autoComplete="current-password"
               />
             </div>
 
@@ -153,21 +157,21 @@ export default function DeleteAccountPage() {
                 この操作は取り消すことができないことを理解しています。
               </Label>
             </div>
-          </div>
 
-          {/* ボタン */}
-          <div className="flex justify-center">
-            <Button
-              onClick={handleDeleteAccount}
-              disabled={loading || !agreedToDelete || confirmationText !== requiredText || !password}
-              variant="destructive"
-              className="w-2/3"
-            >
-              {loading ? '削除中...' : 'アカウントを削除する'}
-            </Button>
-          </div>
+            {/* 削除ボタン */}
+            <div className="flex justify-center">
+              <Button
+                type="submit"
+                disabled={loading || !agreedToDelete || confirmationText !== requiredText || !password}
+                variant="destructive"
+                className="w-2/3"
+              >
+                {loading ? '削除中...' : 'アカウントを削除する'}
+              </Button>
+            </div>
+          </form>
 
-          {/* 代替案の提示 */}
+          {/* 代替案 */}
           <Alert className="mt-6">
             <AlertDescription className="text-label">
               <strong>⚠️ アカウント削除以外の選択肢</strong>
