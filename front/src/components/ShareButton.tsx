@@ -15,11 +15,10 @@ import { useAlert } from "@/contexts/AlertContext";
 interface ShareButtonProps {
   workId: number;
   workTitle: string;
-  workDescription?: string;
   userName: string;
 }
 
-export function ShareButton({ workId, workTitle, workDescription, userName }: ShareButtonProps) {
+export function ShareButton({ workId, workTitle, userName }: ShareButtonProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { showAlert } = useAlert();
 
@@ -48,12 +47,16 @@ export function ShareButton({ workId, workTitle, workDescription, userName }: Sh
   // Xでシェアする関数
   const handleShareToX = () => {
     const currentUrl = getCurrentUrl();
-    const text = workDescription
-      ? `${workTitle} by ${userName}\n\n${workDescription}`
-      : `${workTitle} by ${userName}`;
+    const text = `${workTitle} | ${userName}\n#GamutCut\n`;
 
-    // Xのシェア用URLを構築
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(currentUrl)}`;
+    // text=${encodeURIComponent(text)}&url=${encodeURIComponent(currentUrl)}
+    const params = new URLSearchParams({
+      text: text,
+      url: currentUrl,
+    })
+
+    // Xシェア用URL
+    const twitterUrl = `https://twitter.com/intent/tweet?${params.toString()}`;
 
     // 新しいタブでXを開く
     window.open(twitterUrl, '_blank', 'noopener,noreferrer');
