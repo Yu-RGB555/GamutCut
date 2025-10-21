@@ -163,41 +163,45 @@ export default function ShowWorks() {
         </div>
         <div className="grid grid-cols gap-8">
           <Label className="text-label text-4xl font-semibold">{work.title}</Label>
-            <div className="flex items-center">
-              <Link
-                  href={user?.id === work.user.id ? "/mypage" : `/users/${work.user.id}`}
-                  className="text-label underline-offset-4 hover:cursor-pointer hover:underline"
-              >
-                <div className="flex items-center">
-                  <Avatar className="w-10 h-10 mr-2 hover:cursor-pointer">
-                    <AvatarImage src={work.user.avatar_url} />
-                    <AvatarFallback className="bg-background">
-                      <UserCircle2Icon className="w-full h-full"/>
-                    </AvatarFallback>
-                  </Avatar>
-                  <p className="text-label text-xl mr-8 hover:cursor-pointer hover:underline">
-                    {work.user.name}
-                  </p>
-                </div>
-              </Link>
-              <div className="flex gap-4 mx-4">
-                <LikeButton
-                  workId={work.id}
-                  initialLiked={work.is_liked_by_current_user}
-                  initialLikesCount={work.likes_count}
-                />
-                <BookmarkButton
-                  workId={work.id}
-                  initialBookmarked={work.is_bookmarked_by_current_user}
-                />
-                <ShareButton
-                  workId={work.id}
-                  workTitle={work.title}
-                  workDescription={work.description}
-                  userName={work.user.name}
-                />
+          <div className="flex items-center">
+
+            {/* ユーザー情報 */}
+            <Link
+                href={user?.id === work.user.id ? "/mypage" : `/users/${work.user.id}`}
+                className="text-label underline-offset-4 hover:cursor-pointer hover:underline"
+            >
+              <div className="flex items-center">
+                <Avatar className="w-10 h-10 mr-2 hover:cursor-pointer">
+                  <AvatarImage src={work.user.avatar_url} />
+                  <AvatarFallback className="bg-background">
+                    <UserCircle2Icon className="w-full h-full"/>
+                  </AvatarFallback>
+                </Avatar>
+                <p className="text-label text-xl mr-8 hover:cursor-pointer hover:underline">
+                  {work.user.name}
+                </p>
               </div>
+            </Link>
+
+            {/* いいね・ブックマーク・シェアボタン */}
+            <div className="flex gap-4 mx-4">
+              <LikeButton
+                workId={work.id}
+                initialLiked={work.is_liked_by_current_user}
+                initialLikesCount={work.likes_count}
+              />
+              <BookmarkButton
+                workId={work.id}
+                initialBookmarked={work.is_bookmarked_by_current_user}
+              />
+              <ShareButton
+                workId={work.id}
+                workTitle={work.title}
+                userName={work.user.name}
+              />
             </div>
+          </div>
+
           {/* タグ表示エリア */}
           {work.tags && work.tags.length > 0 && (
             <div className="mt-4">
@@ -220,6 +224,8 @@ export default function ShowWorks() {
               </div>
             </div>
           )}
+
+          {/* 作品説明欄 */}
           <div className="text-label">{work.description}</div>
         </div>
 
