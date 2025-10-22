@@ -90,7 +90,9 @@ services:
     environment:
       TZ: Asia/Tokyo
       # バックエンドAPI接続設定
-      # NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      INTERNAL_API_URL: ${INTERNAL_API_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
     depends_on:
       - backend
 

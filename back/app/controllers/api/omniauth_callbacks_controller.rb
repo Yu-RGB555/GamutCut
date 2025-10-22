@@ -7,6 +7,10 @@ class Api::OmniauthCallbacksController < ApplicationController
       if user.persisted?
         # 既存のJWT生成ロジックを使用（sessions#createと同様）
         token = generate_jwt_token(user)
+        
+        # セッションにユーザーIDを保存（サーバーサイド認証用）
+        session[:user_id] = user.id
+        Rails.logger.debug "OAuth Session created: user_id=#{user.id}, session[:user_id]=#{session[:user_id]}"
 
         # フロントエンドにリダイレクト
         redirect_to "#{frontend_url}/auth/callback?token=#{token}&success=true", allow_other_host: true
