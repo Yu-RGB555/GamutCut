@@ -44,6 +44,14 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
+  # クロスオリジン対応のセッション設定
+  config.session_store :cookie_store,
+    key: '_app_session',
+    secure: true,              # HTTPS必須
+    httponly: true,            # JavaScriptからのアクセスを防ぐ
+    same_site: :none,          # クロスサイトでの送信を許可
+    domain: :all               # ドメインを問わない
+
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
