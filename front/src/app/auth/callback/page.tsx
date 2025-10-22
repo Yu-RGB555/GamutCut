@@ -36,8 +36,6 @@ function AuthCallbackInner() {
     };
 
     if (success === 'true' && token) {
-      // トークンをローカルストレージに保存
-      localStorage.setItem('authToken', token);
       fetchUser(token as string).then(() => {
         router.replace('/'); // replaceで履歴を上書き
       });
