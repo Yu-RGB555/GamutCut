@@ -30,13 +30,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (userData: User, token: string) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
+
+    // JWTトークンをlocalStorageとCookieの両方に保存
     localStorage.setItem('authToken', token);
+    document.cookie = `authToken=${token}; path=/; secure; samesite=lax; max-age=86400`;
   };
 
   // APIでログアウト処理
   const logout = () => {
+      // localStorageからトークンとユーザー情報を削除
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
+
+      // Cookieからもトークンを削除
+      document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+
       setUser(null);
   };
 

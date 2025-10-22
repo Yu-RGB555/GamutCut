@@ -50,18 +50,18 @@ const getServerSideHeaders = async (includeAuth: boolean = true, includeContentT
   const headers: HeadersInit = {};
 
   if (includeAuth) {
-    // サーバーサイドでcookiesから認証情報を取得
+    // サーバーサイドでcookiesからJWTトークンを取得
     const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
 
-    // セッションベース認証の場合、cookieをそのまま転送
-    const cookieHeader = cookieStore.toString();
-
-    if (cookieHeader) {
-      headers['Cookie'] = cookieHeader;
+    // JWTトークンを取得してAuthorizationヘッダーに設定
+    const authToken = cookieStore.get('authToken')?.value;
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
     }
+  }
 
-  }  if (includeContentType) {
+  if (includeContentType) {
     headers['Content-Type'] = 'application/json';
   }
 
