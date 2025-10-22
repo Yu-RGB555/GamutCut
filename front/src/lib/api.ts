@@ -4,8 +4,19 @@ import { Preset } from '@/types/preset';
 import { Tag } from '@/types/tag';
 import { Comment, CommentDetail, CreateCommentRequest, CreateCommentResponse, DeleteCommentResponse, UpdateCommentRequest, UpdateCommentResponse } from '@/types/comment';
 
-// API_URLの取得
+// API URLの取得
 const getApiBaseUrl = (): string => {
+  // サーバーコンポーネントの場合
+  if (typeof window === 'undefined') {
+    // 本番環境（VercelからRenderのAPIサーバーへ）
+    if (process.env.INTERNAL_API_URL) {
+      return process.env.INTERNAL_API_URL;
+    }
+    // ローカル開発環境（Docker間通信）
+    return 'http://backend:3000';
+  }
+
+  // クライアントコンポーネントの場合
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
@@ -14,7 +25,7 @@ const getApiBaseUrl = (): string => {
 
 const API_BASE_URL = getApiBaseUrl();
 
-// 共通ヘッダーの設定
+// クライアントコンポーネント用のヘッダー設定(localstorage、authToken)
 const getCommonHeaders = (includeAuth: boolean = true, includeContentType: boolean = true): HeadersInit => {
   const headers: HeadersInit = {
     'Accept-Language': navigator.language || 'ja',
@@ -28,6 +39,29 @@ const getCommonHeaders = (includeAuth: boolean = true, includeContentType: boole
   }
 
   if (includeContentType) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  return headers;
+};
+
+// サーバーコンポーネント用のヘッダー設定（cookies）
+const getServerSideHeaders = async (includeAuth: boolean = true, includeContentType: boolean = true): Promise<HeadersInit> => {
+  const headers: HeadersInit = {};
+
+  if (includeAuth) {
+    // サーバーサイドでcookiesから認証情報を取得
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+
+    // セッションベース認証の場合、cookieをそのまま転送
+    const cookieHeader = cookieStore.toString();
+
+    if (cookieHeader) {
+      headers['Cookie'] = cookieHeader;
+    }
+
+  }  if (includeContentType) {
     headers['Content-Type'] = 'application/json';
   }
 
@@ -143,9 +177,15 @@ export async function getWorksWithSearch(searchQuery?: string, tagName?: string,
 
 // 作品詳細
 export async function showWork(workId: number): Promise<Work> {
+  // サーバーサイドかクライアントサイドかによってヘッダー設定を分ける
+  const headers = typeof window === 'undefined'
+    ? await getServerSideHeaders(true, true)
+    : getCommonHeaders(true, true);
+
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'GET',
-    headers: getCommonHeaders(true, true),
+    headers,
+    credentials: 'include',
   });
 
   if (!response.ok) {

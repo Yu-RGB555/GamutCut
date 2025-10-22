@@ -1,245 +1,68 @@
-'use client';
+// サーバーコンポーネント
 
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { LikeButton } from "@/components/LikeButton";
-import { BookmarkButton } from "@/components/BookmarkButton";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import {
-  UserCircle2Icon
-} from "lucide-react";
-import { Work } from "@/types/work";
-import { MaskData } from "@/types/mask";
-import { deleteWork, showWork } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
-import { useAlert } from "@/contexts/AlertContext";
-import { PresetPreview } from "@/components/PresetPreview";
-import { BackButton } from "@/components/BackButton";
-import { CommentList } from "@/components/CommentList";
-import { ShareButton } from "@/components/ShareButton";
+import type { Metadata } from "next";
+import { WorkDetailClient } from "./work-detail-client";
+import { showWork } from "@/lib/api";
 
-export default function ShowWorks() {
-  const router = useRouter();
-  const params = useParams();
-  const id = params?.id;
-  const { user } = useAuth();
-  const { showAlert } = useAlert();
-  const [work, setWork] = useState<Work | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+type Props = {
+  params: Promise<{id: number}>
+}
 
+// メタデータ生成用メソッド
+export async function generateMetadata(
+  { params }: Props
+): Promise<Metadata> {
 
+  // 作品idをparamsから読み取り
+  const { id } = await params;
 
-  useEffect(() => {
-    if (!id) return;
+  // 作品データを取得
+  const workData = await showWork(id);
 
-    const fetchWork = async () => {
-      try{
-        const workData = await showWork(Number(id));
-        setWork(workData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
+  const title = `${workData.title} | ${workData.user.name} - GamutCut`
+  const description = `${workData.description.slice(0, 100)}...`
 
-    };
+  // フロントエンドのベースURL（作品ページのURL用）
+  const frontendBaseUrl = process.env.FRONTEND_URL || 'http://localhost:3003'
+  const url = `${frontendBaseUrl}/work/${id}`
 
-    fetchWork();
-  }, []);
+  // 画像のベースURL（API/画像サーバーのURL用）
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'
+  const imageUrl = workData.illustration_image_url || `${frontendBaseUrl}/og-image.png`
 
-  const handleEdit = (id: number) => {
-    router.push(`/work/${id}/edit`);
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: 'GamutCut',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+    },
   }
+}
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('本当に削除しますか？')) {
-      try {
-        const response = await deleteWork(id);
-        showAlert(response.message);
-        router.push('/work');
-      } catch (error) {
-        console.error(error);
-        showAlert('作品の削除に失敗しました');
-      }
-    }
-  }
+export default async function Page({ params }: Props) {
+  // 作品idをparamsから読み取り
+  const { id } = await params;
 
-  const handleCopyMask = (maskData: MaskData) => {
-    // マスクデータをlocalStorageに保存
-    localStorage.setItem('copiedMaskData', JSON.stringify(maskData));
-    showAlert('マスクをコピーしました。マスク作成画面に移ります。');
-    // 少し遅延を入れてからページ遷移
-    setTimeout(() => {
-      router.push('/');
-    }, 1000);
-  };
+  // 作品データを取得
+  const workData = await showWork(id);
 
-    if (isLoading) {
-    return <div className="flex min-h-[500px] justify-center items-center">
-      <div className="text-center font-semibold">
-        読み込み中...
-      </div>
-    </div>;
-  }
-
-  if (!work) {
-    return <div className="flex min-h-[500px] justify-center items-center">
-      <div className="text-white text-center font-semibold">
-        作品が見つかりません...
-      </div>
-    </div>;
-  }
-
-  return (
-    <div className="mx-16 mt-12 mb-16">
-      {/* 戻るボタン */}
-      <div>
-        <BackButton />
-      </div>
-      {/* アラート(デバッグ用) */}
-      {/* <div className="mb-4 p-4 bg-card rounded">
-        <p className="text-sm text-label mb-2">アラートテスト用（開発中のみ）</p>
-        <div className="flex gap-2">
-          <Button size="sm" onClick={() => showAlert('成功メッセージのテストです')}>
-            成功アラート
-          </Button>
-          <Button size="sm" variant="destructive" onClick={() => showAlert('エラーメッセージのテストです')}>
-            エラーアラート
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => showAlert('情報メッセージのテストです')}>
-            情報アラート
-          </Button>
-        </div>
-      </div> */}
-      <div className="flex justify-between items-start mb-6">
-        <div className="flex items-center">
-        </div>
-        {user && work.user.id === user.id && (
-          <div className="flex items-center gap-x-2">
-            <Button
-              variant="outline"
-              onClick={() => handleEdit(work.id)}
-            >編集</Button>
-            <Button
-              variant="destructive"
-              onClick={() => handleDelete(work.id)}
-            >削除</Button>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col gap-6">
-        <div className="grid grid-cols md:grid-cols-2 gap-8 mb-4">
-          <div className="grid gap-2">
-            <div className="flex items-center justify-center border rounded-sm w-full h-80">
-              {work.illustration_image_url ? (
-                <img
-                  src={work.illustration_image_url}
-                  alt={work.title}
-                  className="object-contain w-full h-full"
-                />
-              ) : (
-                <span className="text-gray-500">画像なし</span>
-              )}
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
-            <PresetPreview
-              maskData={work.set_mask_data}
-              size={250}
-            />
-            <Button
-              variant="outline"
-              className="mt-2"
-              onClick={() => handleCopyMask(work.set_mask_data)}
-            >
-              コピーして編集
-            </Button>
-          </div>
-        </div>
-        <div className="grid grid-cols gap-8">
-          <Label className="text-label text-4xl font-semibold">{work.title}</Label>
-          <div className="flex items-center">
-
-            {/* ユーザー情報 */}
-            <Link
-                href={user?.id === work.user.id ? "/mypage" : `/users/${work.user.id}`}
-                className="text-label underline-offset-4 hover:cursor-pointer hover:underline"
-            >
-              <div className="flex items-center">
-                <Avatar className="w-10 h-10 mr-2 hover:cursor-pointer">
-                  <AvatarImage src={work.user.avatar_url} />
-                  <AvatarFallback className="bg-background">
-                    <UserCircle2Icon className="w-full h-full"/>
-                  </AvatarFallback>
-                </Avatar>
-                <p className="text-label text-xl mr-8 hover:cursor-pointer hover:underline">
-                  {work.user.name}
-                </p>
-              </div>
-            </Link>
-
-            {/* いいね・ブックマーク・シェアボタン */}
-            <div className="flex gap-4 mx-4">
-              <LikeButton
-                workId={work.id}
-                initialLiked={work.is_liked_by_current_user}
-                initialLikesCount={work.likes_count}
-              />
-              <BookmarkButton
-                workId={work.id}
-                initialBookmarked={work.is_bookmarked_by_current_user}
-              />
-              <ShareButton
-                workId={work.id}
-                workTitle={work.title}
-                userName={work.user.name}
-              />
-            </div>
-          </div>
-
-          {/* タグ表示エリア */}
-          {work.tags && work.tags.length > 0 && (
-            <div className="mt-4">
-              <Label className="text-label font-semibold mb-3 block">タグ</Label>
-              <div className="flex flex-wrap gap-2">
-                {work.tags.map((tag) => (
-                  <Link
-                    key={tag.id}
-                    href={`/work?tag=${encodeURIComponent(tag.name)}`}
-                    className="transition-transform hover:scale-105"
-                  >
-                    <Badge
-                      variant="outline"
-                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                    >
-                      {tag.name}
-                    </Badge>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 作品説明欄 */}
-          <div className="text-label">{work.description}</div>
-        </div>
-
-        {/* コメントセクション */}
-        <div className="mt-20 pt-8">
-          <CommentList
-            workId={work.id}
-            isPreview={false}
-            incrementStep={5}  // 段階的表示の増分数
-          />
-        </div>
-
-        <div className="mb-40"></div>
-      </div>
-    </div>
-  );
+  return <WorkDetailClient initialData={workData} />;
 }
