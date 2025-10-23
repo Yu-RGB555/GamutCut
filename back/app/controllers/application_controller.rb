@@ -45,21 +45,6 @@ class ApplicationController < ActionController::API
       Rails.logger.debug "No valid Authorization header present"
       @current_user = nil
     end
-
-    # 2.セッション認証（サーバーコンポーネントからの接続用）
-    if @current_user.nil?
-
-      # セッションからユーザーIDを取得
-      user_id = session[:user_id]
-
-      if user_id.present?
-        @current_user = User.find_by(id: user_id)
-        Rails.logger.debug "Session Auth success: user_id=#{user_id}, found_user=#{@current_user.present?}"
-      else
-        Rails.logger.debug "No user_id in session"
-        @current_user = nil
-      end
-    end
   end
 
   def current_user
