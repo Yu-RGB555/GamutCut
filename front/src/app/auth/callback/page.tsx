@@ -28,8 +28,7 @@ function AuthCallbackInner() {
         }
 
         const data = await response.json();
-        login(data.user, jwt); // AuthContextにjwt（token）を渡す
-        localStorage.setItem('user', JSON.stringify(data.user));
+        login(data.user, jwt);
       } catch (error) {
         console.log(error);
       }
@@ -37,7 +36,10 @@ function AuthCallbackInner() {
 
     if (success === 'true' && token) {
       fetchUser(token as string).then(() => {
-        router.replace('/'); // replaceで履歴を上書き
+        // ログイン後のページ遷移先をlocalStorageから取得し、履歴を残さず遷移
+        const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
+        localStorage.removeItem('redirectAfterLogin'); // 使用後は削除
+        router.replace(redirectUrl);
       });
     } else if (success === 'false') {
       // エラーハンドリング
