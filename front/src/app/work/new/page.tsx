@@ -2,22 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
 import { Preset } from "@/types/preset";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { useAlert } from "@/contexts/AlertContext";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { X, AlertCircleIcon } from 'lucide-react';
 import { DropZone } from "@/components/ui/dropzone";
 import { Input } from "@/components/ui/input";
@@ -28,6 +16,7 @@ import { PresetSelectDialog } from "@/components/PresetSelectDialog";
 import { TagInput } from "@/components/TagInput";
 import { postWork } from "@/lib/api";
 import { AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
@@ -35,9 +24,8 @@ type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
 export default function PostWorks() {
   const router = useRouter();
   const { showAlert } = useAlert();
-  const {isAuthenticated} = useAuth();
+  const { isAuthenticated } = useAuthRedirect();
   const [isLoading, setIsLoading] = useState(false);
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: '',
@@ -49,11 +37,7 @@ export default function PostWorks() {
   const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
   const [illustrationPreview, setIllustrationPreview] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setShowLoginDialog(true);
-    }
-  }, [isAuthenticated]);
+
 
   useEffect(() => {
     if (!illustrationFile){
@@ -78,15 +62,6 @@ export default function PostWorks() {
     e.stopPropagation();
     setPresetData(null);
   }
-
-  const handleLoginRedirect = () => {
-    router.push('/auth/login');
-  };
-
-  const handleDialogCancel = () => {
-    setShowLoginDialog(false);
-    router.push('/');
-  };
 
   const handleSubmit = async (e: React.FormEvent, isDraft: boolean) => {
     e.preventDefault();
@@ -140,21 +115,6 @@ export default function PostWorks() {
 
   return (
     <>
-      <AlertDialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>ログインが必要です</AlertDialogTitle>
-            <AlertDialogDescription className="text-label">
-              作品投稿はログインユーザーのみ可能です。ログインしてください。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleDialogCancel}>戻る</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLoginRedirect}>ログイン</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       <div className={`mx-16 mt-12 mb-40 ${!isAuthenticated ? 'opacity-50 pointer-events-none' : ''}`}>
         {errors.length > 0 && (
           <Alert className="bg-card text-error mb-6">

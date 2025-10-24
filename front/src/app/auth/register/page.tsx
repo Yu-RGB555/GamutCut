@@ -95,9 +95,9 @@ export default function Register() {
     setErrors([]);
 
     try{
+      // 新規登録後、自動ログイン処理を実行する
       await registerUser(formData);
 
-      // 自動ログイン
       const loginData: LoginRequest = {
         email: formData.email,
         password: formData.password
@@ -108,7 +108,11 @@ export default function Register() {
       if (loginResult.token && loginResult.user) {
         login(loginResult.user, loginResult.token);
         showAlert(loginResult.message);
-        router.push('/');
+
+        // ログイン後のページ遷移先をlocalStorageから取得
+        const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
+        localStorage.removeItem('redirectAfterLogin'); // 使用後は削除
+        router.push(redirectUrl);
       } else {
         throw new Error('ログイン情報が不正です');
       }

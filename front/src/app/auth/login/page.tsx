@@ -68,7 +68,11 @@ export default function Login() {
       if (response.user && response.token) {
         login(response.user, response.token);
         showAlert(response.message);
-        router.push('/');
+
+        // ログイン後のページ遷移先をlocalStorageから取得
+        const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
+        localStorage.removeItem('redirectAfterLogin'); // 使用後は削除
+        router.push(redirectUrl);
       }
     } catch (error) {
       if (error instanceof Error) {
