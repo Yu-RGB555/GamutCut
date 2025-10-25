@@ -4,8 +4,11 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Lock, UserX } from 'lucide-react';
 import { MdArrowForwardIos } from "react-icons/md";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export default function SettingsPage() {
+  const { isAuthenticated } = useAuthRedirect();
+
   return (
     <div className="container mx-auto max-w-2xl py-8 px-4">
       <Card>

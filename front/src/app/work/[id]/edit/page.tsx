@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { PresetPreview } from "@/components/PresetPreview";
 import { PresetSelectDialog } from "@/components/PresetSelectDialog";
 import { updateWork, showWork, getWorkImageBlob } from "@/lib/api";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
@@ -49,7 +50,8 @@ export default function EditWorks() {
   const router = useRouter();
   const { showAlert } = useAlert();
   const params = useParams();
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
+  const { isAuthenticated } = useAuthRedirect();
   const id = params?.id;
   const currentObjectUrl = useRef<string | null>(null); // ObjectURLの管理用ref
   const [isLoading, setIsLoading] = useState(false);

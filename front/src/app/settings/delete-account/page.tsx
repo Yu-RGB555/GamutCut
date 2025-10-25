@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,11 +9,13 @@ import { Label } from '@/components/ui/label';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { BackButton } from '@/components/BackButton';
 
 export default function DeleteAccountPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { isAuthenticated } = useAuthRedirect();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [confirmationText, setConfirmationText] = useState('');
@@ -77,13 +78,6 @@ export default function DeleteAccountPage() {
           <CardDescription className="text-label">
             アカウントを完全に削除します。<br />
             以下の内容をご確認の上、削除手続きを進めてください。
-
-            {/* 警告 */}
-            {/* <Alert className="mb-6 border-red-800 bg-red-300">
-              <AlertDescription className="text-red-800">
-                <strong>警告：この操作は取り消せません</strong>
-              </AlertDescription>
-            </Alert> */}
           </CardDescription>
         </CardHeader>
 

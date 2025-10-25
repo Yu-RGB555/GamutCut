@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { UserCircle2Icon } from "lucide-react";
 import XLogo from "./XLogo";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 const tabs = [
   { id: 1, label: "公開作品", href: "/mypage" },
@@ -22,6 +23,7 @@ interface MyPageLayoutProps {
 export function MyPageLayout({ children }: MyPageLayoutProps) {
   const pathname = usePathname();
   const { user } = useAuth();
+  const { isAuthenticated } = useAuthRedirect();
 
   // パスからアクティブなタブを判定
   const getActiveIndex = () => {
@@ -37,7 +39,7 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
   const activeIndex = getActiveIndex();
 
   if(!user) {
-    // 仮（※ログイン導線を敷く）
+    // 未ログイン
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
@@ -46,10 +48,11 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
   }
 
   return (
+    // ログインユーザー
     <div className="px-12">
       <div className="grid grid-cols-1 gap-8">
         <div className="grid justify-items-center align-items-center gap-8">
-          {/* <h3 className="text-xl font-semibold text-label">プロフィール</h3> */}
+
           {/* ユーザープロフィール */}
           <div className="grid justify-items-center align-items-center gap-8">
             <div className="flex flex-col items-center gap-4">

@@ -10,10 +10,12 @@ import { Mail, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { BackButton } from '@/components/BackButton';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export default function EmailChangePage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { isAuthenticated } = useAuthRedirect();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);

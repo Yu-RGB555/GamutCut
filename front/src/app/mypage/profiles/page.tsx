@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Camera, User, FileText, Save, ArrowLeft, X } from 'lucide-react';
+import { Camera, User, X } from 'lucide-react';
 import { getProfile, updateProfile } from '@/lib/api';
 import { User as UserType } from '@/types/auth';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { BackButton } from '@/components/BackButton';
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 interface FormErrors {
   name?: string;
@@ -27,7 +28,8 @@ interface FormErrors {
 
 export default function ProfilesPage() {
   const router = useRouter();
-  const { isAuthenticated, updateUser } = useAuth();
+  const { updateUser } = useAuth();
+  const { isAuthenticated } = useAuthRedirect();
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
