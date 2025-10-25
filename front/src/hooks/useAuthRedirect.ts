@@ -10,17 +10,20 @@ import { useAuth } from '@/contexts/AuthContext';
   ======================================================
 */
 export const useAuthRedirect = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
+    // 認証状態の初期化中は実行しない
+    if (isLoading) return;
+
     if (!isAuthenticated) {
       // 現在のURLをlocalStorageに保存し、ログイン画面へ
       localStorage.setItem('redirectAfterLogin', window.location.pathname);
       router.push('/auth/login');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, router]);
 
-  // ログインした場合はtrueを返す
-  return { isAuthenticated };
+  // 認証状態とローディング状態を返す
+  return { isAuthenticated, isLoading };
 };

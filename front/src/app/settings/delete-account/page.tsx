@@ -15,8 +15,8 @@ import { BackButton } from '@/components/BackButton';
 export default function DeleteAccountPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { isAuthenticated } = useAuthRedirect();
-  const [loading, setLoading] = useState(false);
+  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [confirmationText, setConfirmationText] = useState('');
   const [agreedToDelete, setAgreedToDelete] = useState(false);
@@ -48,7 +48,7 @@ export default function DeleteAccountPage() {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
     setErrors([]);
 
     try {
@@ -61,9 +61,18 @@ export default function DeleteAccountPage() {
     } catch (error) {
       setErrors(['アカウントの削除に失敗しました']);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
+
+  // 認証状態の初期化中はローディング表示
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-2xl py-8 px-4">
@@ -156,11 +165,11 @@ export default function DeleteAccountPage() {
             <div className="flex justify-center">
               <Button
                 type="submit"
-                disabled={loading || !agreedToDelete || confirmationText !== requiredText || !password}
+                disabled={isLoading || !agreedToDelete || confirmationText !== requiredText || !password}
                 variant="destructive"
                 className="w-2/3"
               >
-                {loading ? '削除中...' : 'アカウントを削除する'}
+                {isLoading ? '削除中...' : 'アカウントを削除する'}
               </Button>
             </div>
           </form>

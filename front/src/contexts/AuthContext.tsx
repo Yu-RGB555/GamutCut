@@ -9,7 +9,8 @@ interface AuthContextType {
   login: (user: User, token: string) => void;
   logout: () => void;
   updateUser: (userData: User) => void; // プロフィール更新
-  isAuthenticated: boolean;
+  isAuthenticated: boolean;             // 認証結果
+  isLoading: boolean;                   // 認証状態の初期化中フラグ
 }
 
 // 認証情報を保持するAuthContextオプジェクト
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // ページリロード時（コンポーネントマウント時）に、localStorageからユーザー情報を読み込む
@@ -24,6 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setIsLoading(false); // 初期化完了
   }, []);
 
   // レスポンスで返されたuserをlocalStorageと状態userにセット
@@ -59,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // 子コンポーネントにAuthContextの値を渡せる状態にする
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, isAuthenticated, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

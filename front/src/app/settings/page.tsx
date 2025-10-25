@@ -7,7 +7,16 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export default function SettingsPage() {
-  const { isAuthenticated } = useAuthRedirect();
+  const { isAuthenticated, isLoading } = useAuthRedirect();
+
+  // 認証状態の初期化中はローディング表示
+  if (isLoading) {
+    return (
+      <div className="container mx-auto max-w-2xl py-8 px-4 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-2xl py-8 px-4">

@@ -15,8 +15,8 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 export default function EmailChangePage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { isAuthenticated } = useAuthRedirect();
-  const [loading, setLoading] = useState(false);
+  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -57,7 +57,7 @@ export default function EmailChangePage() {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
     setErrors([]);
 
     try {
@@ -72,10 +72,20 @@ export default function EmailChangePage() {
     } catch (error) {
       setErrors(['メールアドレスの変更に失敗しました']);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
+  // 認証状態の初期化中はローディング表示
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
+
+  // メールアドレス変更確認メール送信後
   if (success) {
     return (
       <div className="container mx-auto max-w-2xl py-8 px-4">
@@ -162,10 +172,10 @@ export default function EmailChangePage() {
             <div className="flex justify-end gap-4">
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={isLoading}
                 className=" w-16"
               >
-                {loading ? '変更中...' : '変更'}
+                {isLoading ? '変更中...' : '変更'}
               </Button>
             </div>
           </form>

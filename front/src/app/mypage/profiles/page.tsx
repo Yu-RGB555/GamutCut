@@ -29,7 +29,7 @@ interface FormErrors {
 export default function ProfilesPage() {
   const router = useRouter();
   const { updateUser } = useAuth();
-  const { isAuthenticated } = useAuthRedirect();
+  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -184,7 +184,8 @@ export default function ProfilesPage() {
     }
   };
 
-  if (!profileUser) {
+  // 認証状態の初期化中またはプロフィール読み込み中はローディング表示
+  if (authLoading || !profileUser) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>

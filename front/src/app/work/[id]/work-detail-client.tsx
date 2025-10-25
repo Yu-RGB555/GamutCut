@@ -22,6 +22,7 @@ import { PresetPreview } from "@/components/PresetPreview";
 import { BackButton } from "@/components/BackButton";
 import { CommentList } from "@/components/CommentList";
 import { ShareButton } from "@/components/ShareButton";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 interface WorkDetailClientProps {
   initialData: Work;
@@ -31,28 +32,9 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
   const router = useRouter();
   const params = useParams();
   const id = params?.id;
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { showAlert } = useAlert();
   const [work, setWork] = useState(initialData);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // useEffect(() => {
-  //   if (!id) return;
-
-  //   const fetchWork = async () => {
-  //     try{
-  //       const workData = await showWork(Number(id));
-  //       setWork(workData);
-  //     } catch (error) {
-  //       console.error(error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-
-  //   };
-
-  //   fetchWork();
-  // }, []);
 
   const handleEdit = (id: number) => {
     router.push(`/work/${id}/edit`);
@@ -81,12 +63,13 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
     }, 2000);
   };
 
-    if (isLoading) {
-    return <div className="flex min-h-[500px] justify-center items-center">
-      <div className="text-center font-semibold">
-        読み込み中...
+  // 認証状態の初期化中はローディング表示
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
       </div>
-    </div>;
+    );
   }
 
   if (!work) {
@@ -97,6 +80,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
     </div>;
   }
 
+  // 未公開作品のアクセス制限
   if ( work.is_public !== "published" && user?.id !== work.user.id) {
     return <div className="flex min-h-[500px] justify-center items-center">
       <div className="text-white text-center font-semibold">
