@@ -2,11 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { AlertCircle, Mail } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { passwordResets } from '@/lib/api';
@@ -72,7 +69,7 @@ export default function PasswordChangePage() {
 
       {/* フォーム */}
       <Card>
-        <CardHeader className="mb-10">
+        <CardHeader className="mb-8">
           <CardTitle className="text-3xl font-bold text-label">
             パスワード変更
           </CardTitle>
@@ -94,10 +91,10 @@ export default function PasswordChangePage() {
           </Alert>
         )}
 
-        <CardContent className="space-y-10">
-          <div className="bg-blue-200 border border-blue-200 rounded-lg p-4">
-            <p className="font-semibold text-blue-800 mb-2">現在のメールアドレス</p>
-            <p className="text-blue-800">{user?.email}</p>
+        <CardContent className="space-y-12">
+          <div className="max-w-xl bg-green-200 border border-green-800 rounded-lg p-4">
+            <p className="font-semibold text-green-800 mb-2">現在のメールアドレス</p>
+            <p className="text-green-800 pl-4">{user?.email}</p>
           </div>
           <div className="grid gap-10">
             <p className="flex justify-center text-label text-sm">

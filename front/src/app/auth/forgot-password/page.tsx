@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -15,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { passwordResets } from '@/lib/api';
 import { useAlert } from '@/contexts/AlertContext';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -74,39 +76,45 @@ export default function ForgotPassword() {
   if (isSubmitted) {
     return (
       <div className="my-8">
-        <Card className="w-full max-w-md mx-auto">
+        <Card className="w-full max-w-xl mx-auto space-y-6">
           <CardHeader>
-            <CardTitle>メール送信完了</CardTitle>
+            <CardTitle className="text-3xl justify-items-center">メール送信完了</CardTitle>
+            <CardDescription className="text-sm text-label">
+              パスワードリセット用のメールを <strong>{email}</strong> に送信しました。
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                <strong>{email}</strong> にパスワードリセット用のメールを送信しました。
-              </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="font-semibold text-blue-900 mb-2">次の手順</h3>
-                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+            <div>
+              {/* 手順 */}
+              <div className="bg-green-200 border border-green-800 rounded-lg p-4">
+                <h3 className="font-semibold text-green-800 mb-2">次の手順</h3>
+                <ol className="text-sm text-green-800 space-y-1 list-decimal list-inside">
                   <li>受信したメールを確認してください</li>
                   <li>メール内のリンクをクリックしてください</li>
                   <li>新しいパスワードを設定してください</li>
                 </ol>
               </div>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm text-yellow-800">
-                  <strong>⚠️ 注意：</strong> リンクの有効期限は24時間です。<br />
-                  メールが届かない場合は、迷惑メールフォルダもご確認ください。
-                </p>
-              </div>
+
+              {/* 注意事項 */}
+              <Alert className="bg-background border-none">
+                <AlertDescription className="text-label">
+                  <p className="text-sm">
+                    <strong>⚠️ 注意：</strong> リンクの有効期限は<strong> １時間 </strong>です。<br />
+                  </p>
+                </AlertDescription>
+              </Alert>
             </div>
           </CardContent>
-          <CardFooter className="flex-col gap-2">
+
+          {/* ボタン */}
+          <CardFooter className="flex flex-col space-y-2">
             <Button
               onClick={() => {
                 setIsSubmitted(false);
                 setEmail('');
               }}
-              variant="outline"
-              className="w-full"
+              variant="secondary"
+              className="w-2/3 font-normal"
             >
               別のメールアドレスで送信
             </Button>
@@ -114,7 +122,7 @@ export default function ForgotPassword() {
               href="/auth/login"
               className="text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
             >
-              ログイン画面に戻る
+              <p>ログイン画面に戻る</p>
             </Link>
           </CardFooter>
         </Card>
@@ -124,10 +132,10 @@ export default function ForgotPassword() {
 
   return (
     <div className="my-8">
-      <Card className="w-full max-w-sm mx-auto">
+      <Card className="w-full max-w-sm sm:max-w-xl mx-auto">
         <CardHeader>
-          <CardTitle>パスワードを忘れた方</CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <CardTitle className="text-xl">パスワードをお忘れですか？</CardTitle>
+          <p className="text-xs text-label">
             登録済みのメールアドレスにパスワードリセット用のリンクを送信します
           </p>
         </CardHeader>
@@ -156,10 +164,10 @@ export default function ForgotPassword() {
                 required
               />
             </div>
-            <CardFooter className="flex-col gap-4 my-8 px-0">
+            <CardFooter className="flex-col space-y-2 my-8">
               <Button
                 type="submit"
-                className="w-full py-5"
+                className="w-2/3 py-5"
                 disabled={isLoading}
               >
                 {isLoading ? 'メール送信中...' : 'パスワードリセットメールを送信'}
