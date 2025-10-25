@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,9 +9,11 @@ import { Label } from '@/components/ui/label';
 import { Mail, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { BackButton } from '@/components/BackButton';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function EmailChangePage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
@@ -104,7 +105,7 @@ export default function EmailChangePage() {
 
       {/* フォーム */}
       <Card>
-        <CardHeader className="mb-8">
+        <CardHeader className="mb-4">
           <CardTitle className="text-3xl font-bold text-label mb-2">メールアドレス変更</CardTitle>
           <CardDescription className="text-label">
             登録されているメールアドレスを変更できます
@@ -123,6 +124,10 @@ export default function EmailChangePage() {
           </Alert>
         )}
         <CardContent>
+          <div className="max-w-xl bg-blue-200 border border-blue-200 rounded-lg p-4 mb-10">
+            <p className="font-semibold text-blue-800 mb-2">現在のメールアドレス</p>
+            <p className="text-blue-800 pl-4">{user?.email}</p>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6 mb-12">
             <div className="space-y-2">
               <Label htmlFor="newEmail">新しいメールアドレス</Label>
@@ -159,14 +164,6 @@ export default function EmailChangePage() {
                 className=" w-16"
               >
                 {loading ? '変更中...' : '変更'}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                className="px-3 py-2 text-sm font-light transition-colors"
-                onClick={() => router.push('/settings')}
-              >
-                キャンセル
               </Button>
             </div>
           </form>
