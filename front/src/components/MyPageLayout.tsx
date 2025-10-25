@@ -23,7 +23,7 @@ interface MyPageLayoutProps {
 export function MyPageLayout({ children }: MyPageLayoutProps) {
   const pathname = usePathname();
   const { user } = useAuth();
-  const { isAuthenticated } = useAuthRedirect();
+  const { isAuthenticated, isLoading } = useAuthRedirect();
 
   // パスからアクティブなタブを判定
   const getActiveIndex = () => {
@@ -38,8 +38,8 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
 
   const activeIndex = getActiveIndex();
 
-  if(!user) {
-    // 未ログイン
+  // 認証状態の初期化中またはユーザー情報がない場合はローディング表示
+  if(isLoading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>

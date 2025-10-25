@@ -24,7 +24,7 @@ type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
 export default function PostWorks() {
   const router = useRouter();
   const { showAlert } = useAlert();
-  const { isAuthenticated } = useAuthRedirect();
+  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState({
@@ -90,7 +90,6 @@ export default function PostWorks() {
         submitData.append(`work[tags][]`, '');
       }
 
-
       submitData.append('work[set_mask_data]', JSON.stringify(presetData?.mask_data));
 
       const response = await postWork(submitData);
@@ -112,6 +111,15 @@ export default function PostWorks() {
       setIsLoading(false);
     }
   };
+
+  // 認証状態の初期化中はローディング表示
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
 
   return (
     <>

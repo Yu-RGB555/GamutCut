@@ -14,8 +14,8 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 export default function PasswordChangePage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { isAuthenticated } = useAuthRedirect();
-  const [loading, setLoading] = useState(false);
+  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
 
@@ -25,7 +25,7 @@ export default function PasswordChangePage() {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
     setErrors([]);
 
     try {
@@ -34,10 +34,20 @@ export default function PasswordChangePage() {
     } catch (error) {
       setErrors(['パスワードリセットメールの送信に失敗しました']);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
+  // 認証状態の初期化中はローディング表示
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
+
+  // パスワードリセットメール送信完了後
   if (success) {
     return (
       <div className="container mx-auto max-w-2xl py-8 px-4">
@@ -77,7 +87,6 @@ export default function PasswordChangePage() {
           </CardTitle>
           <CardDescription className="text-label">
             アカウントのパスワードを変更できます<br />
-            {/* ※セキュリティのため、パスワード変更はメール経由で行います */}
           </CardDescription>
         </CardHeader>
 
@@ -106,10 +115,10 @@ export default function PasswordChangePage() {
             <div className="flex justify-center">
               <Button
                 onClick={handlePasswordReset}
-                disabled={loading}
+                disabled={isLoading}
                 className="w-2/3"
               >
-                {loading ? 'メール送信中...' : 'パスワードリセットメールを送信'}
+                {isLoading ? 'メール送信中...' : 'パスワードリセットメールを送信'}
               </Button>
             </div>
           </div>
