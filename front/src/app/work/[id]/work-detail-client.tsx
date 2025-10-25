@@ -97,6 +97,14 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
     </div>;
   }
 
+  if ( work.is_public !== "published" && user?.id !== work.user.id) {
+    return <div className="flex min-h-[500px] justify-center items-center">
+      <div className="text-white text-center font-semibold">
+        作品が見つかりません...
+      </div>
+    </div>;
+  }
+
   return (
     <div className="mx-16 mt-12 mb-16">
       {/* 戻るボタン */}

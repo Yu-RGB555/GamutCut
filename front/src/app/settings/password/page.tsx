@@ -6,13 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Mail } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { BackButton } from '@/components/BackButton';
 import { passwordResets } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { BackButton } from '@/components/BackButton';
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export default function PasswordChangePage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { isAuthenticated } = useAuthRedirect();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
