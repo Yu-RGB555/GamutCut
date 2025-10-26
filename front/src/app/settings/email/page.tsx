@@ -6,24 +6,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, AlertCircle } from 'lucide-react';
+import { BsExclamationCircle } from "react-icons/bs";
+import { MdOutlineCheckCircle } from "react-icons/md";
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { BackButton } from '@/components/BackButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { changeEmail } from '@/lib/api';
 
 export default function EmailChangePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
-    currentEmail: '',
     newEmail: '',
     password: ''
   });
+
+  // SNS認証ユーザーは非表示
+  if (!authLoading && isAuthenticated && user?.has_social_accounts) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -61,16 +71,29 @@ export default function EmailChangePage() {
     setErrors([]);
 
     try {
-      // 仮の処理
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // メールアドレス変更申請
+      const response = await changeEmail({
+        email: formData.newEmail,
+        password: formData.password
+      });
+
+      // 成功時は戻ってきた user でローカルの状態を更新
+      if (response?.user) {
+        updateUser(response.user);
+      }
 
       setSuccess(true);
-      setTimeout(() => {
-        router.push('/settings');
-      }, 2000);
-
-    } catch (error) {
-      setErrors(['メールアドレスの変更に失敗しました']);
+    } catch (e) {
+      if (Array.isArray(e)) {
+        // バリデーションエラーの場合（配列）
+        setErrors(e);
+      } else if (e instanceof Error) {
+        // Errorオブジェクトの場合
+        setErrors([e.message]);
+      } else {
+        // その他
+        setErrors(['予期しないエラーが発生しました']);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -89,21 +112,25 @@ export default function EmailChangePage() {
   if (success) {
     return (
       <div className="container mx-auto max-w-2xl py-8 px-4">
-        <Card className="border-green-200">
-          <CardContent className="pt-6">
+        <Card>
+          <CardContent className="px-8 pt-6">
             <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
-                <Mail className="h-6 w-6 text-green-600" />
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full mb-4">
+                <MdOutlineCheckCircle className="h-20 w-20 text-primary" />
               </div>
-              <h2 className="text-lg font-semibold text-green-800 mb-2">
-                メールアドレス変更完了
-              </h2>
-              <p className="text-green-600 mb-4">
-                新しいメールアドレスに確認メールを送信しました
+              <p className="text-3xl font-semibold text-label m-2">
+                メールアドレスの変更が<br />
+                完了しました
               </p>
-              <Button onClick={() => router.push('/settings')}>
-                設定画面に戻る
-              </Button>
+              <div className="space-y-2 m-16">
+                <Button
+                  variant="secondary"
+                  className="w-2/3 font-normal"
+                  onClick={() => router.push('/settings')}
+                >
+                  設定画面に戻る
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -117,24 +144,25 @@ export default function EmailChangePage() {
 
       {/* フォーム */}
       <Card>
-        <CardHeader className="mb-4">
+        <CardHeader className="mb-2">
           <CardTitle className="text-3xl font-bold text-label mb-2">メールアドレス変更</CardTitle>
           <CardDescription className="text-label">
             登録されているメールアドレスを変更できます
           </CardDescription>
-        </CardHeader>
 
-        {/* エラー表示 */}
-        {errors.length > 0 && (
-          <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">
-              {errors.map((error, index) => (
-                <p key={index}>{error}</p>
-              ))}
-            </AlertDescription>
-          </Alert>
-        )}
+            {/* エラー表示 */}
+            {errors.length > 0 && (
+              <Alert className="mb-2 border-red-200 bg-red-50">
+                <BsExclamationCircle className="!text-red-800"/>
+                <AlertDescription className="text-red-800">
+                  {errors.map((error, index) => (
+                    <p key={index}>{error}</p>
+                  ))}
+                </AlertDescription>
+              </Alert>
+            )}
+
+        </CardHeader>
         <CardContent>
           <div className="max-w-xl bg-blue-200 border border-blue-200 rounded-lg p-4 mb-10">
             <p className="font-semibold text-blue-800 mb-2">現在のメールアドレス</p>

@@ -2,11 +2,12 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { Button } from "@/components/ui/button";
+import { MdOutlineCheckCircle } from "react-icons/md";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -15,14 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { passwordUpdate } from '@/lib/api';
 import { PasswordUpdateRequest } from '@/types/auth';
-import { useAlert } from '@/contexts/AlertContext';
 
 function PasswordResetForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { showAlert } = useAlert();
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [formData, setFormData] = useState<PasswordUpdateRequest>({
     password: '',
@@ -82,9 +82,8 @@ function PasswordResetForm() {
     setIsLoading(true);
 
     try {
-      const response = await passwordUpdate(token, formData);
-      showAlert(response.message || 'パスワードが正常に変更されました。');
-      router.push('/auth/login');
+      await passwordUpdate(token, formData);
+      setSuccess(true);
     } catch (error) {
       if (error instanceof Error) {
         try {
@@ -101,36 +100,68 @@ function PasswordResetForm() {
     }
   };
 
+  // トークンを取得できるまで
   if (!token && errors.length === 0) {
     return (
-      <div className="my-8">
-        <Card className="w-full max-w-sm mx-auto">
-          <CardContent className="pt-6">
-            <p className="text-center">リンクを確認しています...</p>
+      <div className="container mx-auto max-w-2xl py-8 px-4 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
+
+  // パスワードリセット完了後
+  if (success) {
+    return (
+      <div className="container mx-auto max-w-2xl py-8 px-4">
+        <Card>
+          <CardContent className="px-8 pt-6">
+            <div className="text-center">
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full mb-4">
+                <MdOutlineCheckCircle className="h-20 w-20 text-primary" />
+              </div>
+              <p className="text-3xl font-semibold text-label m-2">
+                パスワードの変更が<br />
+                完了しました
+              </p>
+              <div className="space-y-2 m-16">
+                <Button
+                  variant="secondary"
+                  className="w-2/3 font-normal"
+                  onClick={() => router.push('/settings')}
+                >
+                  設定画面に戻る
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
     );
   }
 
+  // パスワードリセット画面
   return (
-    <div className="my-8">
+    <div className="my-8 text-center">
       <Card className="w-full max-w-sm mx-auto">
         <CardHeader>
-          <CardTitle>パスワードリセット</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            新しいパスワードを設定してください
-          </p>
+          <CardTitle className="text-3xl font-bold text-label">パスワードリセット</CardTitle>
+          <CardDescription className="text-label">
+            新しいパスワードを設定してください。
+          </CardDescription>
+
+          {/* エラー表示 */}
+          {errors.length > 0 && (
+            <CardContent className="pt-0">
+              <div className="flex flex-col gap-2">
+                {errors.map((error, index) => (
+                  <p key={index} className="text-red-500 text-sm">{error}</p>
+                ))}
+              </div>
+            </CardContent>
+          )}
         </CardHeader>
-        {errors.length > 0 && (
-          <CardContent className="pt-0">
-            <div className="flex flex-col gap-2">
-              {errors.map((error, index) => (
-                <p key={index} className="text-red-500 text-sm">{error}</p>
-              ))}
-            </div>
-          </CardContent>
-        )}
+
+        {/* フォーム */}
         <CardContent className={errors.length > 0 ? 'pt-4' : ''}>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
@@ -171,14 +202,6 @@ function PasswordResetForm() {
               >
                 {isLoading ? 'パスワード変更中...' : 'パスワードを変更'}
               </Button>
-              <div className="text-center">
-                <Link
-                  href="/auth/login"
-                  className="text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
-                >
-                  ログイン画面に戻る
-                </Link>
-              </div>
             </CardFooter>
           </form>
         </CardContent>
@@ -190,12 +213,8 @@ function PasswordResetForm() {
 export default function PasswordReset() {
   return (
     <Suspense fallback={
-      <div className="my-8">
-        <Card className="w-full max-w-sm mx-auto">
-          <CardContent className="pt-6">
-            <p className="text-center">読み込み中...</p>
-          </CardContent>
-        </Card>
+      <div className="container mx-auto max-w-2xl py-8 px-4 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
       </div>
     }>
       <PasswordResetForm />

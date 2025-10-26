@@ -24,6 +24,9 @@ Rails.application.routes.draw do
     get '/users/profile', to: 'users#show_profile'
     patch '/users/profile', to: 'users#update_profile'
 
+    # メールアドレス変更
+    patch '/users/change_email', to: 'users#change_email'
+
     # パスワードリセット
     post '/password_resets', to: 'password_resets#create'     # リセット要求（メール送信）
     patch '/password_resets/:token', to: 'password_resets#update'  # パスワード更新
