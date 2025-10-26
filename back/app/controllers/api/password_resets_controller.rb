@@ -5,15 +5,15 @@ class Api::PasswordResetsController < ApplicationController
   def create
     user = User.find_by(email: reset_email_params[:email])
 
-    # ユーザーが存在する場合のみメール送信処理を実行
-    if user
+    # ユーザーが存在し、かつSNS認証ユーザーでない場合のみメール送信処理を実行
+    if user && !user.has_social_accounts?
       user.generate_password_reset_token!
       UserMailer.password_reset(user).deliver_now
     end
 
-    # メール送信メッセージはユーザーが存在しない場合でもエラーなしで表示
+    # メール送信メッセージはユーザーが存在しない場合でも表示させる
     render json: {
-      message: "メールアドレスが登録されている場合、パスワードリセットの手順をお送りしました"
+      message: "入力されたメールアドレスにパスワードリセットの手順をお送りしました"
     }, status: :ok
   end
 

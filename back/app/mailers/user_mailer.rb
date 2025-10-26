@@ -4,7 +4,7 @@ class UserMailer < ApplicationMailer
   def password_reset(user)
     @user = user
 
-    # フロントエンドのURLを取得（デフォルト値を設定）
+    # フロントエンドのURLを取得
     frontend_url = ENV['FRONTEND_URL']
 
     # メール内に埋め込むパスワード変更画面のリンク
@@ -22,6 +22,21 @@ class UserMailer < ApplicationMailer
     mail(
       to: @user.email,
       subject: 'パスワードリセットのご案内'
+    )
+  end
+
+  def change_email(user)
+    @user = user
+
+    # フロントエンドのURLを取得
+    frontend_url = ENV['FRONTEND_URL']
+
+    # メール内に埋め込むパスワードメールアドレス変更確認画面のリンク
+    @url = "#{frontend_url}/settings/email"
+
+    mail(
+      to: @user.email,
+      subject: 'メールアドレス変更完了のお知らせ'
     )
   end
 end

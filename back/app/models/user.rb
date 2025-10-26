@@ -50,6 +50,12 @@ class User < ApplicationRecord
     avatar_url(size: [150, 150])
   end
 
+  # SNS認証でログインしたユーザーかどうか判定
+  # 「メアド変更」「パスワード変更」ページへのアクセス制限用
+  def has_social_accounts?
+    social_accounts.exists?
+  end
+
   def self.from_omniauth(auth)
     Rails.logger.debug "auth_info: #{auth.info}"
     # ソーシャルアカウントから既存ユーザーを検索

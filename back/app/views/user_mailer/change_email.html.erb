@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>メールアドレス変更完了のお知らせ - GamutCut</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    .link {
+      word-break: break-all;
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e9ecef;
+      font-size: 14px;
+      color: #6c757d;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <p>メールアドレス変更完了のお知らせ</p>
+    </div>
+
+    <p>こんにちは、<span style="font-weight: 600;"><%= @user.name %></span> さん</p>
+
+    <p>GamutCutアカウントにご登録のメールアドレスが変更されました。</p>
+
+
+    <p>変更後のメールアドレス：  <span><%= @user.email %></span></p>
+
+
+    <p>変更後のメールアドレスを確認したい場合は、以下のリンクよりご確認いただけます。</p>
+
+    <p class="link">
+      <%= @url %>
+    </p>
+
+    <div class="footer">
+      <p>このメールは自動送信されています。返信はできません。</p>
+      <p>&copy; <%= Date.current.year %> GamutCut. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

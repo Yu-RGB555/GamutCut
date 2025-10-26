@@ -375,8 +375,6 @@ export async function getPopularTags(limit: number = 10): Promise<Tag[]> {
   return data.tags || [];
 }
 
-// === コメント関連のAPI ===
-
 // コメント一覧取得
 export async function getComments(workId: number): Promise<Comment[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments`, {
@@ -463,7 +461,7 @@ export async function getProfile(): Promise<User> {
     method: 'GET',
     headers: getCommonHeaders(true, true),
     credentials: 'include',
-  })
+  });
 
   if (!response.ok) {
     throw new Error('プロフィール情報の取得に失敗しました');
@@ -478,7 +476,7 @@ export async function getUserProfile(userId: number): Promise<User> {
     method: 'GET',
     headers: getCommonHeaders(true, true),
     credentials: 'include',
-  })
+  });
 
   if (!response.ok) {
     throw new Error('プロフィール情報の取得に失敗しました');
@@ -494,12 +492,33 @@ export async function updateProfile(profileData: FormData): Promise<UpdateProfil
     headers: getCommonHeaders(true, false),
     body: profileData,
     credentials: 'include',
-  })
+  });
 
   if (!response.ok) {
     const data = await response.json();
     const errorMessage = data.errors ? JSON.stringify({ errors: data.errors }) : data.message || 'プロフィールの更新に失敗しました';
     throw new Error(errorMessage);
+  }
+
+  return response.json();
+}
+
+// メールアドレス変更
+export async function changeEmail(emailData: { email: string, password: string }): Promise<{message: string, user: User}> {
+  const response = await fetch(`${API_BASE_URL}/api/users/change_email`, {
+    method: 'PATCH',
+    headers: getCommonHeaders(true, true),
+    body: JSON.stringify({ user: emailData }),
+    credentials: 'include'
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    if (data.errors && Array.isArray(data.errors)) {
+      throw data.errors; // errorsがある場合は配列を直接throw
+    } else {
+      throw new Error(data.message || 'メールアドレスの変更に失敗しました');
+    }
   }
 
   return response.json();

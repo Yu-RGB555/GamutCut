@@ -44,6 +44,7 @@ export interface User {
   avatar_url?: string;
   bio?: string;
   x_account_url?: string;
+  has_social_accounts?: boolean; // SNS認証アカウントかどうか（アクセス制限用）
 }
 
 // === プロフィール更新用 ===

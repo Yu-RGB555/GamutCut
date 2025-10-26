@@ -15,12 +15,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { passwordResets } from '@/lib/api';
-import { useAlert } from '@/contexts/AlertContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function ForgotPassword() {
   const router = useRouter();
-  const { showAlert } = useAlert();
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -56,7 +54,6 @@ export default function ForgotPassword() {
     try {
       const response = await passwordResets(email);
       setIsSubmitted(true);
-      showAlert(response.message || 'パスワードリセットメールを送信しました。');
     } catch (error) {
       if (error instanceof Error) {
         try {

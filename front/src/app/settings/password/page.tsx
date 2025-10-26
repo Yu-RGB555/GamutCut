@@ -19,6 +19,15 @@ export default function PasswordChangePage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
 
+  // SNS認証ユーザーは非表示
+  if (!authLoading && isAuthenticated && user?.has_social_accounts) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+      </div>
+    );
+  }
+
   const handlePasswordReset = async () => {
     if (!user?.email) {
       setErrors(['ユーザー情報の取得に失敗しました']);
@@ -51,20 +60,25 @@ export default function PasswordChangePage() {
   if (success) {
     return (
       <div className="container mx-auto max-w-2xl py-8 px-4">
-        <Card className="border-green-200">
-          <CardContent className="pt-6">
+        <Card>
+          <CardContent className="px-8 pt-6">
             <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
-                <Mail className="h-6 w-6 text-green-600" />
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-green-100 mb-4">
+                <Mail className="h-12 w-12 text-green-600" />
               </div>
-              <h2 className="text-lg font-semibold text-green-800 mb-2">
-                パスワードリセットメール送信完了
-              </h2>
-              <p className="text-green-600 mb-4">
-                登録されているメールアドレス（{user?.email}）にパスワードリセットの手順をお送りしました
+              <p className="text-3xl font-semibold text-label mb-12">
+                パスワードリセットメールを<br />送信しました
               </p>
-              <div className="space-y-2">
-                <Button onClick={() => router.push('/settings')} className="w-full">
+              <p className="text-label text-sm mb-4">
+                登録されているメールアドレス（<span className="font-semibold"> {user?.email} </span>）に<br />
+                パスワードリセットの手順をお送りしました。
+              </p>
+              <div className="space-y-2 mt-16">
+                <Button
+                  variant="secondary"
+                  className="w-2/3 font-normal"
+                  onClick={() => router.push('/settings')}
+                >
                   設定画面に戻る
                 </Button>
               </div>
@@ -81,12 +95,13 @@ export default function PasswordChangePage() {
 
       {/* フォーム */}
       <Card>
-        <CardHeader className="mb-8">
+        <CardHeader className="mb-4">
           <CardTitle className="text-3xl font-bold text-label">
             パスワード変更
           </CardTitle>
           <CardDescription className="text-label">
-            アカウントのパスワードを変更できます<br />
+            上記のメールアドレスにパスワードリセットの手順を送信します。<br />
+            メール内のリンクをクリックして新しいパスワードを設定してください。
           </CardDescription>
         </CardHeader>
 
@@ -108,10 +123,6 @@ export default function PasswordChangePage() {
             <p className="text-green-800 pl-4">{user?.email}</p>
           </div>
           <div className="grid gap-10">
-            <p className="flex justify-center text-label text-sm">
-              上記のメールアドレスにパスワードリセットの手順を送信します。<br />
-              メール内のリンクをクリックして新しいパスワードを設定してください。
-            </p>
             <div className="flex justify-center">
               <Button
                 onClick={handlePasswordReset}
