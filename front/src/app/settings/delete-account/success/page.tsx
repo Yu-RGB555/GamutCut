@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MdOutlineCheckCircle } from 'react-icons/md';
 
-export default function signOutSuccess() {
+export default function SignOutSuccess() {
   const router = useRouter();
 
     return (
