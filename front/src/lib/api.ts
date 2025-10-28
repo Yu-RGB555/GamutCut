@@ -553,3 +553,23 @@ export async function passwordUpdate(token: string, passwordData: PasswordUpdate
 
   return response.json();
 }
+
+// 退会
+export async function signOut(): Promise<{message: string}> {
+  const response = await fetch(`${API_BASE_URL}/api/users/sign_out`, {
+    method: 'DELETE',
+    headers: getCommonHeaders(true, true),
+    credentials: 'include'
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    if (data.errors && Array.isArray(data.errors)) {
+      throw data.errors; // errorsがある場合は配列を直接throw
+    } else {
+      throw new Error('メールアドレスの変更に失敗しました');
+    }
+  }
+
+  return response.json();
+}
