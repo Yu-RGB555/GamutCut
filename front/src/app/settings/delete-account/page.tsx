@@ -4,36 +4,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useAuth } from '@/contexts/AuthContext';
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { BackButton } from '@/components/BackButton';
+import { signOut } from '@/lib/api';
 
 export default function DeleteAccountPage() {
   const router = useRouter();
-  const { user } = useAuth();
   const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const [confirmationText, setConfirmationText] = useState('');
   const [agreedToDelete, setAgreedToDelete] = useState(false);
-  const [password, setPassword] = useState('');
-
-  const requiredText = '退会します';
 
   const validateForm = (): boolean => {
     const newErrors: string[] = [];
-
-    if (confirmationText !== requiredText) {
-      newErrors.push(`確認テキストに「${requiredText}」と正確に入力してください`);
-    }
-
-    if (!password) {
-      newErrors.push('現在のパスワードを入力してください');
-    }
 
     if (!agreedToDelete) {
       newErrors.push('退会に関する注意事項に同意してください');
@@ -43,7 +29,9 @@ export default function DeleteAccountPage() {
     return newErrors.length === 0;
   };
 
-  const handleDeleteAccount = async () => {
+  const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!validateForm()) {
       return;
     }
@@ -52,11 +40,16 @@ export default function DeleteAccountPage() {
     setErrors([]);
 
     try {
-      // 仮の処理
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // 退会リクエストを送信
+      await signOut();
 
-      // 削除成功後はログアウトしてトップページへ
-      router.push('/');
+      // ブラウザ側の認証情報のみ削除（AuthContextは更新しない）
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+
+      // 専用ページ遷移
+      router.push('/settings/delete-account/success');
 
     } catch (error) {
       setErrors(['アカウントの削除に失敗しました']);
@@ -65,7 +58,7 @@ export default function DeleteAccountPage() {
     }
   };
 
-  // 認証状態の初期化中はローディング表示
+  // 認証状態の初期化中はローディング表示（退会完了状態を除く）
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -117,36 +110,7 @@ export default function DeleteAccountPage() {
           </div>
 
           {/* フォーム */}
-          <form onSubmit={(e) => { e.preventDefault(); handleDeleteAccount(); }} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="confirmText">
-                確認テキスト（「{requiredText}」と入力してください）
-              </Label>
-              <Input
-                id="confirmText"
-                name="confirmText"
-                type="text"
-                value={confirmationText}
-                onChange={(e) => setConfirmationText(e.target.value)}
-                placeholder={requiredText}
-                autoComplete="off"
-                className={confirmationText === requiredText ? 'border-green-300' : ''}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="current-password">現在のパスワード</Label>
-              <Input
-                id="current-password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="現在のパスワードを入力"
-                autoComplete="current-password"
-              />
-            </div>
-
+          <form onSubmit={handleDeleteAccount} className="space-y-4">
             <div className="flex items-start space-x-2">
               <input
                 type="checkbox"
@@ -165,7 +129,7 @@ export default function DeleteAccountPage() {
             <div className="flex justify-center">
               <Button
                 type="submit"
-                disabled={isLoading || !agreedToDelete || confirmationText !== requiredText || !password}
+                disabled={isLoading || !agreedToDelete}
                 variant="destructive"
                 className="w-2/3"
               >

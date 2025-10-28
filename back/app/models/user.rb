@@ -7,7 +7,7 @@ class User < ApplicationRecord
   has_one_attached :avatar
   ACCEPTED_CONTENT_TYPES = ['image/png', 'image/jpeg'].freeze
 
-  has_many :works, dependent: :restrict_with_exception  # 作品がある場合は退会不可
+  has_many :works, dependent: :destroy
   has_many :presets, dependent: :destroy
   has_many :social_accounts, dependent: :destroy
   has_many :likes, dependent: :destroy
