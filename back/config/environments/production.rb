@@ -126,9 +126,8 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # Vercel → Render間の通信を許可
-  # RenderのパブリックドメインをHostsに追加
-  if ENV['RENDER_EXTERNAL_HOSTNAME'].present?
-    config.hosts << ENV['RENDER_EXTERNAL_HOSTNAME']
-  end
+  # 許可するホスト名
+  # RailsサーバーがVercel(Next.js)からリクエストを受け取るHostヘッダーを制御
+  # api.gamutcut.com: Vercel→Render間の通信およびAPIへの直接アクセス用
+  config.hosts << ENV['RENDER_EXTERNAL_HOSTNAME']
 end
