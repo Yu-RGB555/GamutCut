@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   devise_for :users, skip: [:registrations, :sessions]
 
   # ヘルスチェック
+  root 'health_check#index'  # ルートパスをヘルスチェックに設定
+  get '/up', to: 'health_check#index'  # Renderのデフォルトヘルスチェック
   get '/health', to: 'health_check#index'
   get '/health/detailed', to: 'health_check#detailed'
 

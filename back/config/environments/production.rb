@@ -129,5 +129,5 @@ Rails.application.configure do
   # 許可するホスト名
   # RailsサーバーがVercel(Next.js)からリクエストを受け取るHostヘッダーを制御
   # api.gamutcut.com: Vercel→Render間の通信およびAPIへの直接アクセス用
-  config.hosts << ENV['RENDER_EXTERNAL_HOSTNAME']
+  config.hosts = [ENV['RENDER_EXTERNAL_HOSTNAME']].compact
 end
