@@ -46,7 +46,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
           // 3thStep（step:2）
           icon: <><MdOutlineCollections className="text-primary"/></>,
           title: 'ダウンロード',
-          content: <>作成したマスクはpng画像としてダウンロードできます。お使いのペイントソフトのスポイトツールで色を抽出するなどして、着彩にご利用ください。</>,
+          content: <>作成したマスクはpng画像としてダウンロードできます。<br />お使いのペイントソフトのスポイトツールで色を抽出するなどして、着彩にご利用ください。</>,
           selector: '#step-3',
           side: 'top',
           showControls: true,

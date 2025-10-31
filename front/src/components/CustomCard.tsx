@@ -12,30 +12,28 @@ export const CustomCard = ({
   arrow,
 }: CardComponentProps) => {
   return (
-    <div className="bg-background rounded-lg shadow-lg p-5 w-full max-w-sm sm:max-w-md md:max-w-lg border border-gray-300 min-w-80">
+    <div className="bg-background rounded-lg shadow-lg p-3 sm:p-4 md:p-5 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg border border-gray-300 mx-2 sm:mx-0">
       {/* ヘッダー */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-bold text-label flex items-center gap-2">
-          <span className="text-2xl">{step.icon}</span>
-          {step.title}
-        </h1>
+      <div className="flex items-center justify-center font-bold text-label mb-2 sm:mb-4 gap-0.5 sm:gap-2">
+        <span className="text-xl sm:text-2xl text-center">{step.icon}</span>
+        <p className="text-sm sm:text-lg text-center">{step.title}</p>
       </div>
 
       {/* コンテンツ */}
       <div className="mb-6">
-        <p className="text-label text-sm leading-relaxed">{step.content}</p>
+        <p className="text-label text-xs sm:text-sm leading-relaxed">{step.content}</p>
       </div>
 
       {/* ボタンエリア */}
-      <div className="grid gap-3">
-        <div className="flex items-center justify-between px-4 sm:px-6 md:px-8">
+      <div className="grid gap-2 sm:gap-3">
+        <div className="flex items-center justify-between px-1 sm:px-2 md:px-4">
           {/* 戻るボタン */}
-          <div className="w-16">
+          <div className="w-12 sm:w-14 md:w-16">
             {currentStep != 0 ? (
               <Button
                 onClick={prevStep}
                 variant="secondary"
-                className="px-3 py-2 text-sm transition-colors w-full"
+                className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm transition-colors w-full"
               >
                 戻る
               </Button>
@@ -43,7 +41,7 @@ export const CustomCard = ({
               <Button
                 onClick={prevStep}
                 variant="plain"
-                className="px-3 py-2 text-gray-500 text-sm transition-colors hover:cursor-not-allowed w-full"
+                className="px-2 sm:px-3 py-1.5 sm:py-2 text-gray-500 text-xs sm:text-sm transition-colors hover:cursor-not-allowed w-full"
               >
                 戻る
               </Button>
@@ -51,17 +49,17 @@ export const CustomCard = ({
           </div>
 
           {/* ステップ表示 */}
-          <div className="flex items-center justify-center min-w-16">
-            <span className="text-xs text-label px-3 py-1 whitespace-nowrap">
+          <div className="flex items-center justify-center min-w-12 sm:min-w-14 md:min-w-16">
+            <span className="text-xs text-label px-2 sm:px-3 py-1 whitespace-nowrap">
               {currentStep + 1} / {totalSteps}
             </span>
           </div>
 
           {/* 次へボタン */}
-          <div className="w-16">
+          <div className="w-12 sm:w-14 md:w-16">
             <Button
               onClick={nextStep}
-              className="px-3 py-2 text-sm rounded-md transition-colors w-full"
+              className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-md transition-colors w-full"
             >
               {currentStep + 1 === totalSteps ? '完了' : '次へ'}
             </Button>
@@ -71,7 +69,7 @@ export const CustomCard = ({
           <Button
             onClick={skipTour}
             variant="plain"
-            className="px-3 py-2 text-gray-400 text-xs transition-colors"
+            className="px-2 sm:px-3 py-1.5 sm:py-2 text-gray-400 text-xs transition-colors"
           >
             ツアーをスキップ
           </Button>
