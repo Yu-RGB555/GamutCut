@@ -3,16 +3,8 @@ import { useRouter } from 'next/navigation';
 import { Preset } from '@/types/preset';
 import { PresetCard } from './PresetCard';
 import { getPresets } from '@/lib/api';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from './ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
+import { Button } from './ui/button';
 
 interface PresetSelectDialogProps {
   open: boolean;
@@ -80,28 +72,36 @@ export function PresetSelectDialog({ open, onOpenChange, onSelect, showEditButto
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={showEmptyAlert} onOpenChange={setShowEmptyAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>プリセットにマスクがありません</AlertDialogTitle>
-            <AlertDialogDescription className="text-label">
+      {/* Myマスクに1つもマスクがない場合に表示するダイアログ */}
+      <Dialog open={showEmptyAlert} onOpenChange={setShowEmptyAlert}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>プリセットにマスクがありません</DialogTitle>
+            <DialogDescription className="text-label">
               トップページでマスクを作成してプリセットに保存してください。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row justify-end gap-2">
+            <Button
+              variant="outline"
               onClick={() => {
-                router.push('/');
                 setShowEmptyAlert(false);
                 onOpenChange(false);
+              }}
+            >
+              キャンセル
+            </Button>
+            <Button
+              onClick={() => {
+                router.push('/');
               }}
               className="bg-primary hover:bg-mouseover"
             >
               マスクを作成
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
