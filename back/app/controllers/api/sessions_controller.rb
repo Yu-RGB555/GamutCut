@@ -1,6 +1,7 @@
 class Api::SessionsController < ApplicationController
   skip_before_action :authenticate_user_from_token!, only: [:create]
 
+  # POST /api/users/sign_up
   def create
     user = User.find_by(email: params[:user][:email])
 
@@ -46,12 +47,8 @@ class Api::SessionsController < ApplicationController
   def generate_jwt_token(user)
     payload = {
       user_id: user.id,
-      exp: 24.hours.from_now.to_i
+      exp: 7.days.from_now.to_i
     }
     JWT.encode(payload, Rails.application.credentials.secret_key_base)
   end
-
-  # def sign_out_params
-  #   params.require(:user).permit(:password)
-  # end
 end
