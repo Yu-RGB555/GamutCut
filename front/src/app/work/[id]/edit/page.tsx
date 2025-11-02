@@ -435,7 +435,7 @@ export default function EditWorks() {
             <>
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 disabled={isLoading}
                 onClick={(e)=>handleSubmit(e, true)}
               >
@@ -453,7 +453,7 @@ export default function EditWorks() {
             <>
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 disabled={isLoading}
                 onClick={(e)=>handleSubmit(e, true)}
               >

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthState } from '@/hooks/useAuthState';
 import { useRouter } from 'next/navigation';
 import {
   UserCircle2,
@@ -49,7 +50,8 @@ const userMenuItems = [
 ];
 
 export function Header() {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { logout } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuthState();
   const router = useRouter();
   const [showBorder, setShowBorder] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -109,7 +111,10 @@ export function Header() {
 
           {/* 認証・ユーザーメニューのみ */}
           <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
+            {isLoading ? (
+              // ローディング中は何も表示しない（またはスケルトン表示）
+              <div className="w-20 h-9"></div>
+            ) : isAuthenticated ? (
               <>
                 <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                   <SheetTrigger>
@@ -177,15 +182,18 @@ export function Header() {
               </>
             ) : (
               <>
-                <Button variant="outline" size="sm">
-                  <Link href="/auth/login">
-                    ログイン
-                  </Link>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => router.push('/auth/login')}
+                >
+                  ログイン
                 </Button>
-                <Button size="sm">
-                  <Link href="/auth/register">
-                    新規登録
-                  </Link>
+                <Button
+                  size="sm"
+                  onClick={() => router.push('/auth/register')}
+                >
+                  新規登録
                 </Button>
               </>
             )}

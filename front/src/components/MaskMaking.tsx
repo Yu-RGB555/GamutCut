@@ -464,7 +464,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
                   max="100"
                   value={currentValue}
                   onChange={(e) => setCurrentValue(parseInt(e.target.value))}
-                  className="w-full sm:w-1/3 h-2
+                  className="w-full max-w-1/2 sm:w-1/3 h-2
                     accent-cyan-400
                     backdrop-blur-md
                     bg-white/30
@@ -481,7 +481,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
                     hover:[&::-webkit-slider-thumb]:bg-cyan-200
                     transition-all duration-200"
                 />
-                <span className="text-center">{currentValue}%</span>
+                <span className="text-label">{currentValue}%</span>
               </div>
             </div>
           </div>

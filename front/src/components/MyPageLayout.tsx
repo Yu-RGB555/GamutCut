@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { useAuth } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ interface MyPageLayoutProps {
 
 export function MyPageLayout({ children }: MyPageLayoutProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { user } = useAuth();
   const { isAuthenticated, isLoading } = useAuthRedirect();
 
@@ -75,10 +77,11 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
               }
             </div>
           </div>
-          <Button>
-            <Link href='/mypage/profiles'>
-              設定
-            </Link>
+          <Button
+            variant="secondary"
+            onClick={() => router.push('/mypage/profiles')}
+          >
+            設定
           </Button>
         </div>
 

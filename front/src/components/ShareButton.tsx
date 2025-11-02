@@ -87,7 +87,7 @@ export function ShareButton({ workId, workTitle, userName }: ShareButtonProps) {
           <div className="space-y-3">
             {/* URLコピーボタン */}
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={handleCopyUrl}
               className="w-full justify-start gap-3 p-4 h-auto"
             >
@@ -102,7 +102,7 @@ export function ShareButton({ workId, workTitle, userName }: ShareButtonProps) {
 
             {/* Xシェアボタン */}
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={handleShareToX}
               className="w-full justify-start gap-3 p-4 h-auto"
             >

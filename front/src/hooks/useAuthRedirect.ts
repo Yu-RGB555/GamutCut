@@ -24,6 +24,6 @@ export const useAuthRedirect = () => {
     }
   }, [isAuthenticated, isLoading, router]);
 
-  // 認証状態とローディング状態を返す
+  // 認証状態とローディング状態(falseのみ)を返す
   return { isAuthenticated, isLoading };
 };
