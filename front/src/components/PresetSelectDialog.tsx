@@ -83,7 +83,7 @@ export function PresetSelectDialog({ open, onOpenChange, onSelect, showEditButto
           </DialogHeader>
           <DialogFooter className="flex-row justify-end gap-2">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={() => {
                 setShowEmptyAlert(false);
                 onOpenChange(false);

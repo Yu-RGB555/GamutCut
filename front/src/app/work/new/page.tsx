@@ -249,7 +249,7 @@ export default function PostWorks() {
             <div className="flex justify-end gap-4 mt-10">
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 onClick={(e) => handleSubmit(e, true)}  // 直接true(下書き)を渡す
                 disabled={isLoading}
               >

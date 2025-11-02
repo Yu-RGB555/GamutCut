@@ -32,14 +32,13 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
       {/* 拡大・縮小 */}
       {selectedMask.length > 0 && (
         <div className="bg-card p-4 mb-4 rounded-xl">
-          <h3 className="text-label text-base font-semibold mb-4">ガマットマスク</h3>
           <div className="flex flex-wrap gap-2 mb-2">
 
             {/* マスクの形状 */}
             {selectedMask.map((mask, idx) => (
               <button
                 key={idx}
-                className={`px-2 py-1 font-bold rounded hover:cursor-pointer ${selectedMaskIndex === idx ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground text-muted'}`}
+                className={`px-2 py-1 font-semibold border rounded hover:cursor-pointer ${selectedMaskIndex === idx ? 'text-label border-2 border-btn-border hover:text-foreground hover:bg-muted' : 'text-label bg-card hover:text-foreground hover:bg-muted'}`}
                 onClick={() => onMaskIndexChange(idx)}
               >
                 {getMaskDisplayName(mask, idx)}
@@ -47,7 +46,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
             ))}
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center my-4 gap-2 sm:gap-4">
-            <p className="text-label text-sm font-semibold">拡大・縮小</p>
+            <p className="text-label text-sm font-base">拡大・縮小</p>
             <input
               type="range"
               min="0.2"
@@ -55,7 +54,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
               step="0.01"
               value={selectedMask[selectedMaskIndex]?.scale ?? 1}
               onChange={(e) => onScaleChange(parseFloat(e.target.value))}
-              className="w-full sm:w-1/3 h-2
+              className="w-full max-w-1/2 sm:w-1/3 h-2
                 accent-cyan-400
                 backdrop-blur-md
                 bg-white/30
@@ -72,7 +71,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
                 hover:[&::-webkit-slider-thumb]:bg-cyan-200
                 transition-all duration-200"
             />
-            <span className="text-center">{((selectedMask[selectedMaskIndex]?.scale ?? 1) * 100).toFixed(0)}%</span>
+            <span className="text-label">{((selectedMask[selectedMaskIndex]?.scale ?? 1) * 100).toFixed(0)}%</span>
           </div>
         </div>
       )}
@@ -81,7 +80,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
         <Dialog open={isDialogOpen} onOpenChange={onDialogOpenChange}>
           <DialogTrigger asChild>
             <Button
-              variant="outline"
+              variant="secondary"
               id="step-2"
             >
               マスクを追加
@@ -95,7 +94,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
               {shapeTemplates.map((template) => (
                 <Button
                   key={template.id}
-                  variant="outline"
+                  variant="secondary"
                   className="p-4 h-auto"
                   onClick={() => onMaskSelect(template)}
                 >

@@ -131,7 +131,7 @@ export function TagInput({
           type="button"
           onClick={handleAddButtonClick}
           disabled={!inputValue.trim() || tags.length >= maxTags}
-          variant="outline"
+          variant="secondary"
           className="whitespace-nowrap"
         >
           追加

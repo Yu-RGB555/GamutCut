@@ -103,7 +103,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
         {user && work.user.id === user.id && (
           <div className="flex items-center gap-x-2">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={() => handleEdit(work.id)}
             >編集</Button>
             <Button
@@ -139,7 +139,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
               size={250}
             />
             <Button
-              variant="outline"
+              variant="secondary"
               className="mt-2"
               onClick={() => handleCopyMask(work.set_mask_data)}
             >
