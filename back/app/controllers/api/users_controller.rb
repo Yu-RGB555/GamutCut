@@ -49,7 +49,7 @@ class Api::UsersController < ApplicationController
     # 公開作品一覧（ユーザー情報を含ませる）
     works_with_user = user_works.includes(:user).order(created_at: :desc)
 
-    render json: { works: WorkIndexResource.new(works_with_user).serializable_hash }
+    render json: { works: WorkIndexResource.new(works_with_user, current_user: current_user).serializable_hash }
   end
 
   # GET /api/users/:id/liked_works
