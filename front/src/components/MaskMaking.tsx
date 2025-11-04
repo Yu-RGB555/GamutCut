@@ -57,7 +57,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   });
 
   // 選択マスクの状態
-  const [selectedMask, setSelectedMask] = useState<MaskWithScale[]>([]); // 頂点座標(初期状態)、スケール
+  const [selectedMask, setSelectedMask] = useState<MaskWithScale[]>([]); // 選択中のマスク情報
   const [selectedMaskIndex, setSelectedMaskIndex] = useState<number>(0); // 表示マスクのインデックス
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -72,6 +72,10 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   const [lastMousePos, setLastMousePos] = useState<{x: number, y: number} | null>(null);
   const [dragMaskIndex, setDragMaskIndex] = useState<number>(-1);
 
+  // 円形マスクかどうかを判定
+  const isCircularMask = (mask: MaskWithScale): boolean => {
+    return mask.shape_type === 'circle';
+  };
 
   // 再描画処理
   const redraw = () => {
@@ -108,6 +112,12 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     // 頂点ドラッグ判定
     for (let maskIdx = 0; maskIdx < selectedMask.length; maskIdx++) {
       const mask = selectedMask[maskIdx];
+
+      // 円形マスクの場合は頂点ドラッグを無効化
+      if (isCircularMask(mask)) {
+        continue;
+      }
+
       const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
       const pointIdx = findClosestPoint(x, y, scaledPoints);
       if (pointIdx !== -1) {
@@ -216,10 +226,14 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
       selectedMask.forEach(mask => {
         const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
-        const pointIndex = findClosestPoint(x, y, scaledPoints);
-        if (pointIndex !== -1) foundPoint = true;
 
-        // マスク内部判定
+        // 円形マスク以外の場合のみ頂点判定を行う
+        if (!isCircularMask(mask)) {
+          const pointIndex = findClosestPoint(x, y, scaledPoints);
+          if (pointIndex !== -1) foundPoint = true;
+        }
+
+        // マスク内部判定（全てのマスクで実行）
         if (isPointInPolygon(x, y, scaledPoints)) {
           foundMask = true;
         }
@@ -254,6 +268,13 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
   // テンプレートマスク選択
   const handleMaskSelect = (mask: ShapeTemplate) => {
+    // マスクの最大数制限（3つまで）
+    if (selectedMask.length >= 3) {
+      setIsDialogOpen(false);
+      showAlert('マスクの追加は最大3つまでです');
+      return;
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const width = canvas.width;
@@ -309,7 +330,18 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
   // マスク削除
   const handleMaskDelete = () => {
-    setSelectedMask(selectedMask.slice(0, -1));
+    if (selectedMask.length === 0) return;
+
+    // 選択中のマスクを削除
+    const updatedMasks = selectedMask.filter((_, idx) => idx !== selectedMaskIndex);
+    setSelectedMask(updatedMasks);
+
+    // 削除後にインデックスを調整
+    if (updatedMasks.length === 0) {
+      setSelectedMaskIndex(0);
+    } else if (selectedMaskIndex >= updatedMasks.length) {
+      setSelectedMaskIndex(updatedMasks.length - 1);
+    }
   };
 
   // プリセット保存ダイアログを開く
@@ -354,7 +386,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         }
       };
 
-      // APIを使用してプリセットを保存
+      // プリセットを保存
       const response = await maskSave(presetData);
       showAlert(response.message);
       console.log('プリセットを保存しました');
