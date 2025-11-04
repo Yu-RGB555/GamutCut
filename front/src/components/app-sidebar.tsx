@@ -41,7 +41,7 @@ const items = [
     icon: PenTool,
   },
   {
-    title: "マスク作成",
+    title: "ガマットマスク作成",
     url: "/mask",
     icon: Palette,
   },
@@ -49,7 +49,7 @@ const items = [
 
 const utilityItems = [
   {
-    title: "使い方",
+    title: "GamutCutとは？",
     url: "/help",
     icon: HelpCircle,
   },

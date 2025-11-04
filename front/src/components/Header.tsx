@@ -42,11 +42,6 @@ const userMenuItems = [
     url: "/mypage/bookmarks",
     icon: BookmarkIcon,
   },
-  {
-    title: "使い方",
-    url: "#",
-    icon: HelpCircleIcon,
-  },
 ];
 
 export function Header() {
