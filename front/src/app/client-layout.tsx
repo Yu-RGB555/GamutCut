@@ -116,9 +116,6 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
               cardComponent={CustomCard}
               cardTransition={{ duration: 0.3, type: 'spring' }}
               onStepChange={handleStepChange}
-              // onStepChange={(step, tourName) => console.log(`ステップ ${step} に移動 (ツアー: ${tourName})`)}
-              // onComplete={(tourName) => console.log(`ツアー完了: ${tourName}`)}
-              // onSkip={(step, tourName) => console.log(`ツアースキップ: ステップ ${step} (ツアー: ${tourName})`)}
               clickThroughOverlay={false}
               scrollToTop={false}
               noInViewScroll={true}
