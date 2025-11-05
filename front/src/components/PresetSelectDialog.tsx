@@ -93,7 +93,7 @@ export function PresetSelectDialog({ open, onOpenChange, onSelect, showEditButto
             </Button>
             <Button
               onClick={() => {
-                router.push('/');
+                router.push('/mask');
               }}
               className="bg-primary hover:bg-mouseover"
             >

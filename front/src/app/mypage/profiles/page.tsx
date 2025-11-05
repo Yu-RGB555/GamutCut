@@ -214,7 +214,7 @@ export default function ProfilesPage() {
           <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600 relative">
             <div className="absolute inset-0 bg-card bg-opacity-20"></div>
             <div className="absolute bottom-4 right-6">
-              <div className="text-white text-sm opacity-75">※ヘッダー画像</div>
+              <div className="text-white text-sm opacity-75"></div>
             </div>
           </div>
 

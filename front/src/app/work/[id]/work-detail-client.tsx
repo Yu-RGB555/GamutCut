@@ -59,7 +59,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
     showAlert('マスクをコピーしました。マスク作成画面に移ります。');
     // 少し遅延を入れてからページ遷移
     setTimeout(() => {
-      router.push('/');
+      router.push('/mask');
     }, 2000);
   };
 
@@ -117,13 +117,13 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
         <div className="grid grid-cols md:grid-cols-2 gap-8 mb-4">
 
           {/* イラスト投稿 */}
-          <div className="grid gap-2">
-            <div className="flex items-center justify-center border rounded-sm w-full h-80">
+          <div className="flex flex-1 flex-col">
+            <div className="flex w-full aspect-[3/4] items-center justify-center border rounded-sm">
               {work.illustration_image_url ? (
                 <img
                   src={work.illustration_image_url}
                   alt={work.title}
-                  className="object-contain w-full h-full"
+                  className="object-cover w-full h-full"
                 />
               ) : (
                 <span className="text-gray-500">画像なし</span>
@@ -132,7 +132,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
           </div>
 
           {/* 作品で使用したマスク */}
-          <div className="grid gap-2">
+          <div className="flex flex-1 flex-col">
             <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
             <PresetPreview
               maskData={work.set_mask_data}
@@ -147,45 +147,47 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols gap-8">
-          <Label className="text-label text-4xl font-semibold">{work.title}</Label>
-          <div className="flex items-center">
+        <div className="flex flex-1 flex-col gap-8">
+          <Label className="text-label text-4xl font-semibold">
+            {work.title}
+          </Label>
 
-            {/* ユーザー情報 */}
+          {/* いいね・ブックマーク・シェアボタン */}
+          <div className="flex gap-4">
+            <LikeButton
+              workId={work.id}
+              initialLiked={work.is_liked_by_current_user}
+              initialLikesCount={work.likes_count}
+            />
+            <BookmarkButton
+              workId={work.id}
+              initialBookmarked={work.is_bookmarked_by_current_user}
+            />
+            <ShareButton
+              workId={work.id}
+              workTitle={work.title}
+              userName={work.user.name}
+            />
+          </div>
+
+          {/* ユーザー情報 */}
+          <div className="items-center">
             <Link
                 href={user?.id === work.user.id ? "/mypage" : `/users/${work.user.id}`}
                 className="text-label underline-offset-4 hover:cursor-pointer hover:underline"
             >
               <div className="flex items-center">
-                <Avatar className="w-10 h-10 mr-2 hover:cursor-pointer">
+                <Avatar className="w-10 h-10 mr-2 hover:cursor-pointer flex-shrink-0">
                   <AvatarImage src={work.user.avatar_url} />
                   <AvatarFallback className="bg-background">
                     <UserCircle2Icon className="w-full h-full"/>
                   </AvatarFallback>
                 </Avatar>
-                <p className="text-label text-xl mr-8 hover:cursor-pointer hover:underline">
+                <p className="text-label text-xl mr-8 hover:cursor-pointer hover:underline truncate">
                   {work.user.name}
                 </p>
               </div>
             </Link>
-
-            {/* いいね・ブックマーク・シェアボタン */}
-            <div className="flex gap-4 mx-4">
-              <LikeButton
-                workId={work.id}
-                initialLiked={work.is_liked_by_current_user}
-                initialLikesCount={work.likes_count}
-              />
-              <BookmarkButton
-                workId={work.id}
-                initialBookmarked={work.is_bookmarked_by_current_user}
-              />
-              <ShareButton
-                workId={work.id}
-                workTitle={work.title}
-                userName={work.user.name}
-              />
-            </div>
           </div>
 
           {/* タグ表示エリア */}

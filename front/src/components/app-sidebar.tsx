@@ -7,7 +7,6 @@ import {
   PenTool,
   Palette,
   Settings,
-  HelpCircle
 } from "lucide-react"
 import {
   Sidebar,
@@ -31,6 +30,11 @@ const items = [
     icon: Home,
   },
   {
+    title: "ガマットマスク作成",
+    url: "/mask",
+    icon: Palette,
+  },
+  {
     title: "作品一覧",
     url: "/work",
     icon: Image,
@@ -40,19 +44,9 @@ const items = [
     url: "/work/new",
     icon: PenTool,
   },
-  {
-    title: "ガマットマスク作成",
-    url: "/mask",
-    icon: Palette,
-  },
 ]
 
 const utilityItems = [
-  {
-    title: "GamutCutとは？",
-    url: "/help",
-    icon: HelpCircle,
-  },
   {
     title: "設定",
     url: "/settings",

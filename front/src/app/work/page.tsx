@@ -218,7 +218,7 @@ function WorksListContent() {
                 <div key={work.id} className="flex flex-col bg-background rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   {/* 作品画像エリア - 作品詳細へのリンク */}
                   <Link href={`/work/${work.id}`}>
-                    <div className="flex aspect-[4/3] bg-background items-center justify-center">
+                    <div className="flex aspect-[3/4] bg-background items-center justify-center">
                       {work.illustration_image_url ? (
                         <img
                           src={work.illustration_image_url}
