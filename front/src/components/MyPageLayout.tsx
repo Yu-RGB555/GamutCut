@@ -111,7 +111,7 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
         </div>
 
         {/* タブの内容 */}
-        <div className="mt-6">
+        <div className="mt-2">
           {children}
         </div>
       </div>

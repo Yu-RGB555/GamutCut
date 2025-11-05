@@ -76,7 +76,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
 
   if (works.length === 0) {
     return (
-      <div className="flex justify-center items-center py-8">
+      <div className="flex justify-center min-h-50 items-center py-8">
         <div className="text-gray-500">公開作品がありません</div>
       </div>
     );
@@ -89,7 +89,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
             <div key={work.id} className="flex flex-col bg-background rounded-lg border shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               {/* 作品画像エリア - 作品詳細へのリンク */}
               <Link href={`/work/${work.id}`}>
-                <div className="flex aspect-[4/3] bg-background items-center justify-center">
+                <div className="flex aspect-[3/4] bg-background items-center justify-center">
                   {work.illustration_image_url ? (
                     <img
                       src={work.illustration_image_url}
@@ -107,7 +107,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
                 <div className="flex-1">
                   {/* 作品タイトル - 作品詳細へのリンク */}
                   <Link href={`/work/${work.id}`}>
-                    <h3 className="text-card-foreground font-semibold text-xl hover:underline line-clamp-1">
+                    <h3 className="text-card-foreground font-semibold text-xl hover:underline line-clamp-1 my-2">
                       {work.title}
                     </h3>
                   </Link>
