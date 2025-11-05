@@ -19,7 +19,13 @@ function LikesPageContent() {
 
 export default function LikesPage() {
   return (
-    <Suspense fallback={<div className="flex justify-center items-center py-8">読み込み中...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+        </div>
+      }
+    >
       <LikesPageContent />
     </Suspense>
   );

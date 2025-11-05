@@ -70,7 +70,7 @@ export default function Home() {
   return (
     <div className="justify-items-center mx-4 sm:mx-8 lg:mx-16 mb-40">
       {isLoading ? (
-        <div className="text-center">読み込み中...</div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
       ) : (
         <>
           <div className="grid grid-cols-1 gap-y-16">
