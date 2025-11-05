@@ -48,7 +48,11 @@ function AuthCallbackInner() {
     }
   }, []);
 
-  return <div>認証処理中...</div>;
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+    </div>
+  );
 }
 
 export default function AuthCallback() {

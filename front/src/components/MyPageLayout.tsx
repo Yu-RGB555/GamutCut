@@ -9,6 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { UserCircle2Icon } from "lucide-react";
 import XLogo from "./XLogo";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { motion } from "motion/react";
 
 const tabs = [
   { id: 1, label: "公開作品", href: "/mypage" },
@@ -86,28 +87,33 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
         </div>
 
         {/* タブナビゲーション */}
-        <div className="relative w-full border-b border-gray-200">
-          <nav className="flex gap-6 justify-center">
+        <div className="w-full max-w-screen mx-auto">
+          <nav className="flex gap-4 lg:gap-6 justify-center border-b border-gray-600">
             {tabs.map((tab, idx) => (
               <Link
                 key={tab.id}
                 href={tab.href}
-                className={`relative py-2 px-4 font-semibold transition-none hover:cursor-pointer
+                className={`relative text-sm sm:text-base font-semibold py-2 px-3 md:py-3 lg:px-4 transition-colors duration-200 hover:cursor-pointer hover:text-primary/80
                   ${idx === activeIndex ? "text-primary" : "text-gray-500"}
                 `}
               >
                 {tab.label}
+                {/* 個別タブのアンダーライン */}
+                {idx === activeIndex && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                    layoutId="activeTab"
+                    initial={false}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30
+                    }}
+                  />
+                )}
               </Link>
             ))}
           </nav>
-          {/* アンダーライン */}
-          <div
-            className="absolute bottom-0 h-0.5 bg-primary transition-all duration-300 rounded"
-            style={{
-              width: `calc(100% / ${tabs.length})`,
-              left: `calc(${activeIndex} * (100% / ${tabs.length}))`,
-            }}
-          />
         </div>
 
         {/* タブの内容 */}
