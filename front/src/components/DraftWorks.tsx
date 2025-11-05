@@ -60,8 +60,8 @@ export function DraftWorks({ isActive, userId }: DraftWorksProps) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="text-gray-500">読み込み中...</div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
       </div>
     );
   }

@@ -281,10 +281,8 @@ export default function EditWorks() {
 
   if (isPageLoading && !showUnauthorizedDialog) {
     return (
-      <div className="mx-16 mt-12 mb-40">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg">読み込み中...</div>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
       </div>
     );
   }

@@ -103,10 +103,8 @@ export default function CommentDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[500px] justify-center items-center">
-        <div className="text-center font-semibold">
-          読み込み中...
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
       </div>
     );
   }
