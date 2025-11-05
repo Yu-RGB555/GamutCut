@@ -96,7 +96,6 @@ export default function PostWorks() {
       showAlert(response.message);
       router.push('/work');
     } catch (error) {
-      console.log('Work submission error:', error);
       if (error instanceof Error) {
         try {
           const errorData = JSON.parse(error.message);

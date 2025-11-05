@@ -389,7 +389,6 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
       // プリセットを保存
       const response = await maskSave(presetData);
       showAlert(response.message);
-      console.log('プリセットを保存しました');
 
       // ダイアログを閉じて、プリセット一覧を更新
       setIsSaveDialogOpen(false);

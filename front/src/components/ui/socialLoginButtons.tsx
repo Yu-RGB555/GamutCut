@@ -6,7 +6,6 @@ const SocialLoginButtons: React.FC = () => {
   const handleSocialLogin = (provider: string) => {
     const url = `${API_BASE_URL}/auth/${provider}`;
 
-    console.log(`Redirecting to: ${url}`);
     window.location.href = url;
   };
 
