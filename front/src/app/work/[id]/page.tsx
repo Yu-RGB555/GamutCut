@@ -28,7 +28,7 @@ export async function generateMetadata(
 
   // 画像のベースURL（API/画像サーバーのURL用）
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'
-  const imageUrl = workData.illustration_image_url || `${frontendBaseUrl}/og-image.png`
+  const imageUrl = workData.illustration_image_url || `${frontendBaseUrl}/opengraph-image.png`
 
   return {
     title,
