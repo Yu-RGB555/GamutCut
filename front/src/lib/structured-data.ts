@@ -27,5 +27,5 @@ export const jsonLd = {
     'シェア機能',
     'プリセット保存'
   ],
-  screenshot: `${process.env.FRONTEND_URL}/og-image.png`,
+  screenshot: `${process.env.FRONTEND_URL}/opengraph-image.png`,
 }
