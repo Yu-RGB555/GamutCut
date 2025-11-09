@@ -37,6 +37,7 @@ interface MaskMakingProps {
 
 export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   const { showAlert } = useAlert();
+  const [isComposing, setIsComposing] = useState(false);
 
   // キャンバスを参照
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -413,6 +414,15 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     ));
   };
 
+  // Enterキーで保存
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if(e.key === 'Enter' && !isComposing){
+      executePresetSave();
+    } else if(e.key === 'Escape') {
+      cancelPresetSave();
+    }
+  }
+
   // 初期マスクデータの復元
   useEffect(() => {
     if (copiedMaskData) {
@@ -550,6 +560,9 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
                 id="preset-name"
                 value={presetName}
                 onChange={(e) => setPresetName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onCompositionStart={() => setIsComposing(true)}
+                onCompositionEnd={() => setIsComposing(false)}
                 placeholder="名称未設定"
                 maxLength={50}
               />

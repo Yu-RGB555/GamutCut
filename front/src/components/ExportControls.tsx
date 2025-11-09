@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Lock, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface ExportControlsProps {
@@ -16,10 +16,6 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
 }) => {
   const { isAuthenticated } = useAuth();
 
-  // if (selectedMaskLength === 0) {
-  //   return null;
-  // }
-
   return (
     <div className="bg-card space-y-4 mb-16">
       <div className="grid grid-cols-2 gap-4">
@@ -34,15 +30,10 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
           </Button>
         ) : (
           <Button
-            // disabled
             id="step-4"
             className="bg-gray-500 relative overflow-hidden hover:bg-gray-500 hover:cursor-not-allowed"
           >
             <div className="flex flex-col items-center justify-center h-full py-1 px-2">
-              {/* <div className="flex items-center mb-1">
-                <Lock className="text-white w-3 h-3 mr-1" />
-                <span className="text-white text-xs font-semibold">ログインユーザー限定</span>
-              </div> */}
               <span className="text-xs">Myマスクに保存</span>
             </div>
           </Button>

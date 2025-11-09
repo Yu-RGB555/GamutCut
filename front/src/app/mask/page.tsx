@@ -9,12 +9,8 @@ import { MyMaskList } from "@/components/MyMaskList";
 import { MaskData } from "@/types/mask";
 import { useNextStep } from 'nextstepjs';
 import { motion } from "motion/react"
-// import { testApiConnection } from '@/lib/api';
 
 export default function Home() {
-  // useEffect(() => {
-  //   testApiConnection();
-  // }, []);
   const { isAuthenticated } = useAuth();
   const [presets, setPresets] = useState<Preset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,7 +88,7 @@ export default function Home() {
               />
             </div>
           </div>
-          {/* ガイドツアーボタン - 右下固定 */}
+          {/* ガイドツアーボタン */}
           <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
             <motion.button
               onClick={handleStartTour}
