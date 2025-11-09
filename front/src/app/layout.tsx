@@ -74,6 +74,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <head>
+        {/* Google Analytics */}
+        {process.env.NEXT_PUBLIC_GA_ID && process.env.NODE_ENV === 'production' && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+                    page_title: document.title,
+                    page_location: window.location.href,
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
+        {/* Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
