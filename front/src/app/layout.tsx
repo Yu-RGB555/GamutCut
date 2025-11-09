@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   keywords: [
     'ガマットマスク',
     'ガマットマスク ツール',
+    'Gamut Mask',
+    'Gamut Mask Tool',
     'GamutCut',
     'デジタルイラスト',
     '着彩',
@@ -17,10 +19,10 @@ export const metadata: Metadata = {
     'イラスト制作',
     'カラーパレット',
     'デジタルアート',
-    'Photoshop',
-    'Clip Studio Paint',
     '配色',
-    'カラーマスク'
+    'カラーマスク',
+    'Color Palette Generator',
+    'Digital Art Tool'
   ],
   openGraph: {
     title: 'GamutCut - ガマットマスク制作サイト',
@@ -61,6 +63,11 @@ export const metadata: Metadata = {
   publisher: 'GamutCut',
   category: 'Technology',
   classification: 'Digital Art Tool',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/app_logo.svg',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
