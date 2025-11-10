@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: 'GamutCut - ガマットマスク制作サイト | デジタルイラスト着彩ツール',
   description: 'GamutCut（ガマットカット）は、着彩に統一感を生み出せるガマットマスクをログインせずに作成できるツールサイトです。デジタルイラストに適したHSV色相環モデルを扱っているため、幅広いグラフィックペイントソフトでお使いいただけます。',
   keywords: [
+    'ガマットマッピング',
     'ガマットマスク',
     'ガマットマスク ツール',
     'Gamut Mask',
@@ -20,8 +21,6 @@ export const metadata: Metadata = {
     'カラーパレット',
     'デジタルアート',
     '配色',
-    'カラーマスク',
-    'Color Palette Generator',
     'Digital Art Tool'
   ],
   openGraph: {
