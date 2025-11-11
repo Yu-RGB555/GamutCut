@@ -4,8 +4,11 @@ import { ClientLayout } from './client-layout'
 import { jsonLd } from '@/lib/structured-data'
 
 export const metadata: Metadata = {
-  title: 'GamutCut - ガマットマスク制作サイト | デジタルイラスト着彩ツール',
+  title: 'GamutCut - ガマットマスク制作サイト',
   description: 'GamutCut（ガマットカット）は、着彩に統一感を生み出せるガマットマスクをログインせずに作成できるツールサイトです。デジタルイラストに適したHSV色相環モデルを扱っているため、幅広いグラフィックペイントソフトでお使いいただけます。',
+  alternates: {
+    canonical: process.env.FRONTEND_URL,
+  },
   keywords: [
     'ガマットマッピング',
     'ガマットマスク',
