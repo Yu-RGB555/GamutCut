@@ -274,16 +274,16 @@ export default function ProfilesPage() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/jpeg,image/jpg,image/png,image/gif"
+                accept="image/jpeg,image/jpg,image/png"
                 className="hidden"
                 onChange={handleFileChange}
               />
 
               {/* ハンドルネーム */}
               <div className="grid gap-2">
-                <Label className="text-white">
+                <Label className="text-label font-semibold">
                   ハンドルネーム
-                  <span className="text-red-500 ml-1">*</span>
+                  <Label className="bg-destructive p-1 rounded-xs">必須</Label>
                 </Label>
                 <Input
                   type="text"
@@ -297,7 +297,7 @@ export default function ProfilesPage() {
 
               {/* 自己紹介 */}
               <div className="grid gap-2">
-                <Label  className="text-label">
+                <Label  className="text-label font-semibold">
                   自己紹介
                 </Label>
                 <Textarea
@@ -316,12 +316,12 @@ export default function ProfilesPage() {
 
               {/* X（旧Twitter）アカウント */}
               <div className="grid gap-2">
-                <Label className="text-label">
+                <Label className="text-label font-semibold">
                   X（旧Twitter）アカウント
                 </Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 text-sm">https://x.com/</span>
+                    <span className="text-gray-400 text-sm">https://x.com/</span>
                   </div>
                   <Input
                     type="text"

@@ -121,8 +121,8 @@ export default function EditWorks() {
 
         if(workData.set_mask_data){
           setPresetData({
-            id: workData.id,
-            name: workData.title,
+            id: 0,  // 編集画面初期表示時かどうかの判定フラグ（選択中のマスク名の表示制御用）
+            name: '',
             mask_data: workData.set_mask_data
           });
         }
@@ -339,7 +339,10 @@ export default function EditWorks() {
         <div className="flex flex-col">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             <div>
-              <Label className="text-label font-semibold mb-2">イラスト作品</Label>
+              <Label className="text-label font-semibold mb-2">
+                イラスト作品
+                <Label className="bg-destructive p-1 rounded-xs">必須</Label>
+              </Label>
               <DropZone
                 onFileSelect={handleFileSelect}
                 accept="image/*"
@@ -358,7 +361,10 @@ export default function EditWorks() {
               )}
             </div>
             <div className="gap-2">
-              <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
+              <Label className="text-label font-semibold mb-2">
+                作品で使用したマスク
+                <Label className="bg-destructive p-1 rounded-xs">必須</Label>
+              </Label>
               <div
                 className="cursor-pointer"
                 onClick={() => setIsPresetDialogOpen(true)}
@@ -374,9 +380,13 @@ export default function EditWorks() {
                     >
                       <X className="w-4 h-4 text-white" />
                     </button>
-                    <span className="flex justify-end text-sm text-gray-600 mt-2">
-                      選択中: {presetData.name}
-                    </span>
+
+                    {/* Myマスクのタイトル名を表示（マスクを変更した場合のみ） */}
+                    {presetData.id !== 0 &&
+                      <span className="flex justify-end text-sm text-gray-600 mt-2">
+                        選択中: {presetData.name}
+                      </span>
+                    }
                   </div>
                 ) : (
                   <div className="justify-center w-full h-full border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-card hover:bg-gray-700 relative">
@@ -401,7 +411,10 @@ export default function EditWorks() {
           </div>
           <div className="grid grid-cols gap-6">
             <div>
-              <Label className="text-label font-semibold mb-2">作品タイトル</Label>
+              <Label className="text-label font-semibold mb-2">
+                作品タイトル
+                <Label className="bg-destructive p-1 rounded-xs">必須</Label>
+              </Label>
               <Input
                 value={formData.title}
                 onChange={(e)=> handleInputChange('title', e.target.value)}

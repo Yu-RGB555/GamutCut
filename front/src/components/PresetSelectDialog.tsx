@@ -54,7 +54,7 @@ export function PresetSelectDialog({ open, onOpenChange, onSelect, showEditButto
           {isLoading ? (
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto py-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto py-4">
               {presets.map((preset) => (
                 <div
                   key={preset.id}
