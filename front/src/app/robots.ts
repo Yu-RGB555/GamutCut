@@ -15,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
         '/private/',
       ],
     },
-    sitemap: 'https://www.gamutcut.com/sitemap.xml',
+    sitemap: 'https://gamutcut.com/sitemap.xml',
   }
 }
