@@ -203,13 +203,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
               <p className="text-gray-300 font-medium flex-1">
                 <Tooltip>
                   <TooltipTrigger>
-                    {preset.name.length > 8 ? (
-                      <span>
-                        {`${preset.name.slice(0, 8)}...`}
-                      </span>
-                    ) : (
-                      preset.name
-                    )}
+                    <p className="text-start line-clamp-1">{preset.name}</p>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>{preset.name}</p>

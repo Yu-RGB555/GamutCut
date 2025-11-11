@@ -214,7 +214,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
           )}
 
           {/* 作品説明欄 */}
-          <div className="text-label">{work.description}</div>
+          <div className="text-label whitespace-pre-wrap">{work.description}</div>
         </div>
 
         {/* コメントセクション */}

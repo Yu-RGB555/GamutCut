@@ -69,7 +69,7 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
                 <h1 className="text-2xl font-bold text-label">{user.name}</h1>
               </div>
               <div>
-                <h2>{user.bio}</h2>
+                <h2 className="text-sm text-label whitespace-pre-wrap">{user.bio}</h2>
               </div>
               { user.x_account_url &&
                 <XLogo
