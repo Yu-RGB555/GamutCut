@@ -1,28 +1,33 @@
 // クライアントコンポーネント
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { LikeButton } from "@/components/LikeButton";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  UserCircle2Icon
-} from "lucide-react";
+import { UserCircle2Icon } from "lucide-react";
 import { Work } from "@/types/work";
 import { MaskData } from "@/types/mask";
-import { deleteWork, showWork } from "@/lib/api";
+import { deleteWork } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import { PresetPreview } from "@/components/PresetPreview";
 import { BackButton } from "@/components/BackButton";
 import { CommentList } from "@/components/CommentList";
 import { ShareButton } from "@/components/ShareButton";
-import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 interface WorkDetailClientProps {
   initialData: Work;
@@ -32,27 +37,29 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
   const router = useRouter();
   const params = useParams();
   const id = params?.id;
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const { showAlert } = useAlert();
   const [work, setWork] = useState(initialData);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  // 編集
   const handleEdit = (id: number) => {
     router.push(`/work/${id}/edit`);
   }
 
+  // 削除
   const handleDelete = async (id: number) => {
-    if (window.confirm('本当に削除しますか？')) {
-      try {
-        const response = await deleteWork(id);
-        showAlert(response.message);
-        router.push('/work');
-      } catch (error) {
-        console.error(error);
-        showAlert('作品の削除に失敗しました');
-      }
+    try {
+      const response = await deleteWork(id);
+      showAlert(response.message);
+      router.push('/work');
+    } catch (error) {
+      console.error(error);
+      showAlert('作品の削除に失敗しました');
     }
   }
 
+  // コピーして編集
   const handleCopyMask = (maskData: MaskData) => {
     // マスクデータをlocalStorageに保存
     localStorage.setItem('copiedMaskData', JSON.stringify(maskData));
@@ -64,7 +71,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
   };
 
   // 認証状態の初期化中はローディング表示
-  if (authLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
@@ -108,11 +115,32 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
             >編集</Button>
             <Button
               variant="destructive"
-              onClick={() => handleDelete(work.id)}
+              onClick={() => setIsDialogOpen(true)}
             >削除</Button>
           </div>
         )}
       </div>
+
+      {/* 削除確認ダイアログ */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>作品削除の確認</DialogTitle>
+            <DialogDescription className="text-label pt-2">一度削除すると元に戻すことができなくなります。<br />本当に削除しますか？</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="secondary"
+              onClick={() => setIsDialogOpen(false)}
+            >キャンセル</Button>
+            <Button
+              variant="secondary"
+              onClick={() => handleDelete(work.id)}
+            >はい</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols md:grid-cols-2 gap-8 mb-4">
 
