@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -100,7 +101,14 @@ export function Header() {
           {/* ロゴ・サイト名 */}
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-bold text-foreground flex items-center">
-              <img src='/app_logo.svg' className="w-1/2 h-auto" alt="GamutCut" />
+              <Image
+                src='/app_logo.svg'
+                alt="GamutCut"
+                width={100}
+                height={20}
+                sizes="100px"
+                className="w-1/2 h-auto"
+              />
             </Link>
           </div>
 

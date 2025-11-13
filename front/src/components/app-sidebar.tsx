@@ -1,9 +1,10 @@
 'use client';
 
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import {
   Home,
-  Image,
+  Image as ImageIcon,
   PenTool,
   Palette,
   Settings,
@@ -37,7 +38,7 @@ const items = [
   {
     title: "作品一覧",
     url: "/work",
-    icon: Image,
+    icon: ImageIcon,
   },
   {
     title: "作品投稿",
@@ -77,7 +78,14 @@ export function AppSidebar() {
           onClick={() => handleNavigation("/")}
           className="text-xl font-bold text-foreground text-left hover:cursor-pointer"
         >
-          <img src='/app_logo.svg' className="w-1/2 h-auto" alt="GamutCut" />
+          <Image
+            src='/app_logo.svg'
+            alt="GamutCut"
+            width={100}
+            height={20}
+            sizes="100px"
+            className="w-1/2 h-auto"
+          />
         </button>
       </SidebarHeader>
 
