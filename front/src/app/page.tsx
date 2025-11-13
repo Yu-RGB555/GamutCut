@@ -41,6 +41,7 @@ export default function HelpPage() {
                 alt="App Logo"
                 width={200}
                 height={200}
+                priority
                 className="w-[200px] lg:w-[300px]"
               />
               <span className="text-3xl lg:text-5xl pt-3 lg:pt-5 pl-1 lg:pl-2 font-bold text-label">とは？</span>
@@ -71,6 +72,7 @@ export default function HelpPage() {
             alt="App Logo"
             width={200}
             height={200}
+            priority
             className="w-[200px] lg:w-[300px]"
           />
           <span className="text-3xl lg:text-5xl pt-3 lg:pt-5 pl-1 lg:pl-2 font-bold text-label">の特徴</span>
