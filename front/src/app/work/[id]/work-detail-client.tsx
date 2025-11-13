@@ -221,7 +221,6 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
         <div className="mt-20 pt-8">
           <CommentList
             workId={work.id}
-            isPreview={false}
             incrementStep={5}  // 段階的表示の増分数
           />
         </div>
