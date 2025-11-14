@@ -28,7 +28,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  /* 追加 */
   --color-btn-border: var(--btn-border);
   --color-text-selection: var(--text-selection);
   --color-error: var(--error);

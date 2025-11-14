@@ -175,7 +175,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
   }, [preset]);
 
   return (
-    <div className="bg-background border p-4 rounded-lg">
+    <div className="max-w-xs bg-background border p-4 rounded-lg">
       <div className="flex flex-col">
         <div className="flex justify-between w-full items-center mb-2">
           {isEditing ? (

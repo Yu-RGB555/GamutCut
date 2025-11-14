@@ -139,12 +139,12 @@ export function CommentItem({
                 href={`/users/${comment.user.id}`}
                 className="text-label underline-offset-4 font-semibold text-sm hover:underline"
               >
-                <span className="text-label">{comment.user.name}</span>
+                <span className="text-label line-clamp-1">{comment.user.name}</span>
               </Link>
               <span className="text-xs text-muted-foreground">
                 ・{formatDate(comment.created_at)}
                 {comment.created_at !== comment.updated_at && (
-                  <span className="ml-1 text-xs text-muted-foreground">（編集済み）</span>
+                  <span className="text-xs text-muted-foreground">（編集済み）</span>
                 )}
               </span>
             </div>

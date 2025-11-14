@@ -29,6 +29,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 
 interface MaskMakingProps {
   onSaveSuccess: () => Promise<void>;
@@ -347,7 +348,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
   // プリセット保存ダイアログを開く
   const handleMaskSave = () => {
-    setPresetName('名称未設定');
+    setPresetName('No Title');
     setIsSaveDialogOpen(true);
   };
 
@@ -486,50 +487,36 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
               <ColorInfoPanel colorInfo={colorInfo}/>
             </div>
 
-            {/* Myマスクに保存ボタン・ダウンロードボタン */}
-            <div className="justify-items-end mt-2">
+            <div className="flex flex-col space-y-8 mt-4">
+              {/* 明度調整スライダー */}
+              <div className="w-full space-y-2">
+                <h3 className="text-card-foreground text-lg font-semibold">明度</h3>
+                <div className="flex items-center sm:flex-row gap-2 sm:gap-4">
+                  <Slider
+                    defaultValue={[100]}
+                    value={[currentValue]}
+                    min={0}
+                    max={100}
+                    step={1}
+                    onValueChange={(value) => setCurrentValue(value[0])}
+                    className="w-1/2 h-2 hover:cursor-pointer"
+                  />
+                  <span className="text-label">{currentValue}%</span>
+                </div>
+              </div>
+
+              {/* Myマスクに保存ボタン・ダウンロードボタン */}
               <ExportControls
                 selectedMaskLength={selectedMask.length}
                 onMaskExport={handleMaskExport}
                 onMaskSave={handleMaskSave}
               />
             </div>
-
-            {/* 明度調整スライダー */}
-            <div className="w-full space-y-2">
-              <h3 className="text-card-foreground text-lg font-semibold">明度調整</h3>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={currentValue}
-                  onChange={(e) => setCurrentValue(parseInt(e.target.value))}
-                  className="w-full max-w-1/2 sm:w-1/3 h-2
-                    accent-cyan-400
-                    backdrop-blur-md
-                    bg-white/30
-                    rounded-lg
-                    shadow-md
-                    hover: cursor-pointer
-                    [&::-webkit-slider-thumb]:w-6
-                    [&::-webkit-slider-thumb]:h-6
-                    [&::-webkit-slider-thumb]:bg-white/80
-                    [&::-webkit-slider-thumb]:backdrop-blur-sm
-                    [&::-webkit-slider-thumb]:border-2
-                    [&::-webkit-slider-thumb]:border-cyan-400
-                    [&::-webkit-slider-thumb]:shadow-lg
-                    hover:[&::-webkit-slider-thumb]:bg-cyan-200
-                    transition-all duration-200"
-                />
-                <span className="text-label">{currentValue}%</span>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* 色情報パネル */}
-        <div className="w-full max-w-2xl space-y-4 lg:space-y-8">
+        <div className="justify-items-center space-y-4 lg:space-y-8">
           <MaskControls
             shapeTemplates={shapeTemplates}
             selectedMask={selectedMask}
@@ -549,36 +536,35 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Myマスクに保存</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-label">
               プリセットの名前を入力してください
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="preset-name">プリセット名</Label>
-              <Input
-                id="preset-name"
-                value={presetName}
-                onChange={(e) => setPresetName(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onCompositionStart={() => setIsComposing(true)}
-                onCompositionEnd={() => setIsComposing(false)}
-                placeholder="名称未設定"
-                maxLength={50}
-              />
-            </div>
+          <div className="my-4">
+            <Label htmlFor="preset-name"></Label>
+            <Input
+              id="preset-name"
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={() => setIsComposing(false)}
+              placeholder="No Title"
+              maxLength={30}
+              className="text-label"
+            />
           </div>
           <DialogFooter>
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={cancelPresetSave}
             >
               キャンセル
             </Button>
             <Button
+              variant="secondary"
               onClick={executePresetSave}
               disabled={!presetName.trim()}
-              className="bg-primary hover:bg-mouseover"
             >
               保存
             </Button>
