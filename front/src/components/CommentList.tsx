@@ -52,10 +52,6 @@ export function CommentList({
 
   // コメント削除
   const handleDeleteComment = async (commentId: number) => {
-    if (!window.confirm("このコメントを削除しますか？")) {
-      return;
-    }
-
     try {
       const result = await deleteComment(workId, commentId);
       setComments(comments.filter(comment => comment.id !== commentId));
