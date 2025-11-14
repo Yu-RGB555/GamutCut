@@ -9,6 +9,15 @@ import { Point } from '@/types/gamut';
 import { deletePreset, updatePreset } from '@/lib/api';
 import { useAlert } from '@/contexts/AlertContext';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface PresetCardProps {
@@ -21,6 +30,7 @@ interface PresetCardProps {
 export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, showDeleteButton = true }: PresetCardProps) {
   const { showAlert } = useAlert();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // 編集状態を管理
   const [isEditing, setIsEditing] = useState(false);
@@ -121,6 +131,11 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
       return;
     }
 
+    if (editedName.length > 30) {
+      showAlert('Myマスクのタイトル名は最大30文字までです');
+      return
+    }
+
     try {
       const response = await updatePreset(preset.id, editedName.trim());
       showAlert(response.message);
@@ -219,11 +234,34 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
                 )}
                 {showDeleteButton && (
                   <Trash2Icon
-                    onClick={() => removePreset(preset.id)}
+                    onClick={() => setIsDialogOpen(true)}
                     className="text-destructive w-4 h-4 hover:cursor-pointer"
                   />
                 )}
               </div>
+
+      {/* コメント削除確認ダイアログ */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Myマスク削除の確認</DialogTitle>
+            <DialogDescription
+              className="text-label pt-2">
+                Myマスク一覧から『 <span className="text-primary">{preset.name}</span> 』を削除しますか？
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="secondary"
+              onClick={() => setIsDialogOpen(false)}
+            >キャンセル</Button>
+            <Button
+              variant="secondary"
+              onClick={() => removePreset(preset.id)}
+            >はい</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
             </>
           )}
         </div>
