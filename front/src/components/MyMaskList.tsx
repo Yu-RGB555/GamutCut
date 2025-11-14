@@ -23,7 +23,7 @@ export const MyMaskList: React.FC<MyPresetsProps> = ({
           {myPresets.length === 0 ? (
             <div className="text-white text-center">Myマスクがありません</div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="max-w-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {myPresets.map((preset) => (
                 <PresetCard
                   key={preset.id}

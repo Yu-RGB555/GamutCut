@@ -71,7 +71,7 @@ export default function Home() {
         <>
           <div className="grid grid-cols-1 gap-y-16">
             {/* マスク作成セクション */}
-            <div>
+            <div className="w-full">
               <MaskMaking
                 onSaveSuccess={fetchPresetsAfterSave}
                 copiedMaskData={copiedMaskData} // 「コピーして編集」用

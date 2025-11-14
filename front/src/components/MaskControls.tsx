@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ShapeTemplate, MaskWithScale } from '../types/gamut';
 import { getMaskDisplayName, getShapeDisplayName } from '@/lib/shapeUtils';
@@ -28,7 +29,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
   onScaleChange
 }) => {
   return (
-    <div>
+    <div className="w-full md:max-w-[400px]">
       {/* 拡大・縮小 */}
       {selectedMask.length > 0 && (
         <div className="bg-card p-4 mb-4 rounded-xl">
@@ -45,38 +46,23 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
               </button>
             ))}
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center my-4 gap-2 sm:gap-4">
+          <div className="flex items-center my-4 gap-2 sm:gap-4">
             <p className="text-label text-sm font-base">拡大・縮小</p>
-            <input
-              type="range"
-              min="0.2"
-              max="1.8"
-              step="0.01"
-              value={selectedMask[selectedMaskIndex]?.scale ?? 1}
-              onChange={(e) => onScaleChange(parseFloat(e.target.value))}
-              className="w-full max-w-1/2 sm:w-1/3 h-2
-                accent-cyan-400
-                backdrop-blur-md
-                bg-white/30
-                rounded-lg
-                shadow-md
-                hover: cursor-pointer
-                [&::-webkit-slider-thumb]:w-6
-                [&::-webkit-slider-thumb]:h-6
-                [&::-webkit-slider-thumb]:bg-white/80
-                [&::-webkit-slider-thumb]:backdrop-blur-sm
-                [&::-webkit-slider-thumb]:border-2
-                [&::-webkit-slider-thumb]:border-cyan-400
-                [&::-webkit-slider-thumb]:shadow-lg
-                hover:[&::-webkit-slider-thumb]:bg-cyan-200
-                transition-all duration-200"
+            <Slider
+              defaultValue={[100]}
+              value={[selectedMask[selectedMaskIndex]?.scale ?? 1]}
+              min={0.2}
+              max={1.8}
+              step={0.01}
+              onValueChange={(value) => onScaleChange(value[0])}
+              className="w-full max-w-1/2 sm:w-1/3 h-2 hover:cursor-pointer"
             />
             <span className="text-label">{((selectedMask[selectedMaskIndex]?.scale ?? 1) * 100).toFixed(0)}%</span>
           </div>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <Dialog open={isDialogOpen} onOpenChange={onDialogOpenChange}>
           <DialogTrigger asChild>
             <Button
