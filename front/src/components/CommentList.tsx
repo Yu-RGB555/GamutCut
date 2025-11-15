@@ -29,7 +29,6 @@ export function CommentList({
   // 投稿済みコメントの取得
   const fetchComments = async () => {
     try {
-      setLoading(true);
       const data = await getComments(workId);
       setComments(data);
       setError(null);
@@ -39,8 +38,6 @@ export function CommentList({
       }
     } catch (error) {
       setError("コメントの取得に失敗しました");
-    } finally {
-      setLoading(false);
     }
   };
 

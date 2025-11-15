@@ -13,7 +13,6 @@ import {
   HeartIcon,
   BookmarkIcon,
   Edit2Icon,
-  HelpCircleIcon
 } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import {
@@ -25,6 +24,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from './ui/sheet';
+import { Skeleton } from './ui/skeleton';
 
 // ユーザーメニュー項目の定義
 const userMenuItems = [
@@ -115,14 +115,17 @@ export function Header() {
           {/* 認証・ユーザーメニューのみ */}
           <div className="flex items-center space-x-4">
             {isLoading ? (
-              // ローディング中は何も表示しない（またはスケルトン表示）
-              <div className="w-20 h-9"></div>
+              // ローディング中はスケルトン表示
+              <Skeleton className="w-10 h-10 rounded-full" />
             ) : isAuthenticated ? (
               <>
                 <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                   <SheetTrigger>
-                    <Avatar className="w-10 h-10 hover:cursor-pointer hover:opacity-80 transition-opacity">
-                      <AvatarImage src={user?.avatar_url} />
+                    <Avatar className="w-10 h-10 hover:opacity-80 transition-opacity hover:cursor-pointer">
+                      <AvatarImage
+                        src={user?.avatar_url}
+                        alt={user?.name || 'ユーザーアバター'}
+                      />
                       <AvatarFallback className="bg-background">
                         <UserCircle2 className="w-full h-full" />
                       </AvatarFallback>

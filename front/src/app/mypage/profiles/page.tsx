@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAlert } from '@/contexts/AlertContext';
 import { Camera, User, X } from 'lucide-react';
 import { getProfile, updateProfile } from '@/lib/api';
 import { User as UserType } from '@/types/auth';
@@ -29,12 +30,12 @@ interface FormErrors {
 export default function ProfilesPage() {
   const router = useRouter();
   const { updateUser } = useAuth();
+  const { showAlert } = useAlert();
   const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [errors, setErrors] = useState<FormErrors>({}); // フォームバリデーションエラー
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,10 +50,10 @@ export default function ProfilesPage() {
   const cleanXAccountUrl = (url: string): string => {
     if (!url) return '';
 
-    // https://x.com/、https://twitter.com/、http://x.com/、http://twitter.com/ を削除
+    // https://x.com/、https://twitter.com/、http://x.com/、http://twitter.com/ を削除（@マークも削除）
     const cleanedUrl = url
       .replace(/^https?:\/\/(www\.)?(x\.com|twitter\.com)\//i, '')
-      .replace(/^@/, ''); // @マークも削除
+      .replace(/^@/, '');
 
     return cleanedUrl;
   };
@@ -75,10 +76,6 @@ export default function ProfilesPage() {
           }
         } catch (error) {
           console.error('プロフィール取得エラー:', error);
-          setMessage({
-            type: 'error',
-            text: 'プロフィール情報の取得に失敗しました'
-          });
         }
       }
     };
@@ -150,7 +147,6 @@ export default function ProfilesPage() {
     if (!profileUser || !validateForm()) return;
 
     setIsLoading(true);
-    setMessage(null);
 
     try {
       const submitData = new FormData();
@@ -166,19 +162,16 @@ export default function ProfilesPage() {
 
       const response = await updateProfile(submitData);
 
-      setMessage({ type: 'success', text: response.message });
-      setProfileUser(response.user);
+      showAlert(response.message);
 
       // AuthContextのユーザー情報も更新
+      setProfileUser(response.user);
       updateUser(response.user);
 
-      // 3秒後にメッセージを消す
-      setTimeout(() => setMessage(null), 3000);
+      router.push('/mypage');
+
     } catch (error) {
-      setMessage({
-        type: 'error',
-        text: error instanceof Error ? error.message : 'プロフィールの更新に失敗しました'
-      });
+      console.error('プロフィール更新エラー:', error);
     } finally {
       setIsLoading(false);
     }
@@ -208,19 +201,17 @@ export default function ProfilesPage() {
       </div>
 
       {/* フォーム */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-card rounded-2xl shadow-xl overflow-hidden">
-          {/* ヘッダー画像エリア */}
-          <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600 relative">
-            <div className="absolute inset-0 bg-card bg-opacity-20"></div>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card className="overflow-hidden">
+          <CardHeader className="h-4 relative p-0">
+            <div className="absolute inset-0"></div>
             <div className="absolute bottom-4 right-6">
               <div className="text-white text-sm opacity-75"></div>
             </div>
-          </div>
+          </CardHeader>
 
-          {/* プロフィール画像 */}
-          <div className="relative px-6 pb-6">
-            <div className="flex items-end -mt-16 mb-6">
+          <CardContent className="relative px-6 pb-6">
+            <div className="flex items-end mt-2 mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100">
                   {avatarPreview ? (
@@ -258,19 +249,8 @@ export default function ProfilesPage() {
               </div>
             </div>
 
-            {/* メッセージ表示 */}
-            {message && (
-              <div className={`mb-6 p-4 rounded-lg ${
-                message.type === 'success'
-                  ? 'bg-green-50 border border-green-200 text-green-800'
-                  : 'bg-red-50 border border-red-200 text-red-800'
-              }`}>
-                {message.text}
-              </div>
-            )}
-
             {/* フォーム */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -293,6 +273,9 @@ export default function ProfilesPage() {
                 {errors.name && (
                   <p className="mt-1 text-sm text-red-600">{errors.name}</p>
                 )}
+                <div className="mt-1 text-xs text-gray-500 text-right">
+                  {formData.name.length} / 20
+                </div>
               </div>
 
               {/* 自己紹介 */}
@@ -339,8 +322,9 @@ export default function ProfilesPage() {
               <div className="flex justify-end pt-6">
                 <Button
                   type="submit"
+                  variant="secondary"
                   disabled={isLoading}
-                  className="transition-all duration-200 transform hover:scale-105 disabled:scale-100 shadow-lg hover:shadow-xl"
+                  className="transition-all duration-200 transform disabled:scale-100 shadow-lg hover:shadow-xl"
                 >
                   {isLoading ? (
                     <>
@@ -349,15 +333,14 @@ export default function ProfilesPage() {
                     </>
                   ) : (
                     <>
-                      {/* <Save className="h-4 w-4 mr-2" /> */}
                       更新
                     </>
                   )}
                 </Button>
               </div>
             </form>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

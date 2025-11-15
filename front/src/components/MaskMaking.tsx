@@ -471,7 +471,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
               ref={canvasRef}
               width={400}
               height={400}
-              className="bg-card rounded-md w-full h-auto max-w-[400px] max-h-[400px]"
+              className="rounded-md w-full h-auto max-w-[400px] max-h-[400px]"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
