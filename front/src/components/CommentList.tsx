@@ -38,6 +38,8 @@ export function CommentList({
       }
     } catch (error) {
       setError("コメントの取得に失敗しました");
+    } finally {
+      setLoading(false);
     }
   };
 
