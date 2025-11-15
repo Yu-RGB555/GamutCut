@@ -175,7 +175,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
   }, [preset]);
 
   return (
-    <div className="max-w-xs bg-background border p-4 rounded-lg">
+    <div className="max-w-xs bg-background border p-3 rounded-lg">
       <div className="flex flex-col">
         <div className="flex justify-between w-full items-center mb-2">
           {isEditing ? (
@@ -225,7 +225,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
                   </TooltipContent>
                 </Tooltip>
               </p>
-              <div className="flex gap-1">
+              <div className="flex gap-1.5">
                 {showEditButton && (
                   <Edit2Icon
                     onClick={startEditing}
