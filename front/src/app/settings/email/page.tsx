@@ -13,12 +13,13 @@ import { BackButton } from '@/components/BackButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { changeEmail } from '@/lib/api';
+import { useLoad } from '@/contexts/LoadingContext';
 
 export default function EmailChangePage() {
+  useAuthRedirect();
   const router = useRouter();
+  const { setIsLoadingOverlay } = useLoad();
   const { user, updateUser } = useAuth();
-  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -27,10 +28,12 @@ export default function EmailChangePage() {
   });
 
   // SNS認証ユーザーは非表示
-  if (!authLoading && isAuthenticated && user?.has_social_accounts) {
+  if (user?.has_social_accounts) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+        <div className="text-white text-center font-semibold">
+          SNS認証ユーザーはメールアドレス変更手続きは行えません
+        </div>
       </div>
     );
   }
@@ -67,7 +70,7 @@ export default function EmailChangePage() {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
     setErrors([]);
 
     try {
@@ -95,18 +98,9 @@ export default function EmailChangePage() {
         setErrors(['予期しないエラーが発生しました']);
       }
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
-
-  // 認証状態の初期化中はローディング表示
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   // メールアドレス変更確認メール送信後
   if (success) {
@@ -200,10 +194,9 @@ export default function EmailChangePage() {
             <div className="flex justify-end gap-4">
               <Button
                 type="submit"
-                disabled={isLoading}
                 className=" w-16"
               >
-                {isLoading ? '変更中...' : '変更'}
+                変更
               </Button>
             </div>
           </form>

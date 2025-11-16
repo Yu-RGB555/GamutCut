@@ -7,16 +7,19 @@ import { PublishedWorks } from "@/components/PublishedWorks";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { UserCircle2Icon } from "lucide-react";
 import XLogo from "@/components/XLogo";
+import { useLoad } from "@/contexts/LoadingContext";
 
 export default function UserProfilePage() {
   const params = useParams();
+  // const { setIsLoadingOverlay } = useLoad();
   const userId = params?.id as string;
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
+      // setIsLoadingOverlay(true);
+
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`);
 
@@ -26,10 +29,10 @@ export default function UserProfilePage() {
 
         const data = await response.json();
         setUser(data.user);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : '予期せぬエラーが発生しました');
+      } catch (error) {
+        setError(error instanceof Error ? error.message : '予期せぬエラーが発生しました');
       } finally {
-        setLoading(false);
+        // setIsLoadingOverlay(false);
       }
     };
 
@@ -38,18 +41,12 @@ export default function UserProfilePage() {
     }
   }, [userId]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
-
   if (error || !user) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500">{error || 'ユーザーが見つかりません'}</div>
+      <div className="flex min-h-[500px] justify-center items-center">
+        <div className="text-white text-center font-semibold">
+          ユーザーが見つかりません...
+        </div>
       </div>
     );
   }

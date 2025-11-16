@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { BookmarkIcon} from "lucide-react";
 import { toggleBookmark} from "@/lib/api";
+import { useLoad } from "@/contexts/LoadingContext";
 
 interface BookmarkButtonProps {
   workId: number;
@@ -11,28 +12,28 @@ interface BookmarkButtonProps {
 
 export function BookmarkButton({ workId, initialBookmarked = false }: BookmarkButtonProps) {
   const { user } = useAuth();
+  const { setIsLoadingOverlay } = useLoad();
   const [isBookmarked, setIsBookmarked] = useState(initialBookmarked);
-  const [isLoading, setIsLoading] = useState(false);
 
   // ブックマーク状態を切り替える関数
   const handleBookmarkToggle = async () => {
-    if (!user || isLoading) return;
+    if (!user) return;
 
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
     try {
       const data = await toggleBookmark(workId, isBookmarked);
       setIsBookmarked(data.bookmarked);
     } catch (error) {
       console.error('ブックマーク処理エラー:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
 
   return (
     <button
       onClick={handleBookmarkToggle}
-      disabled={!user || isLoading}
+      disabled={!user}
       className={`flex items-center gap-1 p-2 rounded-lg transition-colors ${
         !user
           ? 'opacity-50 cursor-not-allowed'

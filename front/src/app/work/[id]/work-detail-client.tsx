@@ -28,6 +28,7 @@ import { PresetPreview } from "@/components/PresetPreview";
 import { BackButton } from "@/components/BackButton";
 import { CommentList } from "@/components/CommentList";
 import { ShareButton } from "@/components/ShareButton";
+import { useLoad } from "@/contexts/LoadingContext";
 
 interface WorkDetailClientProps {
   initialData: Work;
@@ -37,8 +38,9 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
   const router = useRouter();
   const params = useParams();
   const id = params?.id;
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const { showAlert } = useAlert();
+  const { setIsLoadingOverlay } = useLoad();
   const [work, setWork] = useState(initialData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -49,6 +51,8 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
 
   // 削除
   const handleDelete = async (id: number) => {
+    setIsLoadingOverlay(true);
+
     try {
       const response = await deleteWork(id);
       showAlert(response.message);
@@ -56,6 +60,8 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
     } catch (error) {
       console.error(error);
       showAlert('作品の削除に失敗しました');
+    } finally {
+      setIsLoadingOverlay(false);
     }
   }
 
@@ -69,15 +75,6 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
       router.push('/mask');
     }, 2000);
   };
-
-  // 認証状態の初期化中はローディング表示
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   if (!work) {
     return <div className="flex min-h-[500px] justify-center items-center">

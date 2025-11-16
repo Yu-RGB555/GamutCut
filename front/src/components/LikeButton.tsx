@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { HeartIcon } from "lucide-react";
 import { toggleLike } from "@/lib/api";
+import { useLoad } from "@/contexts/LoadingContext";
 
 interface LikeButtonProps {
   workId: number;
@@ -12,15 +13,15 @@ interface LikeButtonProps {
 
 export function LikeButton({ workId, initialLiked = false, initialLikesCount = 0 }: LikeButtonProps) {
   const { user } = useAuth();
+  const { setIsLoadingOverlay } = useLoad();
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
-  const [isLoading, setIsLoading] = useState(false);
 
   // いいね状態を切り替える関数
   const handleLikeToggle = async () => {
-    if (!user || isLoading) return;
+    if (!user) return;
 
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
     try {
       const data = await toggleLike(workId, isLiked);
       setIsLiked(data.liked);
@@ -28,14 +29,14 @@ export function LikeButton({ workId, initialLiked = false, initialLikesCount = 0
     } catch (error) {
       console.error('いいね処理エラー:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
 
   return (
     <button
       onClick={handleLikeToggle}
-      disabled={!user || isLoading}
+      disabled={!user}
       className={`flex items-center gap-1 p-2 rounded-lg transition-colors ${
         !user
           ? 'opacity-50 cursor-not-allowed'

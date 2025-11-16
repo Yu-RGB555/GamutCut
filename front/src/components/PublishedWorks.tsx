@@ -8,6 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { LikeButton } from "@/components/LikeButton";
 import { BookmarkButton } from "./BookmarkButton";
 import { UserCircle2Icon } from "lucide-react";
+import { useLoad } from "@/contexts/LoadingContext";
 
 interface PublishedWorksProps {
   isActive: boolean;
@@ -16,14 +17,14 @@ interface PublishedWorksProps {
 
 export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
   const { user } = useAuth();
+  const { setIsLoadingOverlay } = useLoad();
   const [works, setWorks] = useState<Work[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const getWorks = async () => {
     if (!isActive || !userId) return;
 
-    setLoading(true);
+    setIsLoadingOverlay(true);
     setError(null);
 
     try {
@@ -44,7 +45,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
     } catch (error) {
       setError(error instanceof Error ? error.message : '予期せぬエラーが発生しました');
     } finally {
-      setLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
 
@@ -56,14 +57,6 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
 
   if (!isActive) {
     return null;
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
   }
 
   if (error) {

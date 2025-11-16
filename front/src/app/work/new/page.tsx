@@ -17,15 +17,16 @@ import { TagInput } from "@/components/TagInput";
 import { postWork } from "@/lib/api";
 import { AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useLoad } from "@/contexts/LoadingContext";
 
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
 
 export default function PostWorks() {
   const router = useRouter();
+  const { setIsLoadingOverlay } = useLoad();
   const { showAlert } = useAlert();
-  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
-  const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated } = useAuthRedirect();
   const [errors, setErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: '',
@@ -36,8 +37,6 @@ export default function PostWorks() {
   const [isPresetDialogOpen, setIsPresetDialogOpen] = useState(false);
   const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
   const [illustrationPreview, setIllustrationPreview] = useState<string | null>(null);
-
-
 
   useEffect(() => {
     if (!illustrationFile){
@@ -66,7 +65,7 @@ export default function PostWorks() {
   const handleSubmit = async (e: React.FormEvent, isDraft: boolean) => {
     e.preventDefault();
 
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
     setErrors([]);
 
     try{
@@ -107,18 +106,9 @@ export default function PostWorks() {
         setErrors(['予期しないエラーが発生しました']);
       }
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
-
-  // 認証状態の初期化中はローディング表示
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -250,16 +240,14 @@ export default function PostWorks() {
                 type="button"
                 variant="secondary"
                 onClick={(e) => handleSubmit(e, true)}  // 直接true(下書き)を渡す
-                disabled={isLoading}
               >
-                {isLoading? '保存中...' : '下書き保存'}
+                下書き保存
               </Button>
               <Button
                 type="button"
                 onClick={(e) => handleSubmit(e, false)} // 直接false(公開)を渡す
-                disabled={isLoading}
               >
-                {isLoading? '投稿中...' : '投稿'}
+                投稿
               </Button>
             </div>
         </form>

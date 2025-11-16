@@ -27,6 +27,7 @@ import { PresetPreview } from "@/components/PresetPreview";
 import { PresetSelectDialog } from "@/components/PresetSelectDialog";
 import { updateWork, showWork, getWorkImageBlob } from "@/lib/api";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useLoad } from "@/contexts/LoadingContext";
 
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
@@ -49,13 +50,12 @@ const createFileFromBackend = async (workId: number, filename: string, filesize?
 export default function EditWorks() {
   const router = useRouter();
   const { showAlert } = useAlert();
+  const { setIsLoadingOverlay } = useLoad();
   const params = useParams();
   const { user } = useAuth();
   const { isAuthenticated } = useAuthRedirect();
   const id = params?.id;
   const currentObjectUrl = useRef<string | null>(null); // ObjectURLの管理用ref
-  const [isLoading, setIsLoading] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(true);
   const [showUnauthorizedDialog, setShowUnauthorizedDialog] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState({
@@ -79,7 +79,7 @@ export default function EditWorks() {
 
       if (!isAuthenticated) {
         setShowUnauthorizedDialog(true);
-        setIsPageLoading(false);
+        setIsLoadingOverlay(false);
       }
     }, 100);
 
@@ -95,13 +95,13 @@ export default function EditWorks() {
 
     const fetchWork = async () => {
       try {
-        setIsPageLoading(true);
+        setIsLoadingOverlay(true);
         const workData = await showWork(Number(id));
 
         // 所有者チェック
         if (workData.user.id !== user.id) {
           setShowUnauthorizedDialog(true);
-          setIsPageLoading(false);
+          setIsLoadingOverlay(false);
           return;
         }
 
@@ -150,8 +150,7 @@ export default function EditWorks() {
         console.error('作品データの取得に失敗しました:', error);
         setErrors(['作品データの取得に失敗しました']);
       } finally {
-        setIsLoading(false);
-        setIsPageLoading(false);
+        setIsLoadingOverlay(false);
       }
     };
 
@@ -227,7 +226,7 @@ export default function EditWorks() {
   const handleSubmit = async (e: React.FormEvent, isDraft:boolean) => {
     e.preventDefault();
 
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
     setErrors([]);
 
     try{
@@ -275,17 +274,9 @@ export default function EditWorks() {
         setErrors(['予期しないエラーが発生しました']);
       }
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
-
-  if (isPageLoading && !showUnauthorizedDialog) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -447,17 +438,15 @@ export default function EditWorks() {
               <Button
                 type="button"
                 variant="secondary"
-                disabled={isLoading}
                 onClick={(e)=>handleSubmit(e, true)}
               >
-                {isLoading? '保存中...' : '下書きに戻す'}
+                下書きに戻す
               </Button>
               <Button
                 type="submit"
-                disabled={isLoading}
                 onClick={(e)=>handleSubmit(e, false)}
               >
-                {isLoading? '更新中...' : '更新'}
+                更新
               </Button>
             </>
           ) : (
@@ -465,17 +454,15 @@ export default function EditWorks() {
               <Button
                 type="button"
                 variant="secondary"
-                disabled={isLoading}
                 onClick={(e)=>handleSubmit(e, true)}
               >
-                {isLoading? '保存中...' : '下書き保存'}
+                下書き保存
               </Button>
               <Button
                 type="submit"
-                disabled={isLoading}
                 onClick={(e)=>handleSubmit(e, false)}
               >
-                {isLoading? '投稿中...' : '公開する'}
+                公開する
               </Button>
             </>
           )}

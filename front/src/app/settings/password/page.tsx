@@ -10,20 +10,23 @@ import { BackButton } from '@/components/BackButton';
 import { passwordResets } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useLoad } from '@/contexts/LoadingContext';
 
 export default function PasswordChangePage() {
+  useAuthRedirect();
   const router = useRouter();
+  const { setIsLoadingOverlay } = useLoad();
   const { user } = useAuth();
-  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
 
   // SNS認証ユーザーは非表示
-  if (!authLoading && isAuthenticated && user?.has_social_accounts) {
+  if (user?.has_social_accounts) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
+        <div className="text-white text-center font-semibold">
+          SNS認証ユーザーはパスワード変更手続きは行えません
+        </div>
       </div>
     );
   }
@@ -34,7 +37,7 @@ export default function PasswordChangePage() {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
     setErrors([]);
 
     try {
@@ -43,18 +46,9 @@ export default function PasswordChangePage() {
     } catch (error) {
       setErrors(['パスワードリセットメールの送信に失敗しました']);
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
-
-  // 認証状態の初期化中はローディング表示
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   // パスワードリセットメール送信完了後
   if (success) {
@@ -126,10 +120,9 @@ export default function PasswordChangePage() {
             <div className="flex justify-center">
               <Button
                 onClick={handlePasswordReset}
-                disabled={isLoading}
                 className="w-2/3"
               >
-                {isLoading ? 'メール送信中...' : 'パスワードリセットメールを送信'}
+                パスワードリセットメールを送信
               </Button>
             </div>
           </div>

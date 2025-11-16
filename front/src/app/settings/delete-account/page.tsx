@@ -10,11 +10,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { BackButton } from '@/components/BackButton';
 import { signOut } from '@/lib/api';
+import { useLoad } from '@/contexts/LoadingContext';
 
 export default function DeleteAccountPage() {
+  useAuthRedirect();
   const router = useRouter();
-  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
-  const [isLoading, setIsLoading] = useState(false);
+  const { setIsLoadingOverlay } = useLoad();
   const [errors, setErrors] = useState<string[]>([]);
   const [agreedToDelete, setAgreedToDelete] = useState(false);
 
@@ -36,7 +37,7 @@ export default function DeleteAccountPage() {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
     setErrors([]);
 
     try {
@@ -54,18 +55,9 @@ export default function DeleteAccountPage() {
     } catch (error) {
       setErrors(['アカウントの削除に失敗しました']);
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
-
-  // 認証状態の初期化中はローディング表示（退会完了状態を除く）
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto max-w-2xl py-8 px-4">
@@ -129,11 +121,11 @@ export default function DeleteAccountPage() {
             <div className="flex justify-center">
               <Button
                 type="submit"
-                disabled={isLoading || !agreedToDelete}
+                disabled={!agreedToDelete}
                 variant="destructive"
                 className="w-2/3"
               >
-                {isLoading ? '削除中...' : 'アカウントを削除する'}
+                アカウントを削除する
               </Button>
             </div>
           </form>

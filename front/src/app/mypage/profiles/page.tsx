@@ -14,12 +14,11 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { BackButton } from '@/components/BackButton';
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useLoad } from '@/contexts/LoadingContext';
 
 interface FormErrors {
   name?: string;
@@ -29,13 +28,13 @@ interface FormErrors {
 
 export default function ProfilesPage() {
   const router = useRouter();
+  const { setIsLoadingOverlay } = useLoad();
   const { updateUser } = useAuth();
   const { showAlert } = useAlert();
-  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
+  const { isAuthenticated } = useAuthRedirect();
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({}); // フォームバリデーションエラー
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -146,7 +145,7 @@ export default function ProfilesPage() {
 
     if (!profileUser || !validateForm()) return;
 
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
 
     try {
       const submitData = new FormData();
@@ -173,18 +172,9 @@ export default function ProfilesPage() {
     } catch (error) {
       console.error('プロフィール更新エラー:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
-
-  // 認証状態の初期化中またはプロフィール読み込み中はローディング表示
-  if (authLoading || !profileUser) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -323,19 +313,9 @@ export default function ProfilesPage() {
                 <Button
                   type="submit"
                   variant="secondary"
-                  disabled={isLoading}
                   className="transition-all duration-200 transform disabled:scale-100 shadow-lg hover:shadow-xl"
                 >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      更新中...
-                    </>
-                  ) : (
-                    <>
-                      更新
-                    </>
-                  )}
+                  更新
                 </Button>
               </div>
             </form>

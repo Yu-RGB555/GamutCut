@@ -5,6 +5,7 @@ import { PresetCard } from './PresetCard';
 import { getPresets } from '@/lib/api';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
 import { Button } from './ui/button';
+import { useLoad } from '@/contexts/LoadingContext';
 
 interface PresetSelectDialogProps {
   open: boolean;
@@ -16,15 +17,15 @@ interface PresetSelectDialogProps {
 
 export function PresetSelectDialog({ open, onOpenChange, onSelect, showEditButton = true ,showDeleteButton = true }: PresetSelectDialogProps) {
   const router = useRouter();
+  const { setIsLoadingOverlay } = useLoad();
   const [presets, setPresets] = useState<Preset[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [showEmptyAlert, setShowEmptyAlert] = useState(false);
 
   // プリセット一覧を取得
   useEffect(() => {
     const fetchPresets = async () => {
       try {
-        setIsLoading(true);
+        setIsLoadingOverlay(true);
         const presetData = await getPresets();
         setPresets(presetData);
 
@@ -35,7 +36,7 @@ export function PresetSelectDialog({ open, onOpenChange, onSelect, showEditButto
       } catch (error) {
         console.error('プリセット取得エラー:', error);
       } finally {
-        setIsLoading(false);
+        setIsLoadingOverlay(false);
       }
     };
 
@@ -51,24 +52,20 @@ export function PresetSelectDialog({ open, onOpenChange, onSelect, showEditButto
           <DialogHeader>
             <DialogTitle>作成したマスクを選択</DialogTitle>
           </DialogHeader>
-          {isLoading ? (
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto py-4">
-              {presets.map((preset) => (
-                <div
-                  key={preset.id}
-                  className="cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => {
-                    onSelect(preset);
-                    onOpenChange(false);
-                  }}
-                >
-                  <PresetCard preset={preset} showEditButton={showEditButton} showDeleteButton={showDeleteButton} />
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto py-4">
+            {presets.map((preset) => (
+              <div
+                key={preset.id}
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => {
+                  onSelect(preset);
+                  onOpenChange(false);
+                }}
+              >
+                <PresetCard preset={preset} showEditButton={showEditButton} showDeleteButton={showDeleteButton} />
+              </div>
+            ))}
+          </div>
         </DialogContent>
       </Dialog>
 
