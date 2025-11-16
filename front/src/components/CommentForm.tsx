@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,6 +17,7 @@ interface CommentFormProps {
 export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
   const { user } = useAuth();
   const { showAlert } = useAlert();
 
@@ -53,12 +55,20 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
 
   if (!user) {
     return (
-      <div className="p-4 border rounded-lg bg-muted/50 text-center">
+      <div className="p-4 border rounded-lg text-center">
         <p className="text-sm text-muted-foreground mb-2">
           コメントを投稿するにはログインが必要です
         </p>
-        <Button variant="outline" size="sm" asChild>
-          <a href="/auth/login">ログイン</a>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {
+            // localStorageにパスを保存してログイン画面へ遷移
+            localStorage.setItem('redirectAfterLogin', window.location.pathname);
+            router.push('/auth/login');
+          }}
+        >
+          ログイン
         </Button>
       </div>
     );
