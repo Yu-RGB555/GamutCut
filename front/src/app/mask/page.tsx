@@ -9,14 +9,14 @@ import { MyMaskList } from "@/components/MyMaskList";
 import { MaskData } from "@/types/mask";
 import { useNextStep } from 'nextstepjs';
 import { motion } from "motion/react"
+import { useLoad } from "@/contexts/LoadingContext";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const [presets, setPresets] = useState<Preset[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [copiedMaskData, setCopiedMaskData] = useState<MaskData | null>(null);
-
-  const { startNextStep, closeNextStep } = useNextStep();
+  const { setIsLoadingOverlay } = useLoad();
+  const { startNextStep } = useNextStep();
 
   const handleStartTour = () => {
     startNextStep("mainTour");
@@ -26,7 +26,7 @@ export default function Home() {
   const fetchPresets = async (showLoading: boolean = true): Promise<void> => {
     try {
       if (showLoading) {
-        setIsLoading(true);
+        setIsLoadingOverlay(true);
       }
       const presetData = await getPresets();
       setPresets(presetData);
@@ -34,7 +34,7 @@ export default function Home() {
       console.error('Myマスク取得エラー:', error);
     } finally {
       if (showLoading) {
-        setIsLoading(false);
+        setIsLoadingOverlay(false);
       }
     }
   };
@@ -65,42 +65,36 @@ export default function Home() {
 
   return (
     <div className="justify-items-center mx-4 sm:mx-8 lg:mx-16 mb-40">
-      {isLoading ? (
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 gap-y-16">
-            {/* マスク作成セクション */}
-            <div className="w-full">
-              <MaskMaking
-                onSaveSuccess={fetchPresetsAfterSave}
-                copiedMaskData={copiedMaskData} // 「コピーして編集」用
-              />
-            </div>
+      <div className="grid grid-cols-1 gap-y-16">
+        {/* マスク作成セクション */}
+        <div className="w-full">
+          <MaskMaking
+            onSaveSuccess={fetchPresetsAfterSave}
+            copiedMaskData={copiedMaskData} // 「コピーして編集」用
+          />
+        </div>
 
-            {/* Myマスク一覧セクション */}
-            <div id="step-5" className="space-y-16">
-              <h3 className="text-label text-left text-lg font-semibold">Myマスク一覧</h3>
-              <MyMaskList
-                myPresets={presets}
-                fetchPresets={() => fetchPresets(false)}
-                isAuthenticated={isAuthenticated}
-              />
-            </div>
-          </div>
-          {/* ガイドツアーボタン */}
-          <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-            <motion.button
-              onClick={handleStartTour}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-12 h-12 sm:w-14 sm:h-14 bg-cyan-400 border-1 border-green-100 hover:bg-cyan-700 hover:cursor-pointer transition-colors rounded-full shadow-lg"
-            >
-              <p className="text-center text-[10px] sm:text-xs font-semibold text-black leading-tight">かんたん<br />ガイド</p>
-            </motion.button>
-          </div>
-        </>
-      )}
+        {/* Myマスク一覧セクション */}
+        <div id="step-5" className="space-y-16">
+          <h3 className="text-label text-left text-lg font-semibold">Myマスク一覧</h3>
+          <MyMaskList
+            myPresets={presets}
+            fetchPresets={() => fetchPresets(false)}
+            isAuthenticated={isAuthenticated}
+          />
+        </div>
+      </div>
+      {/* ガイドツアーボタン */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+        <motion.button
+          onClick={handleStartTour}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-12 h-12 sm:w-14 sm:h-14 bg-cyan-400 border-1 border-green-100 hover:bg-cyan-700 hover:cursor-pointer transition-colors rounded-full shadow-lg"
+        >
+          <p className="text-center text-[10px] sm:text-xs font-semibold text-black leading-tight">かんたん<br />ガイド</p>
+        </motion.button>
+      </div>
     </div>
   );
 }

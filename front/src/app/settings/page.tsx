@@ -8,16 +8,12 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function SettingsPage() {
-  const { user } = useAuth();
-  const { isAuthenticated, isLoading } = useAuthRedirect();
+  useAuthRedirect();
+  const { user, isLoading } = useAuth();
 
-  // 認証状態の初期化中はローディング表示
+  // 認証状態の初期化中は何も表示しない（LoadingOverlayが表示）
   if (isLoading) {
-    return (
-      <div className="container mx-auto max-w-2xl py-8 px-4 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
+    return null;
   }
 
   return (

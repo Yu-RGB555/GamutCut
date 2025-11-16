@@ -8,6 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   UserCircle2Icon,
 } from "lucide-react";
+import { useLoad } from "@/contexts/LoadingContext";
 
 interface DraftWorksProps {
   isActive: boolean;
@@ -16,14 +17,15 @@ interface DraftWorksProps {
 
 export function DraftWorks({ isActive, userId }: DraftWorksProps) {
   const { user } = useAuth();
+  const { setIsLoadingOverlay } = useLoad();
   const [works, setWorks] = useState<Work[]>([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const getWorks = async () => {
     if (!isActive || !userId) return;
 
-    setLoading(true);
+    setIsLoadingOverlay(true);
     setError(null);
 
     try {
@@ -44,7 +46,7 @@ export function DraftWorks({ isActive, userId }: DraftWorksProps) {
     } catch (error) {
       setError(error instanceof Error ? error.message : '予期せぬエラーが発生しました');
     } finally {
-      setLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
 
@@ -56,14 +58,6 @@ export function DraftWorks({ isActive, userId }: DraftWorksProps) {
 
   if (!isActive) {
     return null;
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
   }
 
   if (error) {

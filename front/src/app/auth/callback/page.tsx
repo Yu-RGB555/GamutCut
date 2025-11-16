@@ -4,11 +4,13 @@ import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Suspense } from 'react';
+import { useLoad } from '@/contexts/LoadingContext';
 
 function AuthCallbackInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
+  const { setIsLoadingOverlay } = useLoad();
 
   useEffect(() => {
     const token = searchParams?.get('token');
@@ -16,6 +18,8 @@ function AuthCallbackInner() {
     const error = searchParams?.get('error');
 
     const fetchUser = async (jwt: string) => {
+      setIsLoadingOverlay(true);
+
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/me`, {
           headers: {
@@ -31,6 +35,8 @@ function AuthCallbackInner() {
         login(data.user, jwt);
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoadingOverlay(false);
       }
     };
 
@@ -42,22 +48,18 @@ function AuthCallbackInner() {
         router.replace(redirectUrl);
       });
     } else if (success === 'false') {
-      // エラーハンドリング
       console.error('Social login failed:', error);
       router.push('/login?error=' + error);
     }
-  }, []);
+  }, [searchParams]);
 
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-    </div>
-  );
+  // ローディング画面（LoadingOverlay）を表示
+  return null;
 }
 
 export default function AuthCallback() {
   return (
-    <Suspense fallback={<div>認証処理中...</div>}>
+    <Suspense fallback={null}>
       <AuthCallbackInner />
     </Suspense>
   );

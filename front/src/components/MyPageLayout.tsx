@@ -23,10 +23,26 @@ interface MyPageLayoutProps {
 }
 
 export function MyPageLayout({ children }: MyPageLayoutProps) {
+  useAuthRedirect();
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useAuth();
-  const { isAuthenticated, isLoading } = useAuthRedirect();
+  const { user, isLoading } = useAuth();
+
+  // 認証状態の初期化中は何も表示しない（LoadingOverlayが表示）
+  if (isLoading) {
+    return null;
+  }
+
+  // ユーザーが取得できない場合のフォールバック
+  if (!user) {
+    return (
+      <div className="flex min-h-[500px] justify-center items-center">
+        <div className="text-white text-center font-semibold">
+          ユーザーが見つかりません...
+        </div>
+      </div>
+    );
+  }
 
   // パスからアクティブなタブを判定
   const getActiveIndex = () => {
@@ -41,14 +57,6 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
 
   const activeIndex = getActiveIndex();
 
-  // 認証状態の初期化中またはユーザー情報がない場合はローディング表示
-  if(isLoading || !user) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   return (
     // ログインユーザー
@@ -60,20 +68,20 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
           <div className="grid justify-items-center align-items-center gap-8">
             <div className="flex flex-col items-center gap-4">
               <Avatar className="w-24 h-24">
-                <AvatarImage src={user.avatar_url} />
+                <AvatarImage src={user?.avatar_url} />
                 <AvatarFallback className="bg-background">
                   <UserCircle2Icon className="w-full h-full"/>
                 </AvatarFallback>
               </Avatar>
               <div className="text-center">
-                <h1 className="text-2xl font-bold text-label">{user.name}</h1>
+                <h1 className="text-2xl font-bold text-label">{user?.name}</h1>
               </div>
               <div>
-                <h2 className="text-sm text-label whitespace-pre-wrap">{user.bio}</h2>
+                <h2 className="text-sm text-label whitespace-pre-wrap">{user?.bio}</h2>
               </div>
-              { user.x_account_url &&
+              { user?.x_account_url &&
                 <XLogo
-                  url={user.x_account_url}
+                  url={user?.x_account_url}
                 />
               }
             </div>

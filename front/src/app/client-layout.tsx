@@ -5,6 +5,7 @@ import { Footer } from '../components/Footer'
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AlertProvider } from '@/contexts/AlertContext';
 import AlertContainer from '@/components/AlertContainer';
+import { LoadingProvider } from '@/contexts/LoadingContext';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -104,43 +105,45 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   const isLastStep = currentStep === 5;
 
   return (
-    <AuthProvider>
-      <AlertProvider>
-        <TooltipProvider>
-          <NextStepProvider>
-            <NextStep
-              steps={steps}
-              showNextStep={true}
-              shadowRgb={isLastStep ? "0,0,0" : "200,200,200"}
-              shadowOpacity={isLastStep ? "0.5" : "0.4"}
-              cardComponent={CustomCard}
-              cardTransition={{ duration: 0.3, type: 'spring' }}
-              onStepChange={handleStepChange}
-              clickThroughOverlay={false}
-              scrollToTop={false}
-              noInViewScroll={true}
-            >
-              <SidebarProvider>
-                <div className="flex min-h-screen min-w-screen">
-                  {/* サイドバー */}
-                  <AppSidebar />
+    <LoadingProvider>
+      <AuthProvider>
+        <AlertProvider>
+          <TooltipProvider>
+            <NextStepProvider>
+              <NextStep
+                steps={steps}
+                showNextStep={true}
+                shadowRgb={isLastStep ? "0,0,0" : "200,200,200"}
+                shadowOpacity={isLastStep ? "0.5" : "0.4"}
+                cardComponent={CustomCard}
+                cardTransition={{ duration: 0.3, type: 'spring' }}
+                onStepChange={handleStepChange}
+                clickThroughOverlay={false}
+                scrollToTop={false}
+                noInViewScroll={true}
+              >
+                <SidebarProvider>
+                  <div className="flex min-h-screen min-w-screen">
+                    {/* サイドバー */}
+                    <AppSidebar />
 
-                  {/* メインコンテンツエリア */}
-                  <div className="flex-1 flex flex-col">
-                    <Header />
-                    <main className="flex-1 pt-16">
-                      <SidebarTrigger className="fixed left-4 top-20 z-50 border border-md md:hidden"/>
-                      {children}
-                    </main>
-                    <Footer />
+                    {/* メインコンテンツエリア */}
+                    <div className="flex-1 flex flex-col">
+                      <Header />
+                      <main className="flex-1 pt-16">
+                        <SidebarTrigger className="fixed left-4 top-20 z-50 border border-md md:hidden"/>
+                        {children}
+                      </main>
+                      <Footer />
+                    </div>
                   </div>
-                </div>
-                <AlertContainer />
-              </SidebarProvider>
-            </NextStep>
-          </NextStepProvider>
-        </TooltipProvider>
-      </AlertProvider>
-    </AuthProvider>
+                  <AlertContainer />
+                </SidebarProvider>
+              </NextStep>
+            </NextStepProvider>
+          </TooltipProvider>
+        </AlertProvider>
+      </AuthProvider>
+    </LoadingProvider>
   );
 }

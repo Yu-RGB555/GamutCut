@@ -16,12 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { passwordUpdate } from '@/lib/api';
 import { PasswordUpdateRequest } from '@/types/auth';
+import { useLoad } from '@/contexts/LoadingContext';
 
 function PasswordResetForm() {
   const router = useRouter();
+  const { setIsLoadingOverlay } = useLoad();
   const searchParams = useSearchParams();
   const [errors, setErrors] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [formData, setFormData] = useState<PasswordUpdateRequest>({
@@ -31,13 +32,15 @@ function PasswordResetForm() {
 
   // URLからトークンを取得
   useEffect(() => {
+    setIsLoadingOverlay(true);
     const tokenParam = searchParams?.get('token');
     if (!tokenParam) {
       setErrors(['無効なリセットリンクです。']);
     } else {
       setToken(tokenParam);
     }
-  }, [searchParams]);
+    setIsLoadingOverlay(false);
+  }, [searchParams, setIsLoadingOverlay]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -79,7 +82,7 @@ function PasswordResetForm() {
     }
 
     setErrors([]);
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
 
     try {
       await passwordUpdate(token, formData);
@@ -96,18 +99,9 @@ function PasswordResetForm() {
         setErrors(['予期しないエラーが発生しました']);
       }
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
-
-  // トークンを取得できるまで
-  if (!token && errors.length === 0) {
-    return (
-      <div className="container mx-auto max-w-2xl py-8 px-4 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    );
-  }
 
   // パスワードリセット完了後
   if (success) {
@@ -175,7 +169,7 @@ function PasswordResetForm() {
                   placeholder="新しいパスワード（6文字以上）"
                   value={formData.password}
                   onChange={handleInputChange}
-                  disabled={!token || isLoading}
+                  disabled={!token}
                   required
                 />
               </div>
@@ -189,7 +183,7 @@ function PasswordResetForm() {
                   placeholder="パスワードを再度入力"
                   value={formData.password_confirmation}
                   onChange={handleInputChange}
-                  disabled={!token || isLoading}
+                  disabled={!token}
                   required
                 />
               </div>
@@ -198,9 +192,9 @@ function PasswordResetForm() {
               <Button
                 type="submit"
                 className="w-full py-5"
-                disabled={!token || isLoading}
+                disabled={!token}
               >
-                {isLoading ? 'パスワード変更中...' : 'パスワードを変更'}
+                パスワードを変更
               </Button>
             </CardFooter>
           </form>
@@ -212,11 +206,7 @@ function PasswordResetForm() {
 
 export default function PasswordReset() {
   return (
-    <Suspense fallback={
-      <div className="container mx-auto max-w-2xl py-8 px-4 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-      </div>
-    }>
+    <Suspense fallback={null}>
       <PasswordResetForm />
     </Suspense>
   );

@@ -14,16 +14,17 @@ import { BookmarkButton } from "@/components/BookmarkButton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { UserCircle2Icon } from "lucide-react";
+import { useLoad } from "@/contexts/LoadingContext";
 
 function WorksListContent() {
   const { user } = useAuth();
+  const { setIsLoadingOverlay } = useLoad();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [works, setWorks] = useState<Work[]>([]);
   const [popularTags, setPopularTags] = useState<Tag[]>([]);
   const [selectedTag, setSelectedTag] = useState<string>('');
   const [sortTerm, setSortTerm] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -40,7 +41,7 @@ function WorksListContent() {
 
       // URLパラメータに基づいて即座に作品を取得
       const fetchInitialWorks = async () => {
-        setIsLoading(true);
+        setIsLoadingOverlay(true);
         try {
           const worksData = queryFromUrl || tagFromUrl || sortFromUrl
             ? await getWorksWithSearch(queryFromUrl, tagFromUrl, sortFromUrl)
@@ -49,7 +50,7 @@ function WorksListContent() {
         } catch (error) {
           console.error('作品取得エラー:', error);
         } finally {
-          setIsLoading(false);
+          setIsLoadingOverlay(false);
           setIsInitialized(true);
         }
       };
@@ -72,7 +73,7 @@ function WorksListContent() {
   }, []);
 
   const fetchWorks = async (query?: string, tagName?: string, sortTerm?: string) => {
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
     try {
       const worksData = query || tagName || sortTerm
         ? await getWorksWithSearch(query, tagName, sortTerm)
@@ -81,7 +82,7 @@ function WorksListContent() {
     } catch (error) {
       console.error('作品取得エラー:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
 
@@ -191,12 +192,8 @@ function WorksListContent() {
         />
       </div>
       <div className="px-8 pb-8 mb-32">
-        {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="text-gray-500">検索中...</div>
-          </div>
-        ) : works.length === 0 ? (
-          <div className="flex justify-center items-center py-12">
+        {works.length === 0 ? (
+          <div className="flex min-h-screen justify-center items-center py-12">
             <div className="text-gray-500">
               {searchQuery || selectedTag ? '検索結果が見つかりませんでした' : '作品がありません'}
             </div>
@@ -286,12 +283,7 @@ function WorksListContent() {
 
 export default function WorksList() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-background flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ring"></div>
-        </div>
-      }>
+    <Suspense fallback={null}>
       <WorksListContent />
     </Suspense>
   );

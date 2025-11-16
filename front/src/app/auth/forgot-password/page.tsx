@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import {
@@ -16,11 +15,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { passwordResets } from '@/lib/api';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useLoad } from '@/contexts/LoadingContext';
 
 export default function ForgotPassword() {
-  const router = useRouter();
+  const { setIsLoadingOverlay } = useLoad();
   const [errors, setErrors] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [email, setEmail] = useState('');
 
@@ -49,7 +48,7 @@ export default function ForgotPassword() {
     }
 
     setErrors([]);
-    setIsLoading(true);
+    setIsLoadingOverlay(true);
 
     try {
       const response = await passwordResets(email);
@@ -66,7 +65,7 @@ export default function ForgotPassword() {
         setErrors(['予期しないエラーが発生しました']);
       }
     } finally {
-      setIsLoading(false);
+      setIsLoadingOverlay(false);
     }
   };
 
@@ -157,7 +156,6 @@ export default function ForgotPassword() {
                 placeholder="登録済みのメールアドレス"
                 value={email}
                 onChange={handleInputChange}
-                disabled={isLoading}
                 required
               />
             </div>
@@ -165,9 +163,8 @@ export default function ForgotPassword() {
               <Button
                 type="submit"
                 className="w-2/3 py-5"
-                disabled={isLoading}
               >
-                {isLoading ? 'メール送信中...' : 'パスワードリセットメールを送信'}
+                パスワードリセットメールを送信
               </Button>
               <div className="text-center">
                 <Link
