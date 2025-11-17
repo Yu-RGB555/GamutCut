@@ -51,6 +51,7 @@ function AuthCallbackInner() {
       console.error('Social login failed:', error);
       router.push('/login?error=' + error);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   // ローディング画面（LoadingOverlay）を表示
