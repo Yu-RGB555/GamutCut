@@ -23,25 +23,14 @@ interface MyPageLayoutProps {
 }
 
 export function MyPageLayout({ children }: MyPageLayoutProps) {
-  useAuthRedirect();
+  const { isLoading } = useAuthRedirect();
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
 
   // 認証状態の初期化中は何も表示しない（LoadingOverlayが表示）
-  if (isLoading) {
+  if (isLoading || !user) {
     return null;
-  }
-
-  // ユーザーが取得できない場合のフォールバック
-  if (!user) {
-    return (
-      <div className="flex min-h-[500px] justify-center items-center">
-        <div className="text-white text-center font-semibold">
-          ユーザーが見つかりません...
-        </div>
-      </div>
-    );
   }
 
   // パスからアクティブなタブを判定
@@ -89,6 +78,7 @@ export function MyPageLayout({ children }: MyPageLayoutProps) {
           <Button
             variant="secondary"
             onClick={() => router.push('/mypage/profiles')}
+            className="w-xs md:w-md"
           >
             設定
           </Button>

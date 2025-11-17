@@ -12,21 +12,17 @@ interface BookmarkButtonProps {
 
 export function BookmarkButton({ workId, initialBookmarked = false }: BookmarkButtonProps) {
   const { user } = useAuth();
-  const { setIsLoadingOverlay } = useLoad();
   const [isBookmarked, setIsBookmarked] = useState(initialBookmarked);
 
   // ブックマーク状態を切り替える関数
   const handleBookmarkToggle = async () => {
     if (!user) return;
 
-    setIsLoadingOverlay(true);
     try {
       const data = await toggleBookmark(workId, isBookmarked);
       setIsBookmarked(data.bookmarked);
     } catch (error) {
       console.error('ブックマーク処理エラー:', error);
-    } finally {
-      setIsLoadingOverlay(false);
     }
   };
 

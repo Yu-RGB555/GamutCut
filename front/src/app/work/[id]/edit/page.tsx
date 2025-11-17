@@ -53,7 +53,7 @@ export default function EditWorks() {
   const { setIsLoadingOverlay } = useLoad();
   const params = useParams();
   const { user } = useAuth();
-  const { isAuthenticated } = useAuthRedirect();
+  const { isAuthenticated, isLoading } = useAuthRedirect();
   const id = params?.id;
   const currentObjectUrl = useRef<string | null>(null); // ObjectURLの管理用ref
   const [showUnauthorizedDialog, setShowUnauthorizedDialog] = useState(false);
@@ -84,6 +84,7 @@ export default function EditWorks() {
     }, 100);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // 投稿中の作品情報をセット
@@ -155,6 +156,7 @@ export default function EditWorks() {
     };
 
     fetchWork();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isAuthenticated, user, isAuthChecked]);
 
   // 画像表示制御
@@ -190,6 +192,7 @@ export default function EditWorks() {
     return () => {
       URL.revokeObjectURL(url);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [illustrationFile, isLoadingFile]);
 
   const handleInputChange = (field: string, value: string) => {
@@ -277,6 +280,11 @@ export default function EditWorks() {
       setIsLoadingOverlay(false);
     }
   };
+
+  // 認証状態の初期化中、またはユーザー情報がない場合は何も表示しない
+  if (isLoading || !user) {
+    return null;
+  }
 
   return (
     <>
