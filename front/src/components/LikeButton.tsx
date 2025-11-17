@@ -13,7 +13,6 @@ interface LikeButtonProps {
 
 export function LikeButton({ workId, initialLiked = false, initialLikesCount = 0 }: LikeButtonProps) {
   const { user } = useAuth();
-  const { setIsLoadingOverlay } = useLoad();
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
 
@@ -21,15 +20,12 @@ export function LikeButton({ workId, initialLiked = false, initialLikesCount = 0
   const handleLikeToggle = async () => {
     if (!user) return;
 
-    setIsLoadingOverlay(true);
     try {
       const data = await toggleLike(workId, isLiked);
       setIsLiked(data.liked);
       setLikesCount(data.likes_count);
     } catch (error) {
       console.error('いいね処理エラー:', error);
-    } finally {
-      setIsLoadingOverlay(false);
     }
   };
 

@@ -8,11 +8,11 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function SettingsPage() {
-  useAuthRedirect();
-  const { user, isLoading } = useAuth();
+  const { isLoading } = useAuthRedirect();
+  const { user } = useAuth();
 
-  // 認証状態の初期化中は何も表示しない（LoadingOverlayが表示）
-  if (isLoading) {
+  // 認証状態の初期化中、またはユーザー情報がない場合は何も表示しない
+  if (isLoading || !user) {
     return null;
   }
 

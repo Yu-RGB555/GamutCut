@@ -136,7 +136,7 @@ export function CommentItem({
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <Link
-                href={`/users/${comment.user.id}`}
+                href={isOwner ? "/mypage" : `/users/${comment.user.id}`}
                 className="text-label underline-offset-4 font-semibold text-sm hover:underline"
               >
                 <span className="text-label line-clamp-1">{comment.user.name}</span>
