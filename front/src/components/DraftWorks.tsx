@@ -53,6 +53,7 @@ export function DraftWorks({ isActive, userId }: DraftWorksProps) {
   useEffect(() => {
     if (isActive) {
       getWorks();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }
   }, [isActive, userId]);
 

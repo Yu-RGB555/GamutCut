@@ -33,6 +33,7 @@ const SlideInAlert: React.FC<SlideInAlertProps> = ({
 
       return () => clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible, duration]);
 
   const handleClose = () => {

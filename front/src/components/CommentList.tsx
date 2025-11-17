@@ -45,9 +45,8 @@ export function CommentList({
 
   useEffect(() => {
     fetchComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workId]);
-
-
 
   // コメント削除
   const handleDeleteComment = async (commentId: number) => {

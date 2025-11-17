@@ -43,6 +43,7 @@ export function PresetSelectDialog({ open, onOpenChange, onSelect, showEditButto
     if (open) {
       fetchPresets();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   return (

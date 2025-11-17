@@ -172,6 +172,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
   // 初回レンダリング時に描画
   useEffect(() => {
     drawPreset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset]);
 
   return (

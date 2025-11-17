@@ -47,6 +47,7 @@ export default function Home() {
     if(isAuthenticated){
       fetchPresets();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // コピーされたマスクデータを確認（コピーして編集用）

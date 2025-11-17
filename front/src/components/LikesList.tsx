@@ -53,6 +53,7 @@ export function LikesList({ isActive, userId }: LikesListProps) {
     if (isActive) {
       getWorks();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, userId]);
 
   if (!isActive) {
