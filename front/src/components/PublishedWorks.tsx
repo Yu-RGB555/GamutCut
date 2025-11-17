@@ -53,6 +53,7 @@ export function PublishedWorks({ isActive, userId }: PublishedWorksProps) {
     if (isActive) {
       getWorks();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, userId]);
 
   if (!isActive) {

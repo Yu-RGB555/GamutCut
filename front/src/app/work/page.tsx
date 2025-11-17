@@ -57,6 +57,7 @@ function WorksListContent() {
 
       fetchInitialWorks();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   // 人気タグを取得
@@ -91,6 +92,7 @@ function WorksListContent() {
     if (isInitialized) {
       fetchWorks(searchQuery, selectedTag, sortTerm);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, selectedTag, sortTerm, isInitialized]);
 
   const handleSearch = (query: string) => {

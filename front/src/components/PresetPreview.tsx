@@ -74,6 +74,7 @@ export function PresetPreview({ maskData, size =300 }: PresetPreviewProps) {
   // 初回レンダリング時に描画
   useEffect(() => {
     drawPreset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maskData, size]);
 
   return (

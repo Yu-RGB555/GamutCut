@@ -458,6 +458,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   // 再描画トリガー
   useEffect(() => {
     redraw();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentValue, selectedMask]);
 
   return (
