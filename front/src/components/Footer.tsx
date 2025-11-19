@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import XLogo from "./XLogo";
 import GitHubLogo from './GitHubLogo';
 
@@ -20,15 +19,30 @@ export function Footer() {
 
           {/* Legal */}
           <div className="flex gap-6 justify-center">
-            <Link href="/legal/terms_of_service" className="text-label hover:underline">
+            <a
+              href="/legal/terms_of_service"
+              rel="noopener noreferrer"
+              target="_blank"
+              className="text-label hover:underline"
+            >
               <p className="text-sm text-label">利用規約</p>
-            </Link>
-            <Link href="/legal/privacy_policy" className="text-label hover:underline">
+            </a>
+            <a
+              href="/legal/privacy_policy"
+              rel="noopener noreferrer"
+              target="_blank"
+              className="text-label hover:underline"
+            >
               <p className="text-sm text-label">プライバシーポリシー</p>
-            </Link>
-            <Link href="/legal/contact" className="text-label hover:underline">
+            </a>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSeAeKtDfGityDObNRo96NH87rdZKfoEkNCJMQWdqZxLmmNfKA/viewform?usp=dialog"
+              rel="noopener noreferrer"
+              target="_blank"
+              className="text-label hover:underline"
+            >
               <p className="text-sm text-label">お問い合わせ</p>
-            </Link>
+            </a>
           </div>
 
           {/* コピーライト */}
