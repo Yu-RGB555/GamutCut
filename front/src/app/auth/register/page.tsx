@@ -215,19 +215,23 @@ export default function Register() {
                 required
               ></input>
               <Label htmlFor="legal" className="text-sm leading-tight">
-                <Link
+                <a
                   href="/legal/terms_of_service"
+                  rel="noopener noreferrer"
+                  target="_blank"
                   className="text-foreground underline-offset-4 hover:underline"
                 >
                   利用規約
-                </Link>
+                </a>
                 <span>、</span>
-                <Link
+                <a
                   href="/legal/privacy_policy"
+                  rel="noopener noreferrer"
+                  target="_blank"
                   className="text-foreground underline-offset-4 hover:underline"
                 >
                   プライバシーポリシー
-                </Link>
+                </a>
                 <span>に同意する</span>
               </Label>
             </div>
