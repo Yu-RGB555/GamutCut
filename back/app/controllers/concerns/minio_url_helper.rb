@@ -29,7 +29,7 @@ module MinioUrlHelper
 
           "#{endpoint}/#{bucket}/#{blob.key}"
         else
-          # S3(本番環境)の場合はattachment.urlを使用（署名付きURLが生成される）
+          # S3(本番環境)の場合（署名付きURLを生成）
           attachment.url
         end
       else

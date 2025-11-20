@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
   # アバター（プロフィール画面用）
   has_one_attached :avatar
-  ACCEPTED_CONTENT_TYPES = ['image/png', 'image/jpeg'].freeze
+  ACCEPTED_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/webp'].freeze
 
   has_many :works, dependent: :destroy
   has_many :presets, dependent: :destroy
@@ -21,7 +21,7 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 8 }, format: { with: /\A[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+\z/ }, if: :password_required?
   validates :bio, length: { maximum: 300 }
   validates :avatar, content_type: ACCEPTED_CONTENT_TYPES  # アバターアイコン用
-  validates :avatar, size: { less_than: 2.megabytes }      # アバターアイコン用
+  validates :avatar, size: { less_than: 5.megabytes }      # アバターアイコン用
   validates :reset_password_token, uniqueness: true, allow_nil: true
 
   # Ransackで検索可能な属性を明示的に定義
@@ -30,24 +30,11 @@ class User < ApplicationRecord
   end
 
   # アバター画像のURLを取得（画像なし許容）
-  def avatar_url(size: nil)
-    if avatar.attached?
-      if size
-        # リサイズが必要な場合はvariantを使用
-        minio_direct_url(avatar.variant(resize_to_limit: size))
-      else
-        # リサイズ不要な場合は直接URL取得
-        minio_direct_url(avatar)
-      end
-    else
-      # デフォルトアバターまたは既存のavatar_urlカラムの値を返す
-      read_attribute(:avatar_url)
-    end
-  end
+  def avatar_url
+    return nil unless avatar.attached?
 
-  # サムネイル用のアバターURL取得
-  def avatar_thumbnail_url
-    avatar_url(size: [150, 150])
+    # リサイズ不要な場合は直接URL取得
+    minio_direct_url(avatar)
   end
 
   # SNS認証でログインしたユーザーかどうか判定
@@ -57,7 +44,6 @@ class User < ApplicationRecord
   end
 
   def self.from_omniauth(auth)
-    Rails.logger.debug "auth_info: #{auth.info}"
     # ソーシャルアカウントから既存ユーザーを検索
     social_account = SocialAccount.find_by(
       provider: auth.provider,
@@ -77,8 +63,6 @@ class User < ApplicationRecord
 
       if user
         # 既存ユーザーに新しいソーシャルアカウントを統合
-        Rails.logger.info "Integrating #{auth.provider} account with existing user (email: #{auth.info.email})"
-
         user.social_accounts.create!(
           provider: auth.provider,
           provider_user_id: auth.uid,
@@ -97,20 +81,17 @@ class User < ApplicationRecord
       end
     end
 
-    # 新規ユーザーを作成
-    Rails.logger.info "Creating new user from #{auth.provider} authentication"
-
     # 英数字のみのランダムパスワードを生成
     random_password = SecureRandom.alphanumeric(20)
 
-    # メールアドレスがない場合はダミーメールを生成
+    # メールアドレスがない場合はダミーメールを生成（Xアカウント用）
     email = auth.info.email.presence || generate_dummy_email(auth)
 
+    # OmniAuthで取得したSNSユーザー情報を元に、usersとsocial_accountsのレコードを作成
     User.transaction do
       user = User.create!(
         email: email,
         name: auth.info.name || auth.info.nickname || "User",
-        avatar_url: auth.info.image,
         password: random_password
       )
 
@@ -124,6 +105,11 @@ class User < ApplicationRecord
         provider_data: auth.extra,
         last_login_at: Time.current
       )
+
+      # SNS認証の画像をavatarとしてアタッチ
+      if auth.info.image.present?
+        attach_avatar_from_url(user, auth.info.image)
+      end
 
       user
     end
@@ -167,7 +153,7 @@ class User < ApplicationRecord
   private
 
   def self.generate_dummy_email(auth)
-    # プロバイダーとUIDを使ってユニークなダミーメールを生成
+    # プロバイダーとUIDを使ってダミーメールアドレスを生成
     "#{auth.provider}_#{auth.uid}@dummy.local"
   end
 
@@ -175,8 +161,9 @@ class User < ApplicationRecord
     # 既存情報が空の場合のみ更新
     updates = {}
 
-    if user.avatar_url.blank? && auth.info.image.present?
-      updates[:avatar_url] = auth.info.image
+    # アバター画像が添付されていない場合、avatarとしてアタッチ
+    if !user.avatar.attached? && auth.info.image.present?
+      attach_avatar_from_url(user, auth.info.image)
     end
 
     if user.name.blank? && (auth.info.name || auth.info.nickname).present?
@@ -184,6 +171,22 @@ class User < ApplicationRecord
     end
 
     user.update!(updates) if updates.any?
+  end
+
+  # auth.info.imageをダウンロード＆解像度変換し、avatarとしてアタッチ
+  def self.attach_avatar_from_url(user, image_url)
+    require 'open-uri'
+
+    # 解像度を変換（Google: 200x200, X: 400x400）
+    resize_image_url = image_url.gsub(/=s\d+-c/, '=s200-c').gsub(/_(normal|bigger|mini)(\.[a-z]+)$/, '_400x400\2')
+    downloaded = URI.open(resize_image_url)
+    content_type = downloaded.content_type
+
+    user.avatar.attach(
+      io: downloaded,
+      filename: "avatar_#{SecureRandom.hex(8)}",
+      content_type: content_type
+    )
   end
 
 
