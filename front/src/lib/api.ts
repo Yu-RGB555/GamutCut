@@ -454,6 +454,30 @@ export async function getCommentDetail(commentId: number): Promise<CommentDetail
   return response.json();
 }
 
+// アバター画像をBlobとして取得（バックエンド経由）
+export async function getAvatarBlob(): Promise<{ blob: Blob; filename: string; filesize: number } | null> {
+  const response = await fetch(`${API_BASE_URL}/api/users/avatar`, {
+    method: 'GET',
+    headers: getCommonHeaders(true, false),
+    credentials: 'include',
+  });
+
+  // アバター未設定の場合でも「204 No Content」で正常レスポンス扱いとする
+  if (response.status === 204) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error('アバター画像の取得に失敗しました');
+  }
+
+  const blob = await response.blob();
+  const filename = response.headers.get('X-File-Name') || 'avatar.jpg';
+  const filesize = parseInt(response.headers.get('X-File-Size') || '0', 10);
+
+  return { blob, filename, filesize };
+}
+
 // プロフィール取得（認証済みユーザー自身のプロフィール）
 export async function getProfile(): Promise<User> {
   const response = await fetch(`${API_BASE_URL}/api/users/profile`, {

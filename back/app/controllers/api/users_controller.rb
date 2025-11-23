@@ -12,9 +12,38 @@ class Api::UsersController < ApplicationController
     render json: UserResource.new(current_user).serializable_hash
   end
 
+  # アバター画像取得用（GET /api/users/avatar）
+  def avatar
+    # アバター画像未設定の場合は「204 No Content」を返す
+    unless current_user.avatar.attached?
+      head :no_content
+      return
+    end
+
+    begin
+      avatar_data = current_user.avatar.download
+
+      # レスポンスヘッダーにアバター画像のファイル名とサイズを設定
+      response.headers['Content-Type'] = current_user.avatar.content_type
+      response.headers['Content-Disposition'] = 'inline'
+      response.headers['X-File-Name'] = current_user.avatar.filename.to_s
+      response.headers['X-File-Size'] = current_user.avatar.byte_size.to_s
+
+      render body: avatar_data, content_type: current_user.avatar.content_type
+    rescue => e
+      render json: { error: 'アバター画像の取得に失敗しました' }, status: :internal_server_error
+    end
+  end
+
   # プロフィール更新（PATCH /api/users/profile）
   def update_profile
-    if current_user.update(profile_params)
+    # アバター削除フラグがある場合は削除
+    if params[:user][:remove_avatar] == 'true'
+      current_user.avatar.purge if current_user.avatar.attached?
+    end
+
+    # remove_avatarをprofile_paramsから除外してupdate
+    if current_user.update(profile_params.except(:remove_avatar))
       render json: {
         message: "プロフィールを更新しました",
         user: UserResource.new(current_user).serializable_hash
@@ -132,7 +161,7 @@ class Api::UsersController < ApplicationController
   end
 
   def profile_params
-    params.require(:user).permit(:name, :avatar, :bio, :x_account_url)
+    params.require(:user).permit(:name, :avatar, :bio, :x_account_url, :remove_avatar)
   end
 
   def email_change_params

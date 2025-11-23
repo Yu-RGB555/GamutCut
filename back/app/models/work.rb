@@ -11,10 +11,14 @@ class Work < ApplicationRecord
 
   has_one_attached :illustration_image
 
-  validates :title, presence: true, length: { maximum: 30 }
+  # 公開・限定公開の場合のみ必須
+  validates :title, presence: true, length: { maximum: 30 }, unless: :draft?
+  validates :set_mask_data, presence: true, unless: :draft?
+  validates :illustration_image, presence: true, unless: :draft?
+
+  # 下書きも含めて常に適用されるバリデーション
+  validates :title, length: { maximum: 30 }, if: :draft?
   validates :description, length: { maximum: 300 }
-  validates :set_mask_data, presence: true
-  validates :illustration_image, presence: true
   validate :illustration_image_size
 
   enum :is_public, { published: 0, restricted: 1, draft: 2 }

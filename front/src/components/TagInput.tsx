@@ -102,7 +102,7 @@ export function TagInput({
               <button
                 type="button"
                 onClick={() => removeTag(index)}
-                className="ml-1 hover:text-red-500 transition-colors"
+                className="ml-1 text-label hover:cursor-pointer"
                 aria-label={`${tag}タグを削除`}
               >
                 <X className="w-3 h-3" />
