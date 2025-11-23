@@ -159,17 +159,27 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
           {/* 作品で使用したマスク */}
           <div className="flex flex-1 flex-col">
             <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
-            <PresetPreview
-              maskData={work.set_mask_data}
-              size={250}
-            />
-            <Button
-              variant="secondary"
-              className="mt-2"
-              onClick={() => handleCopyMask(work.set_mask_data)}
-            >
-              コピーして編集
-            </Button>
+              <div>
+                {work.set_mask_data ? (
+                  <div className="grid grid-row-2 relative">
+                    <PresetPreview maskData={work.set_mask_data} size={300} />
+                    <Button
+                      variant="secondary"
+                      className="mt-2"
+                      onClick={() => handleCopyMask(work.set_mask_data)}
+                    >
+                      コピーして編集
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="justify-center w-full h-full border rounded-lg cursor-pointer">
+                    <div className="flex flex-col items-center justify-center h-80">
+                      <p className="mb-2 text-sm font-semibold text-gray-500">マスク未設定</p>
+                      <p className="text-xs text-gray-500"></p>
+                    </div>
+                  </div>
+                )}
+              </div>
           </div>
         </div>
         <div className="flex flex-1 flex-col gap-8">
@@ -178,22 +188,24 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
           </Label>
 
           {/* いいね・ブックマーク・シェアボタン */}
-          <div className="flex gap-4">
-            <LikeButton
-              workId={work.id}
-              initialLiked={work.is_liked_by_current_user}
-              initialLikesCount={work.likes_count}
-            />
-            <BookmarkButton
-              workId={work.id}
-              initialBookmarked={work.is_bookmarked_by_current_user}
-            />
-            <ShareButton
-              workId={work.id}
-              workTitle={work.title}
-              userName={work.user.name}
-            />
-          </div>
+          {work.is_public === "published" &&
+            <div className="flex gap-4">
+              <LikeButton
+                workId={work.id}
+                initialLiked={work.is_liked_by_current_user}
+                initialLikesCount={work.likes_count}
+              />
+              <BookmarkButton
+                workId={work.id}
+                initialBookmarked={work.is_bookmarked_by_current_user}
+              />
+              <ShareButton
+                workId={work.id}
+                workTitle={work.title}
+                userName={work.user.name}
+              />
+            </div>
+          }
 
           {/* ユーザー情報 */}
           <div className="items-center">
@@ -243,12 +255,14 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
         </div>
 
         {/* コメントセクション */}
-        <div className="mt-20 pt-8">
-          <CommentList
-            workId={work.id}
-            incrementStep={5}  // 段階的表示の増分数
-          />
-        </div>
+        {work.is_public === "published" &&
+          <div className="mt-20 pt-8">
+            <CommentList
+              workId={work.id}
+              incrementStep={5}  // 段階的表示の増分数
+            />
+          </div>
+        }
 
         <div className="mb-40"></div>
       </div>

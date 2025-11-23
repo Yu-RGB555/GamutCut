@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAlert } from '@/contexts/AlertContext';
-import { Camera, User, X } from 'lucide-react';
-import { getProfile, updateProfile } from '@/lib/api';
+import { getProfile, getAvatarBlob , updateProfile } from '@/lib/api';
 import { User as UserType } from '@/types/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,11 +18,34 @@ import {
 import { BackButton } from '@/components/BackButton';
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useLoad } from '@/contexts/LoadingContext';
+import { DropZone } from '@/components/ui/dropzone';
 
+// バリデーション対象のフォーム項目
 interface FormErrors {
   name?: string;
   bio?: string;
   x_account_url?: string;
+  avatar?: string;
+}
+
+// 保存済みのアバター画像を取得し、プレビュー表示用のためにFileオブジェクトに変換
+const createAvatarFile = async (): Promise<File | null> => {
+  try{
+    const avatarData = await getAvatarBlob();
+
+    // アバター未設定の場合
+    if (!avatarData) {
+      return null;
+    }
+
+    const { blob, filename } = avatarData;
+    return new File([blob], filename, {
+      type: blob.type,
+      lastModified: Date.now()
+    });
+  } catch(error) {
+    throw error;
+  }
 }
 
 export default function ProfilesPage() {
@@ -35,8 +57,9 @@ export default function ProfilesPage() {
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
+  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false); // アバター画像削除フラグ
   const [errors, setErrors] = useState<FormErrors>({}); // フォームバリデーションエラー
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // フォームの状態管理
   const [formData, setFormData] = useState({
@@ -69,9 +92,24 @@ export default function ProfilesPage() {
             bio: profileData.bio || '',
             x_account_url: cleanXAccountUrl(profileData.x_account_url || '')
           });
+
           // アバター画像がある場合は設定
           if (profileData.avatar_url) {
-            setAvatarPreview(profileData.avatar_url);
+            setIsLoadingAvatar(true);
+            try {
+              const file = await createAvatarFile();
+              if (file) {
+                setAvatarFile(file);
+                setAvatarPreview(profileData.avatar_url);
+                setIsAvatarRemoved(false);
+              }
+            } catch(error) {
+              console.error('アバター画像を読み込めません:', error);
+              // エラー時もavatar_urlがあればプレビュー表示
+              setAvatarPreview(profileData.avatar_url);
+            } finally {
+              setIsLoadingAvatar(false);
+            }
           }
         } catch (error) {
           console.error('プロフィール取得エラー:', error);
@@ -82,33 +120,50 @@ export default function ProfilesPage() {
     fetchProfile();
   }, [isAuthenticated]);
 
-  // アバター画像のプレビュー処理
+  // アバター画像の表示制御
   useEffect(() => {
-    if (avatarFile) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result as string);
+    // ファイル読み込み中は何もしない
+    if (isLoadingAvatar) return;
+
+    // 画像削除時
+    if (!avatarFile) {
+      setAvatarPreview(null);
+      return;
+    }
+
+    // 変更前の画像のままの場合（HTTPから始まるURL）
+    if (avatarPreview && avatarPreview.startsWith('http')) {
+      // ObjectURLを新規作成（新規画像選択時）
+      const url = URL.createObjectURL(avatarFile);
+      setAvatarPreview(url);
+
+      return () => {
+        URL.revokeObjectURL(url);
       };
-      reader.readAsDataURL(avatarFile);
     }
-  }, [avatarFile]);
 
-  const handleAvatarClick = () => {
-    fileInputRef.current?.click();
-  };
+    // 新規画像選択時
+    const url = URL.createObjectURL(avatarFile);
+    setAvatarPreview(url);
 
-  const handleAvatarRemove = () => {
-    setAvatarPreview(null);
-    setAvatarFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [avatarFile, isLoadingAvatar]);
+
+  // ファイル選択
+  const handleFileSelect = (file: File | null) => {
+    setAvatarFile(file);
+    if (!file) {
+      setAvatarPreview(null);
+      setIsAvatarRemoved(true);
+    } else {
+      setIsAvatarRemoved(false);
     }
-  };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAvatarFile(file);
+    // 別アバター画像を選択時、既存のバリデーションエラーがあればクリアする
+    if (errors.avatar) {
+      setErrors(prev => ({ ...prev, avatar: undefined }));
     }
   };
 
@@ -116,14 +171,29 @@ export default function ProfilesPage() {
     // x_account_url項目は自動的にクリーンアップ（cleanXAccountUrl）を実行
     const cleanedValue = field === 'x_account_url' ? cleanXAccountUrl(value) : value;
     setFormData(prev => ({ ...prev, [field]: cleanedValue }));
-    // エラーをクリア
+    // 再入力中は、既存のバリデーションエラーをクリアする
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
+  // バリデーションエラー
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
+
+    // アバター画像のバリデーション
+    if (avatarFile) {
+      const maxSize = 5 * 1024 * 1024;
+      if (avatarFile.size > maxSize) {
+        newErrors.avatar = `画像サイズは5MB以下にしてください`;
+      }
+
+      // 画像形式のチェック
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(avatarFile.type)) {
+        newErrors.avatar = '画像形式はJPEG、PNG、GIF、WebPのみ対応しています';
+      }
+    }
 
     if (!formData.name.trim()) {
       newErrors.name = 'ハンドルネームは必須です';
@@ -155,7 +225,12 @@ export default function ProfilesPage() {
       const cleanedXUrl = cleanXAccountUrl(formData.x_account_url);
       submitData.append('user[x_account_url]', cleanedXUrl ? `https://x.com/${cleanedXUrl}` : '');
 
-      if (avatarFile) {
+      // アバター画像の処理
+      if (isAvatarRemoved && !avatarFile) {
+        // 削除フラグが立っていて、新しいファイルもない場合は削除
+        submitData.append('user[remove_avatar]', 'true');
+      } else if (avatarFile) {
+        // 新しいファイルがある場合はアップロード
         submitData.append('user[avatar]', avatarFile);
       }
 
@@ -201,53 +276,25 @@ export default function ProfilesPage() {
           </CardHeader>
 
           <CardContent className="relative px-6 pb-6">
-            <div className="flex items-end mt-2 mb-6">
-              <div className="relative">
-                <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100">
-                  {avatarPreview ? (
-                    <img
-                      src={avatarPreview}
-                      alt="プロフィール画像"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
-                      <User className="h-12 w-12 text-gray-400" />
-                    </div>
+            {/* フォーム */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex items-end mt-2 mb-6">
+                <DropZone
+                  onFileSelect={handleFileSelect}
+                  accept='image/*'
+                  isAvatarImage={true}
+                  previewUrl={avatarPreview}
+                />
+                <div className="flex flex-col space-y-1">
+                  {avatarFile && (
+                    <span className="text-xs text-muted-foreground ml-2">選択中： {avatarFile.name} ({(avatarFile.size / 1024 /1024).toFixed(2)}MB)</span>
+                  )}
+                  <p className="text-xs text-muted-foreground ml-2">※アバター画像の最大容量は<span className="text-primary text-md font-semibold"> 5MBまで </span>です</p>
+                  {errors.avatar && (
+                    <p className="text-sm text-red-600 ml-2">{errors.avatar}</p>
                   )}
                 </div>
-
-                {/* アバター編集ボタン */}
-                <button
-                  type="button"
-                  onClick={handleAvatarClick}
-                  className="absolute bottom-0 right-0 bg-muted border-white border-2 hover:bg-gradient-to-br hover:cursor-pointer from-gray-200 to-gray-300 text-primary-foreground rounded-full p-2 shadow-lg transition-colors duration-200"
-                >
-                  <Camera className="text-gray-400 h-4 w-4" />
-                </button>
-
-                {/* アバター削除ボタン */}
-                {avatarPreview && (
-                  <button
-                    type="button"
-                    onClick={handleAvatarRemove}
-                    className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white rounded-full p-1 shadow-lg transition-colors duration-200"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                )}
               </div>
-            </div>
-
-            {/* フォーム */}
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/jpg,image/png"
-                className="hidden"
-                onChange={handleFileChange}
-              />
 
               {/* ハンドルネーム */}
               <div className="grid gap-2">

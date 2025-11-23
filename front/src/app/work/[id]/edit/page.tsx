@@ -418,13 +418,14 @@ export default function EditWorks() {
                 value={formData.title}
                 onChange={(e)=> handleInputChange('title', e.target.value)}
                 placeholder="最大30文字まで"
+                className="text-card-foreground"
                 required
               />
             </div>
             <div>
               <Label className="text-label font-semibold mb-2">作品説明</Label>
               <Textarea
-                className="h-32"
+                className="h-32 text-card-foreground"
                 value={formData.description}
                 onChange={(e)=> handleInputChange('description', e.target.value)}
                 placeholder="最大300文字まで"

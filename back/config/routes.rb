@@ -24,6 +24,7 @@ Rails.application.routes.draw do
 
     # 認証済みユーザー自身のプロフィール関連
     get '/users/profile', to: 'users#show_profile'
+    get 'users/avatar', to: 'users#avatar' # アバター画像データ取得用
     patch '/users/profile', to: 'users#update_profile'
 
     # メールアドレス変更

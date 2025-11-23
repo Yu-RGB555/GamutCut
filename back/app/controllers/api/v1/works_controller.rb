@@ -25,6 +25,11 @@ class Api::V1::WorksController < ApplicationController
   def create
     @work = current_user.works.build(work_params.except(:illustration_image, :tags))
 
+    # 画像削除フラグが立っている場合は、アップロード済みの作品画像を削除
+    if params[:work][:remove_illustration_image] == 'true'
+      @work.illustration_image.purge if @work.illustration_image.attached?
+    end
+
     if params[:work][:illustration_image].present?
       # アップロードされたファイルオブジェクトを直接参照
       file = params[:work][:illustration_image]
@@ -60,15 +65,12 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def update
-    # work_paramsからremove_illustration_image(削除フラグ)を除外してupdate
+    # work_paramsから削除フラグとタグを除外してupdate
     update_params = work_params.except(:remove_illustration_image, :tags)
 
-    # 画像削除フラグがある場合の処理
+    # 画像削除フラグが立っている場合は、アップロード済みの作品画像を削除
     if params[:work][:remove_illustration_image] == 'true'
-      render json: {
-        errors: ['イラスト作品がアップロードされていません']
-      }, status: :unprocessable_entity
-      return
+      @work.illustration_image.purge if @work.illustration_image.attached?
     end
 
     # 新しい画像のアップロード処理
@@ -86,9 +88,17 @@ class Api::V1::WorksController < ApplicationController
         update_tags_for_work(@work, params[:work][:tags])
       end
 
-      render json: {
-        message: I18n.t('api.work.update.success')
-      }, status: :ok
+      if params[:work][:is_public] == '2'
+        # 下書き状態で保存・更新する場合
+        render json: {
+          message: I18n.t('api.work.update.draft_success')
+        }, status: :ok
+      else
+        # 公開状態で保存・更新する場合
+        render json: {
+          message: I18n.t('api.work.update.success')
+        }, status: :ok
+      end
     else
       render json: {
         errors: @work.errors.full_messages

@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
   # アバター（プロフィール画面用）
   has_one_attached :avatar
-  ACCEPTED_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/webp'].freeze
+  ACCEPTED_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'].freeze
 
   has_many :works, dependent: :destroy
   has_many :presets, dependent: :destroy
