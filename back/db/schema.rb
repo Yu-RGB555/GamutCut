@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_30_132926) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_23_054619) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -125,7 +125,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_30_132926) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name", null: false
-    t.string "avatar_url"
     t.text "bio"
     t.string "x_account_url"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -145,9 +144,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_30_132926) do
   create_table "works", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "preset_id"
-    t.string "title", null: false
-    t.string "illustration_image"
-    t.jsonb "set_mask_data", null: false
+    t.string "title"
+    t.jsonb "set_mask_data"
     t.text "description"
     t.integer "is_public", default: 0, null: false
     t.datetime "created_at", null: false
