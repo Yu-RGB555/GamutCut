@@ -263,7 +263,15 @@ export default function EditWorks() {
 
       const response = await updateWork(submitData, Number(id));
       showAlert(response.message);
-      router.push(`/work/${id}`);
+
+      if (publicStatus === 2) {
+        // 作品を下書きで保存する場合
+        router.push('/mypage/drafts');
+      } else {
+        console.log('publicStatus:', publicStatus);
+        // 作品を公開する場合
+        router.push(`/work/${id}`);
+      }
     } catch (error) {
       console.error('投稿エラー:', error);
       if (error instanceof Error) {

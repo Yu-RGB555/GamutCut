@@ -95,7 +95,14 @@ export default function PostWorks() {
 
       const response = await postWork(submitData);
       showAlert(response.message);
-      router.push('/work');
+
+      if (publicStatus === 2) {
+        // 下書き保存の場合
+        router.push('/mypage/drafts');
+      } else {
+        // 公開する場合
+        router.push('/work');
+      }
     } catch (error) {
       if (error instanceof Error) {
         try {
@@ -246,13 +253,13 @@ export default function PostWorks() {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={(e) => handleSubmit(e, true)}  // 直接true(下書き)を渡す
+                onClick={(e) => handleSubmit(e, true)}  // true(下書き)を渡す
               >
                 下書き保存
               </Button>
               <Button
                 type="button"
-                onClick={(e) => handleSubmit(e, false)} // 直接false(公開)を渡す
+                onClick={(e) => handleSubmit(e, false)} // false(公開)を渡す
               >
                 投稿
               </Button>
