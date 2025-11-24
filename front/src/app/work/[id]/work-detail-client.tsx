@@ -56,7 +56,13 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
     try {
       const response = await deleteWork(id);
       showAlert(response.message);
-      router.push('/work');
+      if (work.is_public === "draft") {
+        // 下書き中の作品を削除した場合
+        router.push('/mypage/drafts');
+      } else {
+        // 公開中の作品を削除した場合
+        router.back();
+      }
     } catch (error) {
       console.error(error);
       showAlert('作品の削除に失敗しました');

@@ -113,8 +113,15 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def destroy
-    @work.destroy
-    render json: { message: I18n.t('api.work.destroy.success') }
+    if @work.is_public == 'draft'
+      # 下書き状態の作品を削除する場合
+      @work.destroy
+      render json: { message: I18n.t('api.work.destroy.draft_success')}
+    else
+      # 公開中の作品を削除する場合
+      @work.destroy
+      render json: { message: I18n.t('api.work.destroy.success') }
+    end
   end
 
   # 画像を取得してクライアントに返すプロキシメソッド
