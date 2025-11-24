@@ -48,9 +48,15 @@ class Api::V1::WorksController < ApplicationController
         attach_tags_to_work(@work, params[:work][:tags])
       end
 
-      render json: {
-        message: I18n.t('api.work.create.success')
-      }, status: :created
+      if params[:work][:is_public] == '2'
+        render json: {
+          message: I18n.t('api.work.create.draft_success')
+        }, status: :created
+      else
+        render json: {
+          message: I18n.t('api.work.create.success')
+        }, status: :created
+      end
     else
       render json: {
         errors: @work.errors.full_messages

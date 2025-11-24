@@ -54,9 +54,10 @@ ja:
     work:
       create:
         success: "作品が投稿されました"
+        draft_success: "作品を下書き保存しました"
       update:
         success: "作品を更新しました"
-        draft_success: "下書きを保存しました"
+        draft_success: "作品を下書き保存しました"
       destroy:
         success: "作品が削除されました"
     preset:
