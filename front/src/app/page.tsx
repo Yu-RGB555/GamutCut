@@ -44,7 +44,10 @@ export default function HelpPage() {
                 priority
                 className="w-[200px] lg:w-[300px]"
               />
-              <span className="text-3xl lg:text-5xl pt-3 lg:pt-5 pl-1 lg:pl-2 font-bold text-label">とは？</span>
+              <span className="text-3xl lg:text-5xl pt-3 lg:pt-5 pl-1 lg:pl-2 font-bold text-label">
+                <span className="text-2xl lg:text-4xl pt-3 lg:pt-4 pl-1 lg:px-1 font-bold text-label">へ</span>
+                ようこそ
+              </span>
             </motion.div>
             <motion.p
               className="text-sm text-label/80 max-w-lg sm:max-w-3xl sm:text-lg lg:text-xl lg:max-w-4xl mx-auto leading-relaxed lg:leading-relaxed"

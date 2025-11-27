@@ -92,7 +92,7 @@ export function AppSidebar() {
       <SidebarContent>
         {/* メインナビゲーション */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-label">メニュー</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-label mt-2">メニュー</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

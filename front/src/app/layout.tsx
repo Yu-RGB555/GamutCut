@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'GamutCut - ガマットマスク制作サイト',
   description: 'GamutCut（ガマットカット）は、着彩に統一感を生み出せるガマットマスクをログインせずに作成できるツールサイトです。デジタルイラストに適したHSV色相環モデルを扱っているため、幅広いグラフィックペイントソフトでお使いいただけます。',
   alternates: {
-    canonical: process.env.FRONTEND_URL,
+    canonical: `${process.env.FRONTEND_URL}/`,
   },
   keywords: [
     'ガマットマッピング',
@@ -76,7 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <head>
-        {/* Google Analytics */}
+        {/* Google Analytics スニペット */}
         {process.env.NEXT_PUBLIC_GA_ID && process.env.NODE_ENV === 'production' && (
           <>
             <script

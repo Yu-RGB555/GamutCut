@@ -14,6 +14,9 @@ import { Tour } from 'nextstepjs';
 import { CustomCard } from '@/components/CustomCard';
 import { useState } from 'react';
 import { BsPersonArmsUp } from "react-icons/bs";
+import { FaShapes } from "react-icons/fa";
+import { HiDownload } from "react-icons/hi";
+import { IoIosSave } from "react-icons/io";
 import { MdOutlineCollections } from "react-icons/md";
 import { HiOutlineRocketLaunch } from "react-icons/hi2";
 
@@ -33,7 +36,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         },
         {
           // 2ndStep（step:1）
-          icon: <><MdOutlineCollections className="text-primary"/></>,
+          icon: <><FaShapes className="text-primary"/></>,
           title: 'マスク作成',
           content: <>色相環上にマスクを設置します。（最大３つまで）<br />サイズや形状を調整できます。</>,
           selector: '#step-2',
@@ -45,7 +48,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         },
         {
           // 3thStep（step:2）
-          icon: <><MdOutlineCollections className="text-primary"/></>,
+          icon: <><HiDownload className="text-primary"/></>,
           title: 'ダウンロード',
           content: <>作成したマスクはpng画像としてダウンロードできます。<br />お使いのペイントソフトのスポイトツールで色を抽出するなどして、着彩にご利用ください。</>,
           selector: '#step-3',
@@ -57,7 +60,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         },
         {
           // 4thStep（step:3）
-          icon: <><MdOutlineCollections className="text-primary"/></>,
+          icon: <><IoIosSave className="text-primary"/></>,
           title: 'マスクの保存',
           content: <>作成したマスクは名前をつけて保存することができます。<br /><span className="text-muted-foreground text-xs">※ご利用にはログインが必要です</span></>,
           selector: '#step-4',
