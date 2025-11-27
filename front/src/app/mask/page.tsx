@@ -10,6 +10,8 @@ import { MaskData } from "@/types/mask";
 import { useNextStep } from 'nextstepjs';
 import { motion } from "motion/react"
 import { useLoad } from "@/contexts/LoadingContext";
+import Image from "next/image";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -85,16 +87,30 @@ export default function Home() {
           />
         </div>
       </div>
+
       {/* ガイドツアーボタン */}
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-        <motion.button
-          onClick={handleStartTour}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-12 h-12 sm:w-14 sm:h-14 bg-cyan-400 border-1 border-green-100 hover:bg-cyan-700 hover:cursor-pointer transition-colors rounded-full shadow-lg"
-        >
-          <p className="text-center text-[10px] sm:text-xs font-semibold text-black leading-tight">かんたん<br />ガイド</p>
-        </motion.button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <motion.button
+              onClick={handleStartTour}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-12 h-12 sm:w-14 sm:h-14 text-center border border-gray-500 hover:cursor-pointer rounded-full shadow-lg overflow-hidden"
+            >
+              <Image
+                src="/guide_tour.webp"
+                alt="クイックガイド"
+                width={100}
+                height={100}
+                className="object-cover w-full h-full"
+              />
+            </motion.button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="font-semibold">クイックガイド</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );
