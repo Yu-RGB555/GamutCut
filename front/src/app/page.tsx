@@ -377,7 +377,7 @@ export default function HelpPage() {
               </AccordionTrigger>
               <AccordionContent className="text-label">
                 <p className="leading-7">
-                  ガマットマスクとは、色相環上に任意の形状のマスクを設置し、そのマスクの範囲内の色のみを使って着彩を行う手法で使用するマスクのことです。
+                  ガマットマスクとは、色相環上に任意の形状のマスクを設置し、そのマスクの範囲内の色のみを使って着彩を行う手法「ガマットマッピング」で使用するマスクのことです。
                   これにより、色の統一感を保ちながら着彩を行うことができます。
                 </p>
               </AccordionContent>
