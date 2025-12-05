@@ -5,7 +5,7 @@ import { jsonLd } from '@/lib/structured-data'
 
 export const metadata: Metadata = {
   title: 'GamutCut - ガマットマスク制作サイト',
-  description: 'GamutCut（ガマットカット）は、着彩に統一感を生み出せるガマットマスクをログインせずに作成できるツールサイトです。デジタルイラストに適したHSV色相環モデルを扱っているため、幅広いグラフィックペイントソフトでお使いいただけます。',
+  description: 'GamutCut（ガマットカット）は、統一感を生み出せる着彩法『ガマットマッピング』で用いる『ガマットマスク』をログインせずに作成できるツールサイトです。デジタルイラストに適したHSV色相環モデルを扱っているため、幅広いグラフィックペイントソフトでお使いいただけます。',
   alternates: {
     canonical: `${process.env.FRONTEND_URL}/`,
   },
