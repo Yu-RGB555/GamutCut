@@ -228,4 +228,4 @@
 <br>
 
 ## ER図
-![alt 卒制ER図](https://i.gyazo.com/a5a23a3f80022e34b3b8a89f7770cf23.png)
+![alt 卒制ER図](https://github.com/user-attachments/assets/c2aca4e2-38dc-4124-87b8-74d10e2e8436)
