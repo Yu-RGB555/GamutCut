@@ -42,7 +42,6 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
   // キャンバスを参照
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const hiddenCanvasRef = useRef<HTMLCanvasElement>(null);
 
   // 描画インスタンス
   const colorWheelDrawer = new ColorWheelDrawer;
@@ -297,26 +296,11 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
   // エクスポート処理
   const handleMaskExport = () => {
-    const canvas = canvasRef.current; // 色相環用
-    const hiddenCanvas = hiddenCanvasRef.current; // マスク用
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    if (!canvas || !hiddenCanvas) return;
-
-    const hiddenCtx = hiddenCanvas.getContext('2d');
-    if (!hiddenCtx) return;
-
-    hiddenCanvas.width = canvas.width;
-    hiddenCanvas.height = canvas.height;
-
-    colorWheelDrawer.draw(hiddenCtx, hiddenCanvas.width, hiddenCanvas.height, currentValue);
-
-    if (selectedMask.length !== 0) {
-      // マスクが追加されている場合のみ、マスクを描画する
-      maskDrawer.drawMasks(hiddenCtx, selectedMask, hiddenCanvas.width, hiddenCanvas.height);
-    }
-
-    // エクスポート
-    hiddenCanvas.toBlob((blob) => {
+    // 既に描画済みのcanvasをそのままエクスポート
+    canvas.toBlob((blob) => {
       if (blob) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -467,7 +451,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         <div className="justify-items-center space-y-4 lg:space-y-8">
           <div className="relative w-full max-w-[400px]">
 
-            {/* キャンバス（色相環用） */}
+            {/* キャンバス */}
             <canvas
               ref={canvasRef}
               width={400}
@@ -477,12 +461,6 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
-            />
-
-            {/* キャンバス（マスク用） */}
-            <canvas
-              ref={hiddenCanvasRef}
-              style={{ display: 'none' }}
             />
             <div className="absolute top-0 left-0">
               <ColorInfoPanel colorInfo={colorInfo}/>
