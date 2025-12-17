@@ -26,6 +26,7 @@ function WorksListContent() {
   const [selectedTag, setSelectedTag] = useState<string>('');
   const [sortTerm, setSortTerm] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(''); // searchQueryの値を保存（デバウンス処理用）
   const [isInitialized, setIsInitialized] = useState(false);
 
   // URLパラメータから初期検索クエリとタグを取得し、同時に作品を取得
@@ -87,13 +88,22 @@ function WorksListContent() {
     }
   };
 
-  // 初期化完了後のstate変更時のみ作品を再取得
+  // デバウンス処理
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // 文字入力後300ms待機してからdebouncedSearchQueryに入力値をセット
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     if (isInitialized) {
-      fetchWorks(searchQuery, selectedTag, sortTerm);
+      fetchWorks(debouncedSearchQuery, selectedTag, sortTerm);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, selectedTag, sortTerm, isInitialized]);
+  }, [debouncedSearchQuery, selectedTag, sortTerm, isInitialized]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
