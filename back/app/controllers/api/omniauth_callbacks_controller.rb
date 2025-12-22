@@ -36,6 +36,6 @@ class Api::OmniauthCallbacksController < ApplicationController
   end
 
   def frontend_url
-    Rails.env.production? ? ENV['FRONTEND_URL'] : 'http://localhost:3003'
+    Rails.env.production? ? ENV["FRONTEND_URL"] : "http://localhost:3003"
   end
 end

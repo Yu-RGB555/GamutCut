@@ -18,13 +18,13 @@ namespace :db do
 
       # 2. 現在のデータベース名が期待通りかチェック
       expected_db = case Rails.env
-                    when 'staging'
-                      'gamut_cut_db_preview'
-                    when 'production'
-                      'gamut_cut_db'
-                    else
-                      'unknown'
-                    end
+      when "staging"
+                      "gamut_cut_db_preview"
+      when "production"
+                      "gamut_cut_db"
+      else
+                      "unknown"
+      end
 
       if db_name == expected_db
         puts "✓ Database name matches expected: #{expected_db}"
@@ -34,7 +34,7 @@ namespace :db do
 
       # 3. テーブル存在確認（users テーブルのみ）
       puts "\n2. Table Structure Check:"
-      if ActiveRecord::Base.connection.table_exists?('users')
+      if ActiveRecord::Base.connection.table_exists?("users")
         puts "✓ Users table exists"
 
         # スキーマ情報の確認（読み取り専用）
@@ -56,7 +56,7 @@ namespace :db do
 
       # 5. マイグレーション状態の確認
       puts "\n4. Migration Status Check:"
-      if ActiveRecord::Base.connection.table_exists?('schema_migrations')
+      if ActiveRecord::Base.connection.table_exists?("schema_migrations")
         pending_migrations = ActiveRecord::MigrationContext.new(
           ActiveRecord::Migrator.migrations_paths
         ).needs_migration?

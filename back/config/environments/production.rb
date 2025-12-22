@@ -46,7 +46,7 @@ Rails.application.configure do
 
   # クロスオリジン対応のセッション設定
   config.session_store :cookie_store,
-    key: '_app_session',
+    key: "_app_session",
     secure: true,              # HTTPS必須
     httponly: true,            # JavaScriptからのアクセスを防ぐ
     same_site: :none,          # クロスサイトでの送信を許可
@@ -85,12 +85,12 @@ Rails.application.configure do
 
   # SMTP設定
   config.action_mailer.smtp_settings = {
-    address: ENV['SMTP_ADDRESS'],
-    port: ENV['SMTP_PORT'],
-    domain: ENV['MAIL_DOMAIN'],
-    user_name: ENV['MAIL_USERNAME'],
-    password: ENV['MAIL_PASSWORD'],
-    authentication: ENV['SMTP_AUTHENTICATION'],
+    address: ENV["SMTP_ADDRESS"],
+    port: ENV["SMTP_PORT"],
+    domain: ENV["MAIL_DOMAIN"],
+    user_name: ENV["MAIL_USERNAME"],
+    password: ENV["MAIL_PASSWORD"],
+    authentication: ENV["SMTP_AUTHENTICATION"],
     enable_starttls_auto: true,
     open_timeout: 5,  # SMTP接続確立までの待機時間
     read_timeout: 5   # データ送受信の待機時間
@@ -103,7 +103,7 @@ Rails.application.configure do
   # }
 
   # フロントエンドのURL設定
-  config.frontend_url = ENV['FRONTEND_URL']
+  config.frontend_url = ENV["FRONTEND_URL"]
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

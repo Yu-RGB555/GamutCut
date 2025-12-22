@@ -119,9 +119,6 @@ GEM
       database_cleaner-core (~> 2.0)
     database_cleaner-core (2.0.1)
     date (3.4.1)
-    debug (1.11.0)
-      irb (~> 1.10)
-      reline (>= 0.3.8)
     devise (4.9.4)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -447,7 +444,6 @@ DEPENDENCIES
   bootsnap
   brakeman
   database_cleaner-active_record
-  debug
   devise
   dotenv-rails
   factory_bot_rails
@@ -468,7 +464,6 @@ DEPENDENCIES
   rubocop-rails-omakase
   shoulda-matchers
   simplecov
-  tzinfo-data
 
 BUNDLED WITH
    2.6.2

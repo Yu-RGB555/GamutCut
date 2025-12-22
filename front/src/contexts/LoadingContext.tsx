@@ -9,7 +9,6 @@ interface LoadingContextType {
   setIsLoadingOverlay: (isLoading: boolean) => void;
 }
 
-// providerを作る土台？
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
 // <LoadingProvider>でwrapした範囲で扱える定数やメソッドなどをvalueとして定義

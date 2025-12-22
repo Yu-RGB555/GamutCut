@@ -1,5 +1,5 @@
 class Api::SessionsController < ApplicationController
-  skip_before_action :authenticate_user_from_token!, only: [:create]
+  skip_before_action :authenticate_user_from_token!, only: [ :create ]
 
   # POST /api/users/sign_up
   def create
@@ -8,14 +8,14 @@ class Api::SessionsController < ApplicationController
     if user && user.valid_password?(params[:user][:password])
       token = generate_jwt_token(user)
       response_data = {
-        message: I18n.t('api.sessions.create.success'),
+        message: I18n.t("api.sessions.create.success"),
         token: token,
         user: user
       }
 
       render json: AuthResource.new(response_data), status: :ok
     else
-      error_message = I18n.t('errors.messages.invalid_credentials')
+      error_message = I18n.t("errors.messages.invalid_credentials")
       Rails.logger.info "Login failed - sending error: #{error_message}"
 
       render json: {
@@ -33,12 +33,12 @@ class Api::SessionsController < ApplicationController
       render json: {
         message: "退会手続きが完了しました"
       }, status: :ok
-      return
+      nil
     else
       render json: {
-        errors: ["パスワードが正しくありません"]
+        errors: [ "パスワードが正しくありません" ]
       }, status: :unprocessable_entity
-      return
+      nil
     end
   end
 

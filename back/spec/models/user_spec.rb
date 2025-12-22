@@ -49,7 +49,7 @@ RSpec.describe User, type: :model do
 
   describe '.ransackable_attributes' do
     it 'returns the correct searchable attributes' do
-      expected_attributes = ["name", "created_at", "updated_at"]
+      expected_attributes = [ "name", "created_at", "updated_at" ]
       expect(User.ransackable_attributes).to match_array(expected_attributes)
     end
   end

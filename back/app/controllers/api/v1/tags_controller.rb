@@ -1,11 +1,10 @@
 class Api::V1::TagsController < ApplicationController
-
   def index
     @tags = Tag.joins(work_tags: :work)
               .where(works: { is_public: 0 })
-              .group('tags.id')
+              .group("tags.id")
               .order(:name)
-              .select('tags.*')
+              .select("tags.*")
 
     render json: {
       tags: @tags
@@ -19,10 +18,10 @@ class Api::V1::TagsController < ApplicationController
     # 公開済み作品のタグのみを対象に、使用回数をカウントして多い順に取得
     @popular_tags = Tag.joins(work_tags: :work)
                       .where(works: { is_public: 0 })
-                      .group('tags.id')
-                      .order('COUNT(work_tags.tag_id) DESC')
+                      .group("tags.id")
+                      .order("COUNT(work_tags.tag_id) DESC")
                       .limit(limit)
-                      .select('tags.*, COUNT(work_tags.tag_id) as works_count')
+                      .select("tags.*, COUNT(work_tags.tag_id) as works_count")
 
     render json: {
       tags: @popular_tags.map do |tag|

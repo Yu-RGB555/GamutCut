@@ -16,15 +16,15 @@ module MinioUrlHelper
 
       # S3互換サービス(MinIO、AWS S3)の場合
       if service.is_a?(ActiveStorage::Service::S3Service)
-        bucket = ENV['S3_BUCKET_NAME']
+        bucket = ENV["S3_BUCKET_NAME"]
 
         # 開発環境
-        if ENV['AWS_ENDPOINT'].present?
-          endpoint = ENV['AWS_ENDPOINT']
+        if ENV["AWS_ENDPOINT"].present?
+          endpoint = ENV["AWS_ENDPOINT"]
 
           # Docker内部のminio:9000をlocalhostに変換
-          if endpoint.include?('minio:9000')
-            endpoint = endpoint.gsub('minio:9000', 'localhost:9000')
+          if endpoint.include?("minio:9000")
+            endpoint = endpoint.gsub("minio:9000", "localhost:9000")
           end
 
           "#{endpoint}/#{bucket}/#{blob.key}"
@@ -45,7 +45,7 @@ module MinioUrlHelper
     end
   end
 
-  # インスタンスメソッドとしても使える
+  # インスタンスメソッドとしても使える（不要検討）
   def minio_direct_url(attachment)
     self.class.minio_direct_url(attachment)
   end

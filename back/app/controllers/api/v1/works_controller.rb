@@ -1,17 +1,17 @@
 class Api::V1::WorksController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy, :like, :bookmark]
-  before_action :authenticate_user_optional!, only: [:index, :show]
-  before_action :set_work, only: [:update, :destroy]
-  before_action :set_any_work, only: [:like, :bookmark]
-  before_action :check_owner, only: [:update, :destroy]
+  before_action :authenticate_user!, only: [ :create, :update, :destroy, :like, :bookmark ]
+  before_action :authenticate_user_optional!, only: [ :index, :show ]
+  before_action :set_work, only: [ :update, :destroy ]
+  before_action :set_any_work, only: [ :like, :bookmark ]
+  before_action :check_owner, only: [ :update, :destroy ]
 
   def index
     # Ransackを使用した検索・ソート機能
-    base_query = Work.where(is_public: 'published')
+    base_query = Work.where(is_public: "published")
     @q = base_query.ransack(search_params)
 
     # 基本のクエリ結果を取得
-    works_query = @q.result.includes([:user, :illustration_image_attachment, :illustration_image_blob])
+    works_query = @q.result.includes([ :user, :illustration_image_attachment, :illustration_image_blob ])
 
     # 並び順の処理
     sort_term = params.dig(:q, :sort_term_name_eq)
@@ -26,7 +26,7 @@ class Api::V1::WorksController < ApplicationController
     @work = current_user.works.build(work_params.except(:illustration_image, :tags))
 
     # 画像削除フラグが立っている場合は、アップロード済みの作品画像を削除
-    if params[:work][:remove_illustration_image] == 'true'
+    if params[:work][:remove_illustration_image] == "true"
       @work.illustration_image.purge if @work.illustration_image.attached?
     end
 
@@ -48,13 +48,13 @@ class Api::V1::WorksController < ApplicationController
         attach_tags_to_work(@work, params[:work][:tags])
       end
 
-      if params[:work][:is_public] == '2'
+      if params[:work][:is_public] == "2"
         render json: {
-          message: I18n.t('api.work.create.draft_success')
+          message: I18n.t("api.work.create.draft_success")
         }, status: :created
       else
         render json: {
-          message: I18n.t('api.work.create.success')
+          message: I18n.t("api.work.create.success")
         }, status: :created
       end
     else
@@ -65,7 +65,7 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def show
-    @work = Work.includes([:user, :tags, :illustration_image_attachment, :illustration_image_blob]).find(params[:id])
+    @work = Work.includes([ :user, :tags, :illustration_image_attachment, :illustration_image_blob ]).find(params[:id])
 
     render json: WorkShowResource.new(@work, current_user: current_user)
   end
@@ -75,7 +75,7 @@ class Api::V1::WorksController < ApplicationController
     update_params = work_params.except(:remove_illustration_image, :tags)
 
     # 画像削除フラグが立っている場合は、アップロード済みの作品画像を削除
-    if params[:work][:remove_illustration_image] == 'true'
+    if params[:work][:remove_illustration_image] == "true"
       @work.illustration_image.purge if @work.illustration_image.attached?
     end
 
@@ -94,15 +94,15 @@ class Api::V1::WorksController < ApplicationController
         update_tags_for_work(@work, params[:work][:tags])
       end
 
-      if params[:work][:is_public] == '2'
+      if params[:work][:is_public] == "2"
         # 下書き状態で保存・更新する場合
         render json: {
-          message: I18n.t('api.work.update.draft_success')
+          message: I18n.t("api.work.update.draft_success")
         }, status: :ok
       else
         # 公開状態で保存・更新する場合
         render json: {
-          message: I18n.t('api.work.update.success')
+          message: I18n.t("api.work.update.success")
         }, status: :ok
       end
     else
@@ -113,14 +113,14 @@ class Api::V1::WorksController < ApplicationController
   end
 
   def destroy
-    if @work.is_public == 'draft'
+    if @work.draft?
       # 下書き状態の作品を削除する場合
       @work.destroy
-      render json: { message: I18n.t('api.work.destroy.draft_success')}
+      render json: { message: I18n.t("api.work.destroy.draft_success") }
     else
       # 公開中の作品を削除する場合
       @work.destroy
-      render json: { message: I18n.t('api.work.destroy.success') }
+      render json: { message: I18n.t("api.work.destroy.success") }
     end
   end
 
@@ -129,7 +129,7 @@ class Api::V1::WorksController < ApplicationController
     @work = Work.find(params[:id])
 
     unless @work.illustration_image.attached?
-      render json: { error: '画像が見つかりません' }, status: :not_found
+      render json: { error: "画像が見つかりません" }, status: :not_found
       return
     end
 
@@ -139,14 +139,14 @@ class Api::V1::WorksController < ApplicationController
       image_data = @work.illustration_image.download
 
       # 適切なContent-Typeを設定
-      response.headers['Content-Type'] = @work.illustration_image.content_type
-      response.headers['Content-Disposition'] = 'inline'
+      response.headers["Content-Type"] = @work.illustration_image.content_type
+      response.headers["Content-Disposition"] = "inline"
 
       # 画像データをレスポンスとして返す
       render body: image_data, content_type: @work.illustration_image.content_type
     rescue => e
       Rails.logger.error "Failed to download image: #{e.message}"
-      render json: { error: '画像の取得に失敗しました' }, status: :internal_server_error
+      render json: { error: "画像の取得に失敗しました" }, status: :internal_server_error
     end
   end
 
@@ -165,14 +165,14 @@ class Api::V1::WorksController < ApplicationController
         }
       else
         # いいねしていない状態で、URL直叩きされた場合の対策
-        render json: { error: '対象の作品はいいねされていません' }, status: :not_found
+        render json: { error: "対象の作品はいいねされていません" }, status: :not_found
       end
     else
       # POST の場合はいいねを追加
       if existing_like
         # いいねしている状態で、URL直叩きされた場合の対策
         render json: {
-          message: '既にいいね済みです',
+          message: "既にいいね済みです",
           liked: true,
           likes_count: @work.likes.count
         }
@@ -203,13 +203,13 @@ class Api::V1::WorksController < ApplicationController
             bookmarked: false
           }
       else
-        render json: { error: '対象の作品はブックマークされていません'}, status: :not_found
+        render json: { error: "対象の作品はブックマークされていません" }, status: :not_found
       end
     else
       # POST の場合
       if existing_bookmark
         render json: {
-          message: '既にブックマーク済みです',
+          message: "既にブックマーク済みです",
           bookmarked: true
         }
       else
@@ -245,13 +245,13 @@ class Api::V1::WorksController < ApplicationController
   def set_any_work
     @work = Work.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: '作品が見つかりません' }, status: :not_found
+    render json: { error: "作品が見つかりません" }, status: :not_found
   end
 
   def check_owner
     unless @work.user == current_user
       render json: {
-        errors: ['この作品を編集する権限がありません']
+        errors: [ "この作品を編集する権限がありません" ]
       }, status: :forbidden
     end
   end
@@ -332,15 +332,15 @@ class Api::V1::WorksController < ApplicationController
   # 並び順を適用するメソッド
   def apply_sort_order(works_query, sort_term)
     case sort_term
-    when 'evaluation'
+    when "evaluation"
       # 人気順: いいね数の降順（LEFT JOINとCOUNTを使用）
       works_query.left_joins(:likes)
-                .group('works.id')
-                .order('COUNT(likes.id) DESC, works.created_at DESC')
-    when 'upload_desc'
+                .group("works.id")
+                .order("COUNT(likes.id) DESC, works.created_at DESC")
+    when "upload_desc"
       # 新しい順: 作成日時の降順
       works_query.order(created_at: :desc)
-    when 'upload_asc'
+    when "upload_asc"
       # 古い順: 作成日時の昇順
       works_query.order(created_at: :asc)
     else

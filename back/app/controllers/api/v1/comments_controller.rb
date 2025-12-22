@@ -1,9 +1,9 @@
 class Api::V1::CommentsController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy]
-  before_action :authenticate_user_optional!, only: [:index, :show]
-  before_action :set_work, only: [:index, :create]
-  before_action :set_comment, only: [:show, :update, :destroy]
-  before_action :check_comment_owner, only: [:update, :destroy]
+  before_action :authenticate_user!, only: [ :create, :update, :destroy ]
+  before_action :authenticate_user_optional!, only: [ :index, :show ]
+  before_action :set_work, only: [ :index, :create ]
+  before_action :set_comment, only: [ :show, :update, :destroy ]
+  before_action :check_comment_owner, only: [ :update, :destroy ]
 
   # GET /api/v1/works/:work_id/comments
   def index
@@ -19,7 +19,7 @@ class Api::V1::CommentsController < ApplicationController
 
     if @comment.save
       render json: {
-        message: 'コメントを投稿しました',
+        message: "コメントを投稿しました",
         comment: CommentResource.new(@comment).serializable_hash
       }, status: :created
     else
@@ -38,7 +38,7 @@ class Api::V1::CommentsController < ApplicationController
   def update
     if @comment.update(comment_params)
       render json: {
-        message: 'コメントを更新しました',
+        message: "コメントを更新しました",
         comment: CommentResource.new(@comment).serializable_hash
       }
     else
@@ -52,7 +52,7 @@ class Api::V1::CommentsController < ApplicationController
   def destroy
     @comment.destroy
     render json: {
-      message: 'コメントを削除しました'
+      message: "コメントを削除しました"
     }
   end
 
@@ -66,7 +66,7 @@ class Api::V1::CommentsController < ApplicationController
   def set_work
     @work = Work.find(params[:work_id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: '作品が見つかりません' }, status: :not_found
+    render json: { error: "作品が見つかりません" }, status: :not_found
   end
 
   def set_comment
@@ -79,13 +79,13 @@ class Api::V1::CommentsController < ApplicationController
       @comment = Comment.includes(:work, :user).find(params[:id])
     end
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'コメントが見つかりません' }, status: :not_found
+    render json: { error: "コメントが見つかりません" }, status: :not_found
   end
 
   def check_comment_owner
     unless @comment.user == current_user
       render json: {
-        error: 'このコメントを編集・削除する権限がありません'
+        error: "このコメントを編集・削除する権限がありません"
       }, status: :forbidden
     end
   end
