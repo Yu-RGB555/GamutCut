@@ -63,4 +63,4 @@ jobs:
         run: bin/brakeman --no-pager
 
       - name: Run RSpec
-        run: bin/rspec
+        run: bundle exec rspec
