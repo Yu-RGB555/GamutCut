@@ -28,7 +28,7 @@ RSpec.describe User, type: :model do
   end
 
   describe 'associations' do
-    it { should have_many(:works).dependent(:restrict_with_exception) }
+    it { should have_many(:works).dependent(:destroy) }
     it { should have_many(:presets).dependent(:destroy) }
     it { should have_many(:social_accounts).dependent(:destroy) }
     it { should have_many(:likes).dependent(:destroy) }
