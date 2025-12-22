@@ -1,0 +1,66 @@
+name: Backend CI
+
+# backendファイル更新時のみ実行
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'back/**'
+
+jobs:
+  backend_test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # /backで実施
+        working-directory: ./back
+
+    services:
+      # 仮想dbのセットアップ
+      postgres:
+        image: postgres:14
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: myapp_user
+          POSTGRES_DB: app_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # 環境変数
+    env:
+      RAILS_ENV: test
+      DATABASE_HOST: localhost
+      DATABASE_USER: myapp_user
+      DATABASE_PASSWORD: password
+
+    # 実行内容
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+          working-directory: ./back
+
+      - name: Setup Database
+        run: |
+          bin/rails db:create
+          bin/rails db:schema:load
+
+      - name: Run RuboCop
+        run: bin/rubocop
+
+      - name: Run Brakeman
+        run: bin/brakeman --no-pager
+
+      - name: Run RSpec
+        run: bin/rspec
