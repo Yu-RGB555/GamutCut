@@ -4,7 +4,7 @@ class HealthCheckController < ApplicationController
 
   def index
     render json: {
-      status: 'ok',
+      status: "ok",
       timestamp: Time.current,
       environment: Rails.env
     }
@@ -24,14 +24,14 @@ class HealthCheckController < ApplicationController
       }
 
       render json: {
-        status: 'ok',
+        status: "ok",
         application: app_status,
         database: db_status,
         checks: perform_health_checks
       }
     rescue => e
       render json: {
-        status: 'error',
+        status: "error",
         error: e.message,
         timestamp: Time.current
       }, status: 500
@@ -47,8 +47,8 @@ class HealthCheckController < ApplicationController
       database_name: connection.current_database,
       adapter: connection.adapter_name,
       tables_exist: {
-        users: ActiveRecord::Base.connection.table_exists?('users'),
-        schema_migrations: ActiveRecord::Base.connection.table_exists?('schema_migrations')
+        users: ActiveRecord::Base.connection.table_exists?("users"),
+        schema_migrations: ActiveRecord::Base.connection.table_exists?("schema_migrations")
       },
       record_counts: {
         users: User.count
@@ -67,16 +67,16 @@ class HealthCheckController < ApplicationController
     # 1. データベース読み取りテスト
     checks[:database_read] = begin
       User.limit(1).count
-      { status: 'ok', message: 'Database read successful' }
+      { status: "ok", message: "Database read successful" }
     rescue => e
-      { status: 'error', message: e.message }
+      { status: "error", message: e.message }
     end
 
     # 2. 環境変数チェック
     checks[:environment_variables] = {
-      database_url_present: ENV['DATABASE_URL'].present?,
-      rails_env: ENV['RAILS_ENV'],
-      rack_env: ENV['RACK_ENV']
+      database_url_present: ENV["DATABASE_URL"].present?,
+      rails_env: ENV["RAILS_ENV"],
+      rack_env: ENV["RACK_ENV"]
     }
 
     # 3. マイグレーション状態チェック
@@ -86,11 +86,11 @@ class HealthCheckController < ApplicationController
       ).needs_migration?
 
       {
-        status: needs_migration ? 'pending' : 'up_to_date',
+        status: needs_migration ? "pending" : "up_to_date",
         needs_migration: needs_migration
       }
     rescue => e
-      { status: 'error', message: e.message }
+      { status: "error", message: e.message }
     end
 
     checks

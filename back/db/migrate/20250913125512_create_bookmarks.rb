@@ -8,6 +8,6 @@ class CreateBookmarks < ActiveRecord::Migration[7.2]
     end
 
     # 複合ユニーク制約: 同じユーザーが同じ作品を複数回ブックマークできない
-    add_index :bookmarks, [:user_id, :work_id], unique: true
+    add_index :bookmarks, [ :user_id, :work_id ], unique: true
   end
 end

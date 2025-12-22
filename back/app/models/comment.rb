@@ -6,5 +6,4 @@ class Comment < ApplicationRecord
 
   # デフォルトで新しい順にソート
   default_scope { order(created_at: :desc) }
-
 end

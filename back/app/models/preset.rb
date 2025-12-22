@@ -4,5 +4,4 @@ class Preset < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 30 }
   validates :mask_data, presence: true
-
 end

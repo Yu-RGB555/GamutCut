@@ -9,7 +9,7 @@ class CreateComments < ActiveRecord::Migration[7.2]
     end
 
     # パフォーマンス向上のためのインデックス
-    add_index :comments, [:work_id, :created_at]
-    add_index :comments, [:user_id, :created_at]
+    add_index :comments, [ :work_id, :created_at ]
+    add_index :comments, [ :user_id, :created_at ]
   end
 end

@@ -26,7 +26,7 @@ namespace :test_works do
         user_id: test_users[0].id,
         title: "#{TEST_WORK_PREFIX}1",
         illustration_image: nil,
-        set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
+        set_mask_data: { "maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => { "opacity" => 0.8, "blendMode" => "multiply" } },
         description: "これはテスト作品1です",
         is_public: "published"
       },
@@ -34,7 +34,7 @@ namespace :test_works do
         user_id: test_users[1].id,
         title: "#{TEST_WORK_PREFIX}2",
         illustration_image: nil,
-        set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
+        set_mask_data: { "maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => { "opacity" => 0.8, "blendMode" => "multiply" } },
         description: "これはテスト作品2です",
         is_public: "published"
       },
@@ -42,7 +42,7 @@ namespace :test_works do
         user_id: test_users[2].id,
         title: "#{TEST_WORK_PREFIX}3",
         illustration_image: nil,
-        set_mask_data: {"maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => {"opacity" => 0.8, "blendMode" => "multiply"}},
+        set_mask_data: { "maskId" => "dummy_mask_001", "maskName" => "ダミーマスク", "createdAt" => "2025-07-20T13:16:18.159Z", "maskSettings" => { "opacity" => 0.8, "blendMode" => "multiply" } },
         description: "これはテスト作品3です",
         is_public: "published"
       }

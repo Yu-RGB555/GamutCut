@@ -8,6 +8,6 @@ class CreateLikes < ActiveRecord::Migration[7.2]
     end
 
     # 同じユーザーが同じ作品に複数回いいねできないようにユニーク制約を追加
-    add_index :likes, [:user_id, :work_id], unique: true
+    add_index :likes, [ :user_id, :work_id ], unique: true
   end
 end

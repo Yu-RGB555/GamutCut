@@ -25,17 +25,17 @@ class Work < ApplicationRecord
 
   # Ransackで検索可能な属性を明示的に定義
   def self.ransackable_attributes(auth_object = nil)
-    ["title", "description", "created_at", "updated_at", "user_id", "is_public"]
+    [ "title", "description", "created_at", "updated_at", "user_id", "is_public" ]
   end
 
   # Ransackで検索可能な情報（ユーザーとタグ）を許可するためにモデルを指定
   def self.ransackable_associations(auth_object = nil)
-    ["user", "tags"]
+    [ "user", "tags" ]
   end
 
   # 複合キーワード検索用のカスタムスコープ
   def self.ransackable_scopes(auth_object = nil)
-    [:multi_keyword_search]
+    [ :multi_keyword_search ]
   end
 
   # 複数キーワードで作品名とユーザー名を横断検索するスコープ
@@ -53,7 +53,7 @@ class Work < ApplicationRecord
     end
 
     # 全てのキーワードが満たされる必要がある（AND条件）
-    joins(:user).where(conditions.join(' AND '), *keywords.flat_map { |k| ["%#{k}%", "%#{k}%"] })
+    joins(:user).where(conditions.join(" AND "), *keywords.flat_map { |k| [ "%#{k}%", "%#{k}%" ] })
   end
 
   private

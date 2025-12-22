@@ -7,6 +7,6 @@ class CreateWorkTags < ActiveRecord::Migration[7.2]
       t.timestamps
     end
     # 1つの作品に対し、同一のタグを付けられないようにするユニーク制約
-    add_index :work_tags, [:work_id, :tag_id], unique: true
+    add_index :work_tags, [ :work_id, :tag_id ], unique: true
   end
 end

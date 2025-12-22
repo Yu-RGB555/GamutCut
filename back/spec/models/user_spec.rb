@@ -28,7 +28,7 @@ RSpec.describe User, type: :model do
   end
 
   describe 'associations' do
-    it { should have_many(:works).dependent(:restrict_with_exception) }
+    it { should have_many(:works).dependent(:destroy) }
     it { should have_many(:presets).dependent(:destroy) }
     it { should have_many(:social_accounts).dependent(:destroy) }
     it { should have_many(:likes).dependent(:destroy) }
@@ -49,7 +49,7 @@ RSpec.describe User, type: :model do
 
   describe '.ransackable_attributes' do
     it 'returns the correct searchable attributes' do
-      expected_attributes = ["name", "created_at", "updated_at"]
+      expected_attributes = [ "name", "created_at", "updated_at" ]
       expect(User.ransackable_attributes).to match_array(expected_attributes)
     end
   end

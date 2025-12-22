@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
   # アバター（プロフィール画面用）
   has_one_attached :avatar
-  ACCEPTED_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'].freeze
+  ACCEPTED_CONTENT_TYPES = [ "image/png", "image/jpeg", "image/gif", "image/webp" ].freeze
 
   has_many :works, dependent: :destroy
   has_many :presets, dependent: :destroy
@@ -26,7 +26,7 @@ class User < ApplicationRecord
 
   # Ransackで検索可能な属性を明示的に定義
   def self.ransackable_attributes(auth_object = nil)
-    ["name", "created_at", "updated_at"]
+    [ "name", "created_at", "updated_at" ]
   end
 
   # アバター画像のURLを取得（画像なし許容）
@@ -175,10 +175,10 @@ class User < ApplicationRecord
 
   # auth.info.imageをダウンロード＆解像度変換し、avatarとしてアタッチ
   def self.attach_avatar_from_url(user, image_url)
-    require 'open-uri'
+    require "open-uri"
 
     # 解像度を変換（Google: 200x200, X: 400x400）
-    resize_image_url = image_url.gsub(/=s\d+-c/, '=s200-c').gsub(/_(normal|bigger|mini)(\.[a-z]+)$/, '_400x400\2')
+    resize_image_url = image_url.gsub(/=s\d+-c/, "=s200-c").gsub(/_(normal|bigger|mini)(\.[a-z]+)$/, '_400x400\2')
     downloaded = URI.open(resize_image_url)
     content_type = downloaded.content_type
 
