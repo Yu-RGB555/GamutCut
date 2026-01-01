@@ -1,7 +1,7 @@
 'use client';
 
-import { Header } from '../components/Header'
-import { Footer } from '../components/Footer'
+import { Header } from '@/components/Header'
+import { Footer } from '@/components/Footer'
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AlertProvider } from '@/contexts/AlertContext';
 import AlertContainer from '@/components/AlertContainer';

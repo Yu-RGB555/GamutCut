@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
-import './globals.css'
+import '../globals.css'
 import { ClientLayout } from './client-layout'
 import { jsonLd } from '@/lib/structured-data'
+import { getMessages } from 'next-intl/server'
+import { NextIntlClientProvider } from 'next-intl'
 
 export const metadata: Metadata = {
   title: 'GamutCut - ガマットマスク制作サイト',
@@ -72,9 +74,20 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>
+}
+
+export default async function RootLayout({ children, params }: Props) {
+  // paramsから 'ja' or 'en' を取得
+  const { locale } = await params;
+
+  // 言語ファイルを読み込み
+  const messages = await getMessages();
+
   return (
-    <html lang="ja">
+    <html lang={locale}>
       <head>
         {/* Google Analytics スニペット */}
         {process.env.NEXT_PUBLIC_GA_ID && process.env.NODE_ENV === 'production' && (
@@ -105,9 +118,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen bg-background">
-        <ClientLayout>
-          {children}
-        </ClientLayout>
+        <NextIntlClientProvider messages={messages}>
+          <ClientLayout>
+            {children}
+          </ClientLayout>
+        </NextIntlClientProvider>
       </body>
     </html>
   )
