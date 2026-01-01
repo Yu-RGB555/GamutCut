@@ -22,54 +22,56 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-
-// メニュー項目の定義
-const items = [
-  {
-    title: "ホーム",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "ガマットマスク作成",
-    url: "/mask",
-    icon: Palette,
-  },
-  {
-    title: "作品一覧",
-    url: "/work",
-    icon: ImageIcon,
-  },
-  {
-    title: "作品投稿",
-    url: "/work/new",
-    icon: PenTool,
-  },
-]
-
-const utilityItems = [
-  {
-    title: "設定",
-    url: "/settings",
-    icon: Settings,
-  },
-]
+import { useTranslations } from "next-intl";
 
 export function AppSidebar() {
-  const router = useRouter()
+  const router = useRouter();
+  const t = useTranslations('Sidebar');
 
   // useSidebarフックを活用してSidebarの内部状態にアクセスしサイドバーを制御
-  const { setOpenMobile, isMobile } = useSidebar()
+  const { setOpenMobile, isMobile } = useSidebar();
 
   // ナビゲーション時のサイドバー制御（モバイル限定）
   const handleNavigation = (url: string) => {
     if (isMobile) {
-      setOpenMobile(false)
+      setOpenMobile(false);
     }
 
     // ページ遷移を明示的に行うことで、Sheet内のsetOpenMobile(false)を呼び出す
-    router.push(url)
+    router.push(url);
   }
+
+  // メニュー項目の定義
+  const items = [
+    {
+      title: t('home'),
+      url: "/",
+      icon: Home,
+    },
+    {
+      title: t('create_mask'),
+      url: "/mask",
+      icon: Palette,
+    },
+    {
+      title: t('work_list'),
+      url: "/work",
+      icon: ImageIcon,
+    },
+    {
+      title: t('post_work'),
+      url: "/work/new",
+      icon: PenTool,
+    },
+  ]
+
+  const utilityItems = [
+    {
+      title: t('settings'),
+      url: "/settings",
+      icon: Settings,
+    },
+  ]
 
   return (
     <Sidebar className="border-r">
@@ -92,7 +94,7 @@ export function AppSidebar() {
       <SidebarContent>
         {/* メインナビゲーション */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-label mt-2">メニュー</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-label mt-2">{t('menu')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -112,7 +114,7 @@ export function AppSidebar() {
 
         {/* ユーティリティ */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-label">その他</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-label">{t('others')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {utilityItems.map((item) => (
