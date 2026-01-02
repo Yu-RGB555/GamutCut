@@ -12,13 +12,15 @@ import { motion } from "motion/react"
 import { useLoad } from "@/contexts/LoadingContext";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 
-export default function Home() {
+export default function CreateGamutMask() {
   const { isAuthenticated } = useAuth();
   const [presets, setPresets] = useState<Preset[]>([]);
   const [copiedMaskData, setCopiedMaskData] = useState<MaskData | null>(null);
   const { setIsLoadingOverlay } = useLoad();
   const { startNextStep } = useNextStep();
+  const t = useTranslations('CreateMask');
 
   const handleStartTour = () => {
     startNextStep("mainTour");
@@ -79,7 +81,7 @@ export default function Home() {
 
         {/* Myマスク一覧セクション */}
         <div id="step-5" className="space-y-16">
-          <h3 className="text-label text-left text-lg font-semibold">Myマスク一覧</h3>
+          <h3 className="text-label text-left text-lg font-semibold">{t('my_mask_list')}</h3>
           <MyMaskList
             myPresets={presets}
             fetchPresets={() => fetchPresets(false)}
@@ -108,7 +110,7 @@ export default function Home() {
             </motion.button>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="font-semibold">クイックガイド</p>
+            <p className="font-semibold">{t('quick_guide')}</p>
           </TooltipContent>
         </Tooltip>
       </div>

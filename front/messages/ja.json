@@ -48,5 +48,33 @@
     "settings": "設定",
     "menu": "メニュー",
     "others": "その他"
+  },
+  "CreateMask": {
+    "quick_guide": "クイックガイド",
+    "zoom_in_or_out": "拡大・縮小",
+    "add_mask": "マスクを追加",
+    "select_gamut_mask": "ガマットマスクの選択",
+    "delete_mask": "マスクを削除",
+    "save_to_my_masks": "Myマスクに保存",
+    "download": "ダウンロード",
+    "enter_preset_name": "プリセットの名前を入力してください",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "alert_max_masks": "マスクの追加は最大3つまでです",
+    "alert_save_fail": "マスクの保存に失敗しました",
+    "value": "明度",
+    "my_mask_list": "Myマスク一覧",
+    "color_info": "色情報",
+    "hue": "色相",
+    "saturation": "彩度",
+    "login_required": "Myマスクを利用するにはログインが必要です",
+    "no_my_masks": "Myマスクがありません",
+    "shapes": {
+      "triangle": "三角形",
+      "square": "四角形",
+      "circle": "円形",
+      "unknown": "不明な図形"
+    },
+    "mask_default_name": "マスク{index}"
   }
 }

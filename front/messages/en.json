@@ -48,5 +48,33 @@
     "settings": "Settings",
     "menu": "Menu",
     "others": "Others"
+  },
+  "CreateMask": {
+    "quick_guide": "Quick Guide",
+    "zoom_in_or_out": "Zoom In/Out",
+    "add_mask": "Add Mask",
+    "select_gamut_mask": "Select Gamut Mask",
+    "delete_mask": "Delete Mask",
+    "save_to_my_masks": "Save to My Masks",
+    "download": "Download",
+    "enter_preset_name": "Please enter a preset name",
+    "cancel": "Cancel",
+    "save": "Save",
+    "alert_max_masks": "You can add up to 3 masks.",
+    "alert_save_fail": "Failed to save mask",
+    "value": "Value",
+    "my_mask_list": "My Mask List",
+    "color_info": "Color Info",
+    "hue": "Hue",
+    "saturation": "Saturation",
+    "login_required": "Login is required to use My Masks",
+    "no_my_masks": "No My Masks found",
+    "shapes": {
+      "triangle": "Triangle",
+      "square": "Square",
+      "circle": "Circle",
+      "unknown": "Unknown Shape"
+    },
+    "mask_default_name": "Mask {index}"
   }
 }
