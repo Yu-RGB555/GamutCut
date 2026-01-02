@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ShapeTemplate, MaskWithScale } from '../types/gamut';
-import { getMaskDisplayName, getShapeDisplayName } from '@/lib/shapeUtils';
 import { useTranslations } from 'next-intl';
 
 interface MaskControlsProps {
@@ -32,6 +31,20 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
 
   const t = useTranslations('CreateMask');
 
+  // マスク追加のダイアログで表示する図形名
+  const getShapeName = (shapeType?: string) => {
+    if (!shapeType) return t('shapes.unknown');
+    return t(`shapes.${shapeType}`);
+  };
+
+  // 追加したマスクの表示名
+  const getMaskName = (mask: { shape_type?: string }, index: number) => {
+    if (mask.shape_type) {
+      return getShapeName(mask.shape_type);
+    }
+    return t('mask_default_name', { index: index + 1 });
+  };
+
   return (
     <div className="w-full md:max-w-[400px]">
       {/* 拡大・縮小 */}
@@ -46,7 +59,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
                 className={`px-2 py-1 font-semibold border rounded hover:cursor-pointer ${selectedMaskIndex === idx ? 'text-label border-2 border-btn-border hover:text-foreground hover:bg-muted' : 'text-label bg-card hover:text-foreground hover:bg-muted'}`}
                 onClick={() => onMaskIndexChange(idx)}
               >
-                {getMaskDisplayName(mask, idx, t)}
+                {getMaskName(mask, idx)}
               </button>
             ))}
           </div>
@@ -89,7 +102,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
                   onClick={() => onMaskSelect(template)}
                 >
                   {/* マスク名 */}
-                  {getShapeDisplayName(template.shape_type, t)}
+                  {getShapeName(template.shape_type)}
                 </Button>
               ))}
             </div>
