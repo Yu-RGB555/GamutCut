@@ -4,6 +4,7 @@ import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ShapeTemplate, MaskWithScale } from '../types/gamut';
 import { getMaskDisplayName, getShapeDisplayName } from '@/lib/shapeUtils';
+import { useTranslations } from 'next-intl';
 
 interface MaskControlsProps {
   shapeTemplates: ShapeTemplate[];
@@ -28,6 +29,9 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
   onMaskIndexChange,
   onScaleChange
 }) => {
+
+  const t = useTranslations('CreateMask');
+
   return (
     <div className="w-full md:max-w-[400px]">
       {/* 拡大・縮小 */}
@@ -42,12 +46,12 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
                 className={`px-2 py-1 font-semibold border rounded hover:cursor-pointer ${selectedMaskIndex === idx ? 'text-label border-2 border-btn-border hover:text-foreground hover:bg-muted' : 'text-label bg-card hover:text-foreground hover:bg-muted'}`}
                 onClick={() => onMaskIndexChange(idx)}
               >
-                {getMaskDisplayName(mask, idx)}
+                {getMaskDisplayName(mask, idx, t)}
               </button>
             ))}
           </div>
           <div className="flex items-center my-4 gap-2 sm:gap-4">
-            <p className="text-label text-sm font-base">拡大・縮小</p>
+            <p className="text-label text-sm font-base">{t('zoom_in_or_out')}</p>
             <Slider
               defaultValue={[100]}
               value={[selectedMask[selectedMaskIndex]?.scale ?? 1]}
@@ -69,12 +73,12 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
               variant="secondary"
               id="step-2"
             >
-              マスクを追加
+              {t('add_mask')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>ガマットマスクの選択</DialogTitle>
+              <DialogTitle>{t('select_gamut_mask')}</DialogTitle>
             </DialogHeader>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
               {shapeTemplates.map((template) => (
@@ -85,7 +89,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
                   onClick={() => onMaskSelect(template)}
                 >
                   {/* マスク名 */}
-                  {getShapeDisplayName(template.shape_type)}
+                  {getShapeDisplayName(template.shape_type, t)}
                 </Button>
               ))}
             </div>
@@ -97,7 +101,7 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
             onClick={onMaskDelete}
             variant="destructive"
           >
-            マスクを削除
+            {t('delete_mask')}
           </Button>
         )}
       </div>

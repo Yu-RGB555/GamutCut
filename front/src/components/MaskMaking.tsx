@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAlert } from '@/contexts/AlertContext';
 import { ShapeTemplate, ColorInfo, MaskWithScale } from '@/types/gamut';
 import { Preset } from '@/types/preset';
@@ -38,6 +39,7 @@ interface MaskMakingProps {
 
 export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   const { showAlert } = useAlert();
+  const t = useTranslations('CreateMask');
   const [isComposing, setIsComposing] = useState(false);
 
   // キャンバスを参照
@@ -272,7 +274,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     // マスクの最大数制限（3つまで）
     if (selectedMask.length >= 3) {
       setIsDialogOpen(false);
-      showAlert('マスクの追加は最大3つまでです');
+      showAlert(t('alert_max_masks'));
       return;
     }
 
@@ -382,7 +384,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
       await onSaveSuccess();
     } catch (error) {
       console.error('プリセット保存エラー:', error);
-      showAlert('マスクの保存に失敗しました');
+      showAlert(t('alert_save_fail'));
     }
   };
 
@@ -469,7 +471,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
             <div className="flex flex-col space-y-8 mt-4">
               {/* 明度調整スライダー */}
               <div className="w-full space-y-2">
-                <h3 className="text-card-foreground text-lg font-semibold">明度</h3>
+                <h3 className="text-card-foreground text-lg font-semibold">{t('value')}</h3>
                 <div className="flex items-center sm:flex-row gap-2 sm:gap-4">
                   <Slider
                     defaultValue={[100]}
@@ -514,9 +516,9 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
       <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Myマスクに保存</DialogTitle>
+            <DialogTitle>{t('save_to_my_masks')}</DialogTitle>
             <DialogDescription className="text-label">
-              プリセットの名前を入力してください
+              {t('enter_preset_name')}
             </DialogDescription>
           </DialogHeader>
           <div className="my-4">
@@ -538,14 +540,14 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
               variant="secondary"
               onClick={cancelPresetSave}
             >
-              キャンセル
+              {t('cancel')}
             </Button>
             <Button
               variant="secondary"
               onClick={executePresetSave}
               disabled={!presetName.trim()}
             >
-              保存
+              {t('save')}
             </Button>
           </DialogFooter>
         </DialogContent>
