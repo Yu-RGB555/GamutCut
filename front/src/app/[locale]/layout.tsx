@@ -72,6 +72,7 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
     apple: '/app_logo.svg',
   },
+  manifest: '/manifest.json',
 }
 
 interface Props {
