@@ -19,8 +19,11 @@ import { HiDownload } from "react-icons/hi";
 import { IoIosSave } from "react-icons/io";
 import { MdOutlineCollections } from "react-icons/md";
 import { HiOutlineRocketLaunch } from "react-icons/hi2";
+import { useTranslations } from 'next-intl';
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('Tour');
+
   // ツアー内容
   const steps: Tour[] = [
     {
@@ -29,16 +32,16 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         {
           // FirstStep（step:0）
           icon: <><BsPersonArmsUp className="text-primary" /></>,
-          title: 'GamutCutへようこそ',
-          content: <>ここではガマットマスクを作成できます。</>,
+          title: t('step1_title'),
+          content: <>{t('step1_content')}</>,
           showControls: true,
           showSkip: true,
         },
         {
           // 2ndStep（step:1）
           icon: <><FaShapes className="text-primary"/></>,
-          title: 'マスク作成',
-          content: <>色相環上にマスクを設置します。（最大３つまで）<br />サイズや形状を調整できます。</>,
+          title: t('step2_title'),
+          content: <>{t('step2_content_1')}<br />{t('step2_content_2')}</>,
           selector: '#step-2',
           side: 'top',
           showControls: true,
@@ -49,8 +52,8 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         {
           // 3thStep（step:2）
           icon: <><HiDownload className="text-primary"/></>,
-          title: 'ダウンロード',
-          content: <>作成したマスクはpng画像としてダウンロードできます。<br />お使いのペイントソフトのスポイトツールで色を抽出するなどして、着彩にご利用ください。</>,
+          title: t('step3_title'),
+          content: <>{t('step3_content_1')}<br />{t('step3_content_2')}</>,
           selector: '#step-3',
           side: 'top',
           showControls: true,
@@ -61,8 +64,8 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         {
           // 4thStep（step:3）
           icon: <><IoIosSave className="text-primary"/></>,
-          title: 'マスクの保存',
-          content: <>作成したマスクは名前をつけて保存することができます。<br /><span className="text-muted-foreground text-xs">※ご利用にはログインが必要です</span></>,
+          title: t('step4_title'),
+          content: <>{t('step4_content_1')}<br /><span className="text-muted-foreground text-xs">{t('step4_note')}</span></>,
           selector: '#step-4',
           side: 'top',
           showControls: true,
@@ -73,8 +76,8 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         {
           // 5thStep（step:4）
           icon: <><MdOutlineCollections className="text-primary"/></>,
-          title: 'Myマスク一覧',
-          content: <>保存したマスクはここに表示されます。<br /><span className="text-muted-foreground text-xs">※ご利用にはログインが必要です</span></>,
+          title: t('step5_title'),
+          content: <>{t('step5_content_1')}<br /><span className="text-muted-foreground text-xs">{t('step5_note')}</span></>,
           selector: '#step-5',
           side: 'top',
           showControls: true,
@@ -85,8 +88,8 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         {
           // LastStep（step:5）
           icon: <><HiOutlineRocketLaunch className="text-primary"/></>,
-          title: 'はじめてみましょう！',
-          content: <>GamutCutの基本的な使い方は以上です。<br />素敵なマスクを作成してみてください！</>,
+          title: t('step6_title'),
+          content: <>{t('step6_content_1')}<br />{t('step6_content_2')}</>,
           showControls: true,
           showSkip: true,
           pointerPadding: 0,
