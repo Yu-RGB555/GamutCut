@@ -76,5 +76,30 @@
       "unknown": "不明な図形"
     },
     "mask_default_name": "マスク{index}"
+  },
+  "Tour": {
+    "step1_title": "GamutCutへようこそ",
+    "step1_content": "ここではガマットマスクを作成できます。",
+    "step2_title": "マスク作成",
+    "step2_content_1": "色相環上にマスクを設置します。（最大３つまで）",
+    "step2_content_2": "サイズや形状を調整できます。",
+    "step3_title": "ダウンロード",
+    "step3_content_1": "作成したマスクはpng画像としてダウンロードできます。",
+    "step3_content_2": "お使いのペイントソフトのスポイトツールで色を抽出するなどして、着彩にご利用ください。",
+    "step4_title": "マスクの保存",
+    "step4_content_1": "作成したマスクは名前をつけて保存することができます。",
+    "step4_note": "※ご利用にはログインが必要です",
+    "step5_title": "Myマスク一覧",
+    "step5_content_1": "保存したマスクはここに表示されます。",
+    "step5_note": "※ご利用にはログインが必要です",
+    "step6_title": "はじめてみましょう！",
+    "step6_content_1": "GamutCutの基本的な使い方は以上です。",
+    "step6_content_2": "素敵なマスクを作成してみてください！",
+    "button": {
+      "back": "戻る",
+      "next": "次へ",
+      "done": "完了",
+      "skip": "ツアーをスキップ"
+    }
   }
 }

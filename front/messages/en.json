@@ -76,5 +76,30 @@
       "unknown": "Unknown Shape"
     },
     "mask_default_name": "Mask {index}"
+  },
+  "Tour": {
+    "step1_title": "Welcome to GamutCut",
+    "step1_content": "Here you can create gamut masks.",
+    "step2_title": "Create Mask",
+    "step2_content_1": "Place masks on the color wheel. (Up to 3)",
+    "step2_content_2": "You can adjust the size and shape.",
+    "step3_title": "Download",
+    "step3_content_1": "You can download the created mask as a PNG image.",
+    "step3_content_2": "Use the eyedropper tool in your paint software to extract colors for coloring.",
+    "step4_title": "Save Mask",
+    "step4_content_1": "You can save the created mask with a name.",
+    "step4_note": "*Login required",
+    "step5_title": "My Mask List",
+    "step5_content_1": "Saved masks will be displayed here.",
+    "step5_note": "*Login required",
+    "step6_title": "Let's Get Started!",
+    "step6_content_1": "That's the basics of GamutCut.",
+    "step6_content_2": "Create some wonderful masks!",
+    "button": {
+      "back": "Back",
+      "next": "Next",
+      "done": "Done",
+      "skip": "Skip tour"
+    }
   }
 }
