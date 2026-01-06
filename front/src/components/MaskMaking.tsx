@@ -100,9 +100,12 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   };
 
   // マスク図形自体または頂点のドラッグ
-  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // キャンバス外でも操作を継続させる
+    canvas.setPointerCapture(e.pointerId);
 
     const rect = canvas.getBoundingClientRect();
     const displayX = e.clientX - rect.left;
@@ -143,8 +146,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     }
   };
 
-  // マウスムーブイベント
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  // ポインタームーブイベント
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -252,8 +255,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     }
   };
 
-  // マウス操作の状態リセット
-  const handleMouseUp = () => {
+  // ポインター操作の状態リセット
+  const handlePointerUp = () => {
     setIsDragging(false);
     setDragPointIndex(-1);
     setDragMaskIndex(-1);
@@ -458,11 +461,11 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
               ref={canvasRef}
               width={400}
               height={400}
-              className="rounded-md w-full h-auto max-w-[400px] max-h-[400px]"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
+              className="rounded-md w-full h-auto max-w-[400px] max-h-[400px] touch-none"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerUp}
             />
             <div className="absolute top-0 left-0">
               <ColorInfoPanel colorInfo={colorInfo}/>
