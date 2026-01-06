@@ -101,5 +101,21 @@
       "done": "完了",
       "skip": "ツアーをスキップ"
     }
+  },
+  "Header": {
+    "login": "ログイン",
+    "sign_up": "新規登録",
+    "logout": "ログアウト",
+    "mypage": "マイページ",
+    "user_menu": {
+      "draft_list": "下書き",
+      "like_list": "いいね一覧",
+      "bookmark_list": "ブックマーク一覧"
+    }
+  },
+  "Legal": {
+    "privacy_policy": "プライバシーポリシー",
+    "terms_of_service": "利用規約",
+    "contact": "お問い合わせ"
   }
 }

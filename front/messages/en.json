@@ -101,5 +101,21 @@
       "done": "Done",
       "skip": "Skip tour"
     }
+  },
+  "Header": {
+    "login": "Login",
+    "sign_up": "Sign Up",
+    "logout": "Logout",
+    "mypage": "Mypage",
+    "user_menu": {
+      "draft_list": "Draft List",
+      "like_list": "Like List",
+      "bookmark_list": "Bookmark List"
+    }
+  },
+  "Legal": {
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "contact": "Contact"
   }
 }

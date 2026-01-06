@@ -1,7 +1,11 @@
 import XLogo from "./XLogo";
 import GitHubLogo from './GitHubLogo';
+import { useTranslations } from "next-intl";
 
 export function Footer() {
+
+  const t = useTranslations('Legal');
+
   return (
     <footer className="bg-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -25,7 +29,7 @@ export function Footer() {
               target="_blank"
               className="text-label hover:underline"
             >
-              <p className="text-sm text-label">利用規約</p>
+              <p className="text-sm text-label">{t('terms_of_service')}</p>
             </a>
             <a
               href="/legal/privacy_policy"
@@ -33,7 +37,7 @@ export function Footer() {
               target="_blank"
               className="text-label hover:underline"
             >
-              <p className="text-sm text-label">プライバシーポリシー</p>
+              <p className="text-sm text-label">{t('privacy_policy')}</p>
             </a>
             <a
               href="https://docs.google.com/forms/d/e/1FAIpQLSeAeKtDfGityDObNRo96NH87rdZKfoEkNCJMQWdqZxLmmNfKA/viewform?usp=dialog"
@@ -41,7 +45,7 @@ export function Footer() {
               target="_blank"
               className="text-label hover:underline"
             >
-              <p className="text-sm text-label">お問い合わせ</p>
+              <p className="text-sm text-label">{t('contact')}</p>
             </a>
           </div>
 

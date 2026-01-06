@@ -25,25 +25,7 @@ import {
   SheetTrigger,
 } from './ui/sheet';
 import { Skeleton } from './ui/skeleton';
-
-// ユーザーメニュー項目の定義
-const userMenuItems = [
-  {
-    title: "下書き",
-    url: "/mypage/drafts",
-    icon: Edit2Icon,
-  },
-  {
-    title: "いいね一覧",
-    url: "/mypage/likes",
-    icon: HeartIcon,
-  },
-  {
-    title: "ブックマーク一覧",
-    url: "/mypage/bookmarks",
-    icon: BookmarkIcon,
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export function Header() {
   const { logout } = useAuth();
@@ -53,6 +35,27 @@ export function Header() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const t = useTranslations('Header');
+
+  // ユーザーメニュー項目の定義
+  const userMenuItems = [
+    {
+      title: t('user_menu.draft_list'),
+      url: "/mypage/drafts",
+      icon: Edit2Icon,
+    },
+    {
+      title: t('user_menu.like_list'),
+      url: "/mypage/likes",
+      icon: HeartIcon,
+    },
+    {
+      title: t('user_menu.bookmark_list'),
+      url: "/mypage/bookmarks",
+      icon: BookmarkIcon,
+    },
+  ];
 
   const handleLogout = () => {
     logout();
@@ -153,7 +156,7 @@ export function Header() {
                                 : user?.name
                               }
                             </p>
-                            <SheetDescription>マイページ</SheetDescription>
+                            <SheetDescription>{t('mypage')}</SheetDescription>
                           </div>
                         </button>
                       </SheetTitle>
@@ -182,7 +185,7 @@ export function Header() {
                         className="w-full justify-center p-4 text-destructive"
                       >
                         <LogOutIcon className="w-6 h-6 mr-3" />
-                        <span className="text-lg font-medium">ログアウト</span>
+                        <span className="text-lg font-medium">{t('logout')}</span>
                       </Button>
                     </SheetFooter>
                   </SheetContent>
@@ -195,13 +198,13 @@ export function Header() {
                   size="sm"
                   onClick={() => router.push('/auth/login')}
                 >
-                  ログイン
+                  {t('login')}
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => router.push('/auth/register')}
                 >
-                  新規登録
+                  {t('sign_up')}
                 </Button>
               </>
             )}
