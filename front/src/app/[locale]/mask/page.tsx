@@ -69,51 +69,56 @@ export default function CreateGamutMask() {
   }, []);
 
   return (
-    <div className="justify-items-center mx-4 sm:mx-8 lg:mx-16 mb-40">
-      <div className="grid grid-cols-1 gap-y-16">
-        {/* マスク作成セクション */}
-        <div className="w-full">
-          <MaskMaking
-            onSaveSuccess={fetchPresetsAfterSave}
-            copiedMaskData={copiedMaskData} // 「コピーして編集」用
-          />
+    <>
+      <div className="bg-gray-400 border border-gray-500 rounded-lg p-4 m-12">
+        <h3 className="font-semibold text-gray-900">* Multilingual support is currently in progress.</h3>
+      </div>
+      <div className="justify-items-center mx-4 sm:mx-8 lg:mx-16 mb-40">
+        <div className="grid grid-cols-1 gap-y-16">
+          {/* マスク作成セクション */}
+          <div className="w-full">
+            <MaskMaking
+              onSaveSuccess={fetchPresetsAfterSave}
+              copiedMaskData={copiedMaskData} // 「コピーして編集」用
+            />
+          </div>
+
+          {/* Myマスク一覧セクション */}
+          <div id="step-5" className="space-y-16">
+            <h3 className="text-label text-left text-lg font-semibold">{t('my_mask_list')}</h3>
+            <MyMaskList
+              myPresets={presets}
+              fetchPresets={() => fetchPresets(false)}
+              isAuthenticated={isAuthenticated}
+            />
+          </div>
         </div>
 
-        {/* Myマスク一覧セクション */}
-        <div id="step-5" className="space-y-16">
-          <h3 className="text-label text-left text-lg font-semibold">{t('my_mask_list')}</h3>
-          <MyMaskList
-            myPresets={presets}
-            fetchPresets={() => fetchPresets(false)}
-            isAuthenticated={isAuthenticated}
-          />
+        {/* ガイドツアーボタン */}
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <motion.button
+                onClick={handleStartTour}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-12 h-12 sm:w-14 sm:h-14 text-center border border-gray-500 hover:cursor-pointer rounded-full shadow-lg overflow-hidden"
+              >
+                <Image
+                  src="/guide_tour.webp"
+                  alt="クイックガイド"
+                  width={100}
+                  height={100}
+                  className="object-cover w-full h-full"
+                />
+              </motion.button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="font-semibold">{t('quick_guide')}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
-
-      {/* ガイドツアーボタン */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <motion.button
-              onClick={handleStartTour}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-12 h-12 sm:w-14 sm:h-14 text-center border border-gray-500 hover:cursor-pointer rounded-full shadow-lg overflow-hidden"
-            >
-              <Image
-                src="/guide_tour.webp"
-                alt="クイックガイド"
-                width={100}
-                height={100}
-                className="object-cover w-full h-full"
-              />
-            </motion.button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="font-semibold">{t('quick_guide')}</p>
-          </TooltipContent>
-        </Tooltip>
-      </div>
-    </div>
+    </>
   );
 }
