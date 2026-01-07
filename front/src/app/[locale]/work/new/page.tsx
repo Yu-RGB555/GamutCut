@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from '@/i18n/routing';
 import { Preset } from "@/types/preset";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";

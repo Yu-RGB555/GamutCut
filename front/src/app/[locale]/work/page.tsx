@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from '@/i18n/routing';
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Combobox } from "@/components/ui/combobox";
 import { Search } from "@/components/ui/search";

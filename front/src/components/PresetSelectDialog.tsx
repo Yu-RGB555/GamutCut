@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { Preset } from '@/types/preset';
 import { PresetCard } from './PresetCard';
 import { getPresets } from '@/lib/api';

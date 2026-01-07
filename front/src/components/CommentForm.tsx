@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from '@/i18n/routing';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";

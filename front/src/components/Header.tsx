@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthState } from '@/hooks/useAuthState';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import {
   UserCircle2,
   LogOutIcon,
