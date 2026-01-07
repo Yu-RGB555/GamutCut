@@ -4,7 +4,6 @@ import { ClientLayout } from './client-layout'
 import { generateJsonLd } from '@/lib/structured-data'
 import { getMessages, getTranslations } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
-import { generateAlternates } from '@/lib/metadata'
 
 interface Props {
   children: React.ReactNode;
@@ -58,7 +57,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       creator: '@GamutCut',
     },
     metadataBase: new URL(process.env.FRONTEND_URL!),
-    alternates: generateAlternates('', locale), // トップページ用のhreflang
     robots: {
       index: true,
       follow: true,
