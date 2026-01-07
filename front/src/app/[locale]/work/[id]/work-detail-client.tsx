@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
+import { Link } from '@/i18n/routing';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {

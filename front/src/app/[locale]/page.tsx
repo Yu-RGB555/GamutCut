@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Palette, Download, Zap, Check } from "lucide-react";
 import { BsPersonArmsUp } from "react-icons/bs";
 import { FaPenNib } from "react-icons/fa";
-import Link from "next/link";
+import { Link } from '@/i18n/routing';
 import Image from "next/image";
 import { motion } from "motion/react";
 import { useTranslations, useLocale } from "next-intl";

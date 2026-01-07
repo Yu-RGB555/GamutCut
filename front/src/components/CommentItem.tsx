@@ -12,7 +12,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { UserCircle2Icon, CheckIcon, XIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from '@/i18n/routing';
 import { formatDistanceToNow } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Comment } from "@/types/comment";
