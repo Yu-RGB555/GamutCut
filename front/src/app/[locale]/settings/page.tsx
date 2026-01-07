@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Lock, UserX } from 'lucide-react';
 import { MdArrowForwardIos } from "react-icons/md";

@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import { generateAlternates } from '@/lib/metadata';
 
 interface Props {
@@ -8,7 +7,6 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'Work' });
 
   return {
     title: locale === 'ja' ? '作品一覧 - GamutCut' : 'Works - GamutCut',

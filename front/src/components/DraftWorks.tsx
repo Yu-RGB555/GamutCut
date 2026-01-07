@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Work } from "@/types/work";
-import Link from "next/link";
+import { Link } from '@/i18n/routing';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   UserCircle2Icon,

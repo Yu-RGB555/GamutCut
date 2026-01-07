@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Combobox } from "@/components/ui/combobox";
 import { Search } from "@/components/ui/search";
-import Link from "next/link";
+import { Link } from '@/i18n/routing';
 import { Work } from "@/types/work";
 import { Tag } from "@/types/tag";
 import { getWorks, getWorksWithSearch, getPopularTags } from "@/lib/api";
