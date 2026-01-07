@@ -59,6 +59,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     metadataBase: new URL(process.env.FRONTEND_URL!),
     alternates: {
       canonical: './',
+      languages: {
+        'en': '/en',
+        'ja': '/ja',
+      },
     },
     robots: {
       index: true,
