@@ -8,10 +8,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: '利用規約 - GamutCut',
-  description: 'GamutCut（ガマットカット）の利用規約です。本サービスの利用条件などを定めています。',
-  alternates: {
-    canonical: `${process.env.FRONTEND_URL}/legal/terms_of_service`,
-  },
+  description: 'GamutCut（ガマットカット）の利用規約です。本サービスの利用条件などを定めています。'
 };
 
 export default function PrivacyPolicy() {

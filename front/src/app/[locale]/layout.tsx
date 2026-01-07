@@ -46,7 +46,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           alt: t('og_title'),
         },
       ],
-      url: process.env.FRONTEND_URL,
       type: 'website',
       locale: locale === 'ja' ? 'ja_JP' : 'en_US',
     },
@@ -56,6 +55,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: t('twitter_description'),
       images: ['/opengraph-image.png'],
       creator: '@GamutCut',
+    },
+    metadataBase: new URL(process.env.FRONTEND_URL!),
+    alternates: {
+      canonical: './',
     },
     robots: {
       index: true,
