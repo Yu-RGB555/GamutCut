@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from '@/i18n/routing';
+import { useParams } from "next/navigation";
 import { CommentItem } from "@/components/CommentItem";
 import { BackButton } from "@/components/BackButton";
 import { Button } from "@/components/ui/button";

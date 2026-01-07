@@ -1,9 +1,7 @@
 'use client';
 
-import { Link } from '@/i18n/routing';
-import { useRouter } from 'next/navigation';
+import { Link, useRouter, usePathname } from '@/i18n/routing';
 import { useAuth } from "@/contexts/AuthContext";
-import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { UserCircle2Icon } from "lucide-react";

@@ -2,7 +2,8 @@
 'use client';
 
 import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from '@/i18n/routing';
+import { useParams } from "next/navigation";
 import { Link } from '@/i18n/routing';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
