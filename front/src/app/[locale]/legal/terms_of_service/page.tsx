@@ -4,12 +4,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: '利用規約 - GamutCut',
-  description: 'GamutCut（ガマットカット）の利用規約です。本サービスの利用条件などを定めています。'
-};
 
 export default function PrivacyPolicy() {
   return (

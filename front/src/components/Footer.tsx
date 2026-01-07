@@ -1,10 +1,11 @@
 import XLogo from "./XLogo";
 import GitHubLogo from './GitHubLogo';
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export function Footer() {
 
   const t = useTranslations('Legal');
+  const locale = useLocale();
 
   return (
     <footer className="bg-muted">
@@ -24,7 +25,7 @@ export function Footer() {
           {/* Legal */}
           <div className="flex gap-6 justify-center">
             <a
-              href="/legal/terms_of_service"
+              href={`/${locale}/legal/terms_of_service`}
               rel="noopener noreferrer"
               target="_blank"
               className="text-label hover:underline"
@@ -32,7 +33,7 @@ export function Footer() {
               <p className="text-sm text-label">{t('terms_of_service')}</p>
             </a>
             <a
-              href="/legal/privacy_policy"
+              href={`/${locale}/legal/privacy_policy`}
               rel="noopener noreferrer"
               target="_blank"
               className="text-label hover:underline"
