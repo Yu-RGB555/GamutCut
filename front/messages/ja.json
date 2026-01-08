@@ -119,7 +119,8 @@
     "cancel": "キャンセル"
   },
   "Works": {
-    "popular_tags": "人気タグ"
+    "popular_tags": "人気タグ",
+    "work": "作品"
   },
   "Search": {
     "placeholder": "検索"
