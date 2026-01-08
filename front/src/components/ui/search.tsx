@@ -1,6 +1,7 @@
 import { SearchIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useState, FormEvent, useEffect } from "react"
+import { useTranslations } from "next-intl";
 
 interface SearchProps {
   placeholder?: string;
@@ -12,13 +13,14 @@ interface SearchProps {
 }
 
 export function Search({
-  placeholder = "作品タイトル、クリエイターで検索",
+  placeholder = "",
   onSearch,
   onChange,
   value,    // valueが提供されているかで制御/非制御を自動判定
   defaultValue = "",
   className = ""
 }: SearchProps) {
+  const t = useTranslations('Search');
   const [internalQuery, setInternalQuery] = useState(defaultValue);
 
   // 制御コンポーネントか非制御コンポーネントかを判定
@@ -62,7 +64,7 @@ export function Search({
       <div className="relative">
         <Input
           type="text"
-          placeholder={placeholder}
+          placeholder={t('placeholder')}
           value={currentValue}
           onChange={handleInputChange}
           className="pl-10 pr-4"

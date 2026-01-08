@@ -19,6 +19,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface PresetCardProps {
   preset: Preset;
@@ -28,6 +29,8 @@ interface PresetCardProps {
 }
 
 export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, showDeleteButton = true }: PresetCardProps) {
+  const locale = useLocale();
+  const t = useTranslations('PresetCard');
   const { showAlert } = useAlert();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -199,7 +202,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
                   />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>更新</p>
+                  <p>{t('update')}</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -210,7 +213,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
                   />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>キャンセル</p>
+                  <p>{t('cancel')}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -245,21 +248,29 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Myマスク削除の確認</DialogTitle>
+            <DialogTitle>{t('confirm_deletion')}</DialogTitle>
             <DialogDescription
               className="text-label pt-2">
-                Myマスク一覧から『 <span className="text-primary">{preset.name}</span> 』を削除しますか？
+                {locale === 'ja' ? (
+                  <>
+                    Myマスク一覧から『 <span className="text-primary">{preset.name}</span> 』を削除しますか？
+                  </>
+                ) : (
+                  <>
+                    Do you want to remove『 <span className="text-primary">{preset.name}</span> 』from My masks？
+                  </>
+                )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="secondary"
               onClick={() => setIsDialogOpen(false)}
-            >キャンセル</Button>
+            >{t('cancel')}</Button>
             <Button
               variant="secondary"
               onClick={() => removePreset(preset.id)}
-            >はい</Button>
+            >{t('ok')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -273,7 +284,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
           className="my-2"
         />
         <p className="text-gray-300 text-xs text-right">
-          明度： {preset.mask_data.value}%
+          {t('value')}： {preset.mask_data.value}%
         </p>
       </div>
     </div>

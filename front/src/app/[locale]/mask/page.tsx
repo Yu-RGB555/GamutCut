@@ -71,7 +71,7 @@ export default function CreateGamutMask() {
   return (
     <>
       <div className="bg-gray-400 border border-gray-500 rounded-lg p-4 m-12">
-        <h3 className="font-semibold text-gray-900">* Multilingual support is currently in progress.</h3>
+        <h3 className="font-semibold text-gray-900">{t('temp_message')}</h3>
       </div>
       <div className="justify-items-center mx-4 sm:mx-8 lg:mx-16 mb-40">
         <div className="grid grid-cols-1 gap-y-16">
