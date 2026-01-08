@@ -17,12 +17,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/ja/work`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
+    // NOTE: 静的コンテンツ追加後に再度追加予定
+    // {
+    //   url: `${baseUrl}/ja/work`,
+    //   lastModified: new Date(),
+    //   changeFrequency: 'daily',
+    //   priority: 0.8,
+    // },
     {
       url: `${baseUrl}/ja/legal/privacy_policy`,
       lastModified: new Date(),
@@ -48,12 +49,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/en/work`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
+    // NOTE: 静的コンテンツ追加後に再度追加予定
+    // {
+    //   url: `${baseUrl}/en/work`,
+    //   lastModified: new Date(),
+    //   changeFrequency: 'daily',
+    //   priority: 0.8,
+    // },
     {
       url: `${baseUrl}/en/legal/privacy_policy`,
       lastModified: new Date(),
