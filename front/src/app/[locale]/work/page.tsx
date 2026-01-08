@@ -16,6 +16,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { UserCircle2Icon } from "lucide-react";
 import { useLoad } from "@/contexts/LoadingContext";
+import { useTranslations } from "next-intl";
 
 function WorksListContent() {
   const { user } = useAuth();
@@ -29,6 +30,8 @@ function WorksListContent() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(''); // searchQueryの値を保存（デバウンス処理用）
   const [isInitialized, setIsInitialized] = useState(false);
+
+  const t = useTranslations('Works');
 
   // URLパラメータから初期検索クエリとタグを取得し、同時に作品を取得
   useEffect(() => {
@@ -176,7 +179,7 @@ function WorksListContent() {
       {popularTags.length > 0 && (
         <div className="px-8 py-4">
           <div className="max-w-4xl mx-auto">
-            <h3 className="text-sm font-medium text-label mb-3">人気タグ</h3>
+            <h3 className="text-sm font-medium text-label mb-3">{t('popular_tags')}</h3>
             <div className="flex flex-wrap gap-2">
               {popularTags.map((tag) => (
                 <Badge

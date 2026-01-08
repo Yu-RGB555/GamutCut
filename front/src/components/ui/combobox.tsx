@@ -18,21 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-
-const frameworks = [
-  {
-    value: "evaluation",
-    label: "人気順",
-  },
-  {
-    value: "upload_desc",
-    label: "新しい順",
-  },
-  {
-    value: "upload_asc",
-    label: "古い順",
-  },
-]
+import { useTranslations } from "next-intl"
 
 interface ComboboxProps {
   value?: string;
@@ -44,9 +30,27 @@ interface ComboboxProps {
 export function Combobox({
   value = "",
   onChange,
-  placeholder = "並べ替え",
+  placeholder = "",
   className = ""
 }: ComboboxProps) {
+
+  const t = useTranslations('combobox');
+
+  const frameworks = [
+    {
+      value: "evaluation",
+      label: t('popularity_order'),
+    },
+    {
+      value: "upload_desc",
+      label: t('newest_order'),
+    },
+    {
+      value: "upload_asc",
+      label: t('oldest_order'),
+    },
+  ]
+
   const [open, setOpen] = React.useState(false)
 
   const handleSelect = (currentValue: string) => {
@@ -68,7 +72,7 @@ export function Combobox({
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
-            : placeholder}
+            : t('sort_by')}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>

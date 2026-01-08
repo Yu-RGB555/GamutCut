@@ -1,4 +1,12 @@
 {
+  "Metadata": {
+    "title": "GamutCut - ガマットマスク制作サイト",
+    "description": "GamutCut（ガマットカット）は、統一感を生み出せる着彩法『ガマットマッピング』で用いる『ガマットマスク』をログインせずに作成できるツールサイトです。デジタルイラストに適したHSV色相環モデルを扱っているため、幅広いグラフィックペイントソフトでお使いいただけます。",
+    "og_title": "GamutCut - ガマットマスク制作サイト",
+    "og_description": "デジタルイラストの着彩に統一感を生み出すガマットマスク制作ツール。ログイン不要で今すぐ使える！",
+    "twitter_title": "GamutCut - ガマットマスク制作サイト",
+    "twitter_description": "デジタルイラストの着彩に統一感を生み出すガマットマスク制作ツール"
+  },
   "Introduction": {
     "welcome": "へようこそ",
     "overview": "色相環上に図形を配置して「ガマットマスク」を作成し、統一感のある着彩をサポートするイラスト制作ツールです",
@@ -75,7 +83,8 @@
       "circle": "円形",
       "unknown": "不明な図形"
     },
-    "mask_default_name": "マスク{index}"
+    "mask_default_name": "マスク{index}",
+    "temp_message": "※ 翻訳対応中のため、一部のページが正しく表示されない、または元の言語で表示される場合があります。"
   },
   "Tour": {
     "step1_title": "GamutCutへようこそ",
@@ -102,6 +111,25 @@
       "skip": "ツアーをスキップ"
     }
   },
+  "PresetCard": {
+    "confirm_deletion": "Myマスク削除の確認",
+    "value": "明度",
+    "update": "更新",
+    "ok": "はい",
+    "cancel": "キャンセル"
+  },
+  "Works": {
+    "popular_tags": "人気タグ"
+  },
+  "Search": {
+    "placeholder": "検索"
+  },
+  "combobox": {
+    "sort": "並べ替え",
+    "popularity_order": "人気順",
+    "oldest_first": "古い順",
+    "newest_first": "新しい順"
+  },
   "Header": {
     "login": "ログイン",
     "sign_up": "新規登録",
@@ -117,13 +145,5 @@
     "privacy_policy": "プライバシーポリシー",
     "terms_of_service": "利用規約",
     "contact": "お問い合わせ"
-  },
-  "Metadata": {
-    "title": "GamutCut - ガマットマスク制作サイト",
-    "description": "GamutCut（ガマットカット）は、統一感を生み出せる着彩法『ガマットマッピング』で用いる『ガマットマスク』をログインせずに作成できるツールサイトです。デジタルイラストに適したHSV色相環モデルを扱っているため、幅広いグラフィックペイントソフトでお使いいただけます。",
-    "og_title": "GamutCut - ガマットマスク制作サイト",
-    "og_description": "デジタルイラストの着彩に統一感を生み出すガマットマスク制作ツール。ログイン不要で今すぐ使える！",
-    "twitter_title": "GamutCut - ガマットマスク制作サイト",
-    "twitter_description": "デジタルイラストの着彩に統一感を生み出すガマットマスク制作ツール"
   }
 }
