@@ -119,7 +119,8 @@
     "cancel": "Cancel"
   },
   "Works": {
-    "popular_tags": "Popular Tags"
+    "popular_tags": "Popular Tags",
+    "work": "work"
   },
   "Search": {
     "placeholder": "Search"

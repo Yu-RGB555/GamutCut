@@ -16,7 +16,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { UserCircle2Icon } from "lucide-react";
 import { useLoad } from "@/contexts/LoadingContext";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 function WorksListContent() {
   const { user } = useAuth();
@@ -32,6 +32,7 @@ function WorksListContent() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   const t = useTranslations('Works');
+  const locale = useLocale();
 
   // URLパラメータから初期検索クエリとタグを取得し、同時に作品を取得
   useEffect(() => {
@@ -209,20 +210,26 @@ function WorksListContent() {
       </div>
       <div className="px-8 pb-8 mb-32">
         {works.length === 0 ? (
-          <div className="flex min-h-screen justify-center items-center py-12">
+          // 該当作品がない場合
+          <div className="flex min-h-screen justify-center py-12">
             <div className="text-gray-500">
-              {searchQuery || selectedTag ? '検索結果が見つかりませんでした' : '作品がありません'}
+              {searchQuery || selectedTag
+                ? (locale === 'ja' ? '検索結果が見つかりませんでした' : 'No results found')
+                : (locale === 'ja' ? '作品がありません' : 'No works available')
+              }
             </div>
           </div>
         ) : (
+          // 該当作品がある場合
           <>
             {(searchQuery || selectedTag) && (
               <div className="text-center mb-6 text-gray-600">
-                {searchQuery && selectedTag
+                {searchQuery && selectedTag ? (locale === 'ja'
                   ? `「${searchQuery}」と「${selectedTag}」タグの検索結果: ${works.length}件`
-                  : searchQuery
-                    ? `「${searchQuery}」の検索結果: ${works.length}件`
-                    : `「${selectedTag}」タグの作品: ${works.length}件`
+                  : `Search results for "${searchQuery}" and tag "${selectedTag}": ${works.length} works`)
+                  : searchQuery ? (locale === 'ja'
+                    ? `「${searchQuery}」の検索結果: ${works.length}件` : `Search results for "${searchQuery}": ${works.length} works`)
+                    : (locale === 'ja' ? `「${selectedTag}」タグの作品: ${works.length}件` : `Works with tag "${selectedTag}": ${works.length} works`)
                 }
               </div>
             )}
@@ -239,7 +246,7 @@ function WorksListContent() {
                           className="object-cover w-full h-full"
                         />
                       ) : (
-                        <span className="text-gray-500">作品 {work.id}</span>
+                        <span className="text-gray-500">{t('work')} {work.id}</span>
                       )}
                     </div>
                   </Link>
