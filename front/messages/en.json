@@ -173,5 +173,129 @@
     "privacy_policy": "Privacy Policy",
     "terms_of_service": "Terms of Service",
     "contact": "Contact"
+  },
+  "TermsOfService": {
+    "title": "Terms of Service",
+    "intro": "These Terms of Service (hereinafter referred to as \"these Terms\") set forth the terms and conditions for using the service (hereinafter referred to as \"the Service\") provided by {serviceName} (hereinafter referred to as \"the Company\") on this website. All registered users (hereinafter referred to as \"Users\") shall use the Service in accordance with these Terms.",
+    "article_1": {
+      "title": "Article 1 - Application",
+      "content_1": "・These Terms shall apply to all relationships regarding the use of the Service between Users and the Company.",
+      "content_2": "・In addition to these Terms, the Company may establish various rules regarding the use of the Service (hereinafter referred to as \"Individual Provisions\"). These Individual Provisions shall constitute a part of these Terms, regardless of their names.",
+      "content_3": "・In the event that the provisions of these Terms conflict with the provisions of the Individual Provisions in the preceding paragraph, the provisions of the Individual Provisions shall take precedence unless otherwise specified in the Individual Provisions."
+    },
+    "article_2": {
+      "title": "Article 2 - Changes to Terms of Service",
+      "content_1": "・The Company may change these Terms at any time at its discretion. When making changes, the Company will appropriately notify Users of the changes, their content, and the effective date in a manner determined by the Company.",
+      "content_2": "・The revised Terms shall become effective from the time they are posted on the Service, unless otherwise specified by the Company.",
+      "content_3": "・If a User uses the Service after the revised Terms become effective, the User shall be deemed to have agreed to all of the revised Terms."
+    },
+    "article_3": {
+      "title": "Article 3 - Handling of Personal Information",
+      "content_1": "・The Company shall properly handle personal information obtained through the use of the Service in accordance with the Company's \"Privacy Policy\"."
+    },
+    "article_4": {
+      "title": "Article 4 - User Registration",
+      "content_intro": "The Company will not use information obtained from customers for purposes other than the following:",
+      "content_1": "1. In the Service, user registration shall be completed when a registration applicant agrees to these Terms, applies for user registration by the method specified by the Company, and the Company approves the application.",
+      "content_2": "2. The Company may not approve an application for user registration if it determines that the applicant has any of the following reasons, and shall not be obligated to disclose any reasons:",
+      "content_2_1": "　・If false information was provided in the application for user registration",
+      "content_2_2": "　・If the application is from someone who has violated these Terms",
+      "content_2_3": "　・In any other case where the Company deems user registration inappropriate"
+    },
+    "article_5": {
+      "title": "Article 5 - Management of User ID and Password",
+      "content_1": "・Users shall appropriately manage their User IDs and passwords for the Service at their own responsibility.",
+      "content_2": "・Users may not, under any circumstances, transfer or lend their User IDs and passwords to third parties, or share them with third parties. The Company shall deem any login with a combination of User ID and password that matches the registered information as use by the User who registered that User ID.",
+      "content_3": "・The Company shall not be liable for any damages caused by the use of User IDs and passwords by third parties, except in cases of intentional or gross negligence by the Company."
+    },
+    "article_6": {
+      "title": "Article 6 - Usage Fees and Payment Methods",
+      "content_1": "The Service is free of charge (excluding communication fees required to use the Service), but the Company may introduce paid services or paid plans in the future. In such cases, the Company will notify Users in advance by announcing on the website or other methods deemed appropriate by the Company."
+    },
+    "article_7": {
+      "title": "Article 7 - Warranties and Obligations Regarding Posted Information",
+      "content_1": "・Users who post information using the Service shall warrant to the Company that such posted information does not infringe the rights of third parties.",
+      "content_2": "・In the event that information posted by a User infringes the rights of a third party or causes any dispute with a third party, the User shall resolve the issue at their own expense and responsibility and shall not cause any damage to the Company.",
+      "content_3": "・Users shall manage and save all data such as images and text they create at their own responsibility. Users shall save data such as images or text being edited for uploading to the Service or uploaded images or text by methods such as taking backups as appropriate. While the Company will make reasonable efforts in service operation to save data such as images and text, it does not guarantee such preservation."
+    },
+    "article_8": {
+      "title": "Article 8 - Posting",
+      "content_1": "・Creators may post arbitrary posted content on the Creator page after setting the publication range by the method specified by the Company.",
+      "content_2": "・When using the Service, Creators shall not post data or posted content that falls under any of the following, or engage in actions that lead to external online storage services or other external web services for the purpose of publication. If the Company determines that content falls under these categories, it may request corrections from the Creator, delete all or part of the posted content, change the publication range, or take other measures. Depending on the circumstances, the Company may cancel the Creator's registration. However, the Company is not obligated to take these measures and is not obligated to disclose the reasons for taking these measures.",
+      "content_2_1": "　1. Obscene expressions or excessively distorted sexual expressions",
+      "content_2_2": "　2. Violent or cruel expressions that are highly stimulating and cause disgust or discomfort",
+      "content_2_3": "　3. Expressions that glorify or encourage extreme ideologies or antisocial behavior",
+      "content_2_4": "　4. Expressions that glorify or encourage discrimination based on race, creed, occupation, gender, religion, etc.",
+      "content_2_5": "　5. Expressions that glorify or encourage cult-like religious activities or excessive political activities",
+      "content_2_6": "　6. Content that, when a third party makes claims of rights infringement or other matters, the Company examines and determines that it cannot be said that the third party's claims are without reason",
+      "content_2_7": "　7. Content that has been pointed out or commented on by public institutions or experts (national or local governments, reliability verification organizations specified in the guidelines for the Act on the Limitation of Liability for Damages of Specified Telecommunications Service Providers and the Right to Demand Disclosure of Identification Information of the Sender, Internet Hotline, lawyers, etc.) as illegal, contrary to public order and morals, or infringing the rights of others",
+      "content_2_8": "　8. Expressions that infringe the rights of third parties and are deemed inappropriate as expressions provided on this individual service even considering freedom of expression",
+      "content_2_9": "　9. Information products related to finance such as FX, stocks, cryptocurrencies, associated tools and related content",
+      "content_2_10": "　10. Content designated by the Company as \"AI-generated content\" (defined in the next article) in the Service"
+    },
+    "article_9": {
+      "title": "Article 9 - AI-generated Content",
+      "content_intro": "In the Service, content that meets the following requirements is defined as \"AI-generated content\":",
+      "content_1": "・Content generated using AI (including similar technologies) in all or a major part of the production process, or content with minor modifications to such content"
+    },
+    "article_10": {
+      "title": "Article 10 - Prohibited Acts",
+      "content_intro": "Users shall not engage in the following acts when using the Service. If prohibited acts are committed, measures such as deletion of all or part of posted content, forced withdrawal, or suspension of use may be taken.",
+      "content_1": "・Acts that violate laws or public order and morals",
+      "content_2": "・Acts related to criminal activities",
+      "content_3": "・Acts that infringe or may infringe the Company's or third parties' copyrights, design rights, or other intellectual property rights, or other rights",
+      "content_4": "・Acts of reproducing posted information on the Service without the consent of the author (creator)",
+      "content_5": "・Acts that destroy or interfere with the functions of the Company's, other Users', or other third parties' servers or networks",
+      "content_6": "・Acts of commercially using information obtained through the Service",
+      "content_7": "・Acts that may interfere with the Company's service operations",
+      "content_8": "・Acts of unauthorized access or attempts thereof",
+      "content_9": "・Acts of collecting or accumulating personal information about other Users",
+      "content_10": "・Acts of using the Service for fraudulent purposes",
+      "content_11": "・Acts that cause disadvantage, damage, or discomfort to other Users of the Service or other third parties",
+      "content_12": "・Acts of impersonating other Users",
+      "content_13": "・Advertising, solicitation, or business activities on the Service not authorized by the Company",
+      "content_14": "・Acts aimed at meeting strangers of the opposite sex",
+      "content_15": "・Acts of directly or indirectly providing benefits to antisocial forces in connection with the Company's services",
+      "content_16": "・Other acts deemed inappropriate by the Company"
+    },
+    "article_11": {
+      "title": "Article 11 - Disclaimer of Warranties and Exemption from Liability",
+      "content_1": "・The Company does not explicitly or implicitly guarantee that the Service is free from defects (including defects related to safety, reliability, accuracy, completeness, effectiveness, fitness for a particular purpose, security, errors or bugs, infringement of rights, etc.) in fact or in law.",
+      "content_2": "・The Company shall not be liable for any damages caused to Users arising from the Service, except in cases of intentional or gross negligence by the Company. However, this disclaimer does not apply if the contract between the Company and Users regarding the Service (including these Terms) constitutes a consumer contract as defined in the Consumer Contract Act.",
+      "content_3": "・Even in cases stipulated in the proviso of the preceding paragraph, the Company shall not be liable for any damages arising from special circumstances (including cases where the Company or Users foresaw or could have foreseen the occurrence of damages) caused to Users by breach of contract or tort due to negligence (excluding gross negligence) by the Company. Furthermore, compensation for damages caused to Users by breach of contract or tort due to negligence (excluding gross negligence) by the Company shall be limited to the amount of usage fees received from Users in the month in which the damage occurred.",
+      "content_4": "・In the event of any dispute between Users or between Users and third parties, it shall be resolved between the Users or between the Users and the third parties, and the Company shall not be liable.",
+      "content_5": "・The Company shall not be liable for damages suffered by Users or others arising from delays or interruptions in the provision of the Service due to any of the following or other reasons, unless otherwise specified in these Terms:",
+      "content_5_1": "　1. When regularly or urgently performing maintenance on equipment for the Service",
+      "content_5_2": "　2. When the Service cannot be provided due to fire, power outage, etc.",
+      "content_5_3": "　3. When the Service cannot be provided due to natural disasters such as earthquakes, volcanic eruptions, floods, tsunamis, etc.",
+      "content_5_4": "　4. When the Service cannot be provided due to war, upheaval, riot, disturbance, labor disputes, etc.",
+      "content_5_5": "　5. Due to failures in equipment or systems used by the Company, maintenance, etc.",
+      "content_5_6": "　6. When display speed decreases or failures occur due to excessive access or other unforeseen factors",
+      "content_5_7": "　7. When security problems occur that cannot be prevented by normally implemented anti-spying measures, use of software without known defects, antivirus measures, etc.",
+      "content_5_8": "　8. When the Company determines that temporary suspension of the Service is necessary operationally or technically",
+      "content_6": "・The Company is not obligated to manage or save posted information posted by Users"
+    },
+    "article_12": {
+      "title": "Article 12 - Prohibition of Transfer of Rights and Obligations",
+      "content_1": "Users may not transfer their contractual status or rights or obligations under these Terms to third parties, or pledge them as collateral, without the prior written consent of the Company."
+    },
+    "article_13": {
+      "title": "Article 13 - Changes to Service Content",
+      "content_1": "The Company may change, add, or discontinue the content of the Service without prior notice to Users, and Users agree to this. These responses shall be made with consideration for Users' convenience."
+    },
+    "article_14": {
+      "title": "Article 14 - Notices and Communications",
+      "content_1": "Notices and communications between Users and the Company shall be made by the method specified by the Company. Unless the Company receives a change notification from Users in accordance with the format separately specified by the Company, the Company shall deem the currently registered contact information as valid and send notices or communications to that contact information, which shall be deemed to have reached Users at the time of transmission."
+    },
+    "article_15": {
+      "title": "Article 15 - Governing Law and Jurisdiction",
+      "content_1": "・Japanese law shall be the governing law for the interpretation of these Terms.",
+      "content_2": "・In the event of any dispute regarding the Service, the court having jurisdiction over the Company's location shall have exclusive agreed jurisdiction."
+    },
+    "article_16": {
+      "title": "Article 16 - Company Information",
+      "content_1": "Location and personal information shall be disclosed only when there are legitimate reasons."
+    },
+    "end": "End"
   }
 }
