@@ -111,6 +111,33 @@
       "skip": "Skip tour"
     }
   },
+  "SocialLoginButton": {
+    "google": "Continue with Google",
+    "X": "Continue with X"
+  },
+  "Login": {
+    "e_mail": "Email",
+    "password": "Password",
+    "login": "Login",
+    "forgot_password?": "Forgot password?",
+    "or": "or",
+    "is_this_first?": "Is this your first time using GamutCut?",
+    "sign_up": "Sign Up"
+  },
+  "SignUp": {
+    "display_name": "Display Name",
+    "e_mail": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "placeholder_1": "Up to 20 characters",
+    "placeholder_2": "Email",
+    "placeholder_3": "8+ characters (alphanumeric, symbols)",
+    "placeholder_4": "8+ characters (alphanumeric, symbols)",
+    "have_account?": "Already have an account?",
+    "sign_up": "Sign Up",
+    "login": "Login",
+    "or": "or"
+  },
   "PresetCard": {
     "confirm_deletion": "Confirm Deletion",
     "value": "Value",

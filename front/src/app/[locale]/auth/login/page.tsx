@@ -18,6 +18,7 @@ import { loginUser } from '@/lib/api';
 import { LoginRequest } from '@/types/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAlert } from '@/contexts/AlertContext';
+import { useLocale, useTranslations } from 'next-intl';
 
 export default function Login() {
   const router = useRouter();
@@ -28,6 +29,8 @@ export default function Login() {
     email: '',
     password: ''
   });
+  const t = useTranslations('Login');
+  const locale = useLocale();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -107,13 +110,13 @@ export default function Login() {
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="email">メールアドレス</Label>
+                <Label htmlFor="email">{t('e_mail')}</Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="username"
-                  placeholder="メールアドレス"
+                  placeholder={t('e_mail')}
                   value={formData.email}
                   onChange={handleInputChange}
                   required
@@ -121,14 +124,14 @@ export default function Login() {
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">パスワード</Label>
+                  <Label htmlFor="password">{t('password')}</Label>
                 </div>
                 <Input
                   id="password"
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  placeholder="パスワード"
+                  placeholder={t('password')}
                   value={formData.password}
                   onChange={handleInputChange}
                   required
@@ -137,31 +140,31 @@ export default function Login() {
             </div>
             <CardFooter className="flex-col gap-2 my-8">
               <Button type="submit" className="w-full py-5">
-                ログイン
+                {t('login')}
               </Button>
               <div>
                 <Link
                   href="/auth/forgot-password"
                   className="ml-auto inline-block text-foreground text-sm underline-offset-4 hover:underline"
                 >
-                  パスワードをお忘れですか?
+                  {t('forgot_password?')}
                 </Link>
               </div>
             </CardFooter>
           </form>
           <div className="flex justify-between items-center w-full py-4">
             <hr className="w-1/3 border-gray-300" />
-            <span className="text-gray-300 text-sm">または</span>
+            <span className="text-gray-300 text-sm">{t('or')}</span>
             <hr className="w-1/3 border-gray-300" />
           </div>
           <SocialLoginButtons></SocialLoginButtons>
           <div>
-            <span className="text-sm mr-2">はじめてGamutCutをご利用ですか？</span>
+            <span className="text-sm mr-2">{t('is_this_first?')}</span>
             <Link
               href="/auth/register"
               className="ml-auto inline-block text-foreground text-sm underline-offset-4 hover:underline"
             >
-              新規登録
+              {t('sign_up')}
             </Link>
           </div>
         </CardContent>
