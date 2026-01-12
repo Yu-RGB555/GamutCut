@@ -1,8 +1,11 @@
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const SocialLoginButtons: React.FC = () => {
+  const t = useTranslations('SocialLoginButton');
+
   const handleSocialLogin = (provider: string) => {
     const url = `${API_BASE_URL}/auth/${provider}`;
 
@@ -16,7 +19,7 @@ const SocialLoginButtons: React.FC = () => {
         className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-sm shadow-sm bg-background text-sm font-medium text-label hover:cursor-pointer"
       >
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5 mr-2" />
-        Googleではじめる
+        {t('google')}
       </button>
 
       <button
@@ -24,7 +27,7 @@ const SocialLoginButtons: React.FC = () => {
         className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-sm shadow-sm bg-background text-sm font-medium text-label hover:cursor-pointer"
       >
         <img src="/X_logo.svg" alt="X" className="w-5 h-5 mr-2" />
-        Xではじめる
+        {t('X')}
       </button>
     </div>
   );

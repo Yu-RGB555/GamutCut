@@ -111,6 +111,33 @@
       "skip": "ツアーをスキップ"
     }
   },
+  "SocialLoginButton": {
+    "google": "Googleではじめる",
+    "X": "Xではじめる"
+  },
+  "Login": {
+    "e_mail": "メールアドレス",
+    "password": "パスワード",
+    "login": "ログイン",
+    "forgot_password?": "パスワードをお忘れですか？",
+    "or": "または",
+    "is_this_first?": "はじめてGamutCutをご利用ですか？",
+    "sign_up": "新規登録"
+  },
+  "SignUp": {
+    "display_name": "ハンドルネーム",
+    "e_mail": "メールアドレス",
+    "password": "パスワード",
+    "confirm_password": "パスワード（確認用）",
+    "placeholder_1": "最大20文字まで",
+    "placeholder_2": "メールアドレス",
+    "placeholder_3": "8文字以上（半角英数字・記号使用可）",
+    "placeholder_4": "8文字以上（半角英数字・記号）",
+    "have_account?": "すでにアカウントをお持ちですか？",
+    "sign_up": "新規登録",
+    "login": "ログイン",
+    "or": "または"
+  },
   "PresetCard": {
     "confirm_deletion": "Myマスク削除の確認",
     "value": "明度",
