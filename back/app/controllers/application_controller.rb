@@ -6,39 +6,37 @@ class ApplicationController < ActionController::API
 
   def set_locale
     # Accept-Languageヘッダーから言語を判定
-    locale = extract_locale_from_accept_language_header || I18n.default_locale
+    locale = extract_locale || I18n.default_locale
     I18n.locale = locale
   end
 
-  def extract_locale_from_accept_language_header
+  def extract_locale
+    Rails.logger.debug "request.env[HTTP_ACCEPT_LANGUAGE]: #{request.env["HTTP_ACCEPT_LANGUAGE"]}"
     request.env["HTTP_ACCEPT_LANGUAGE"]&.scan(/^[a-z]{2}/)&.first&.to_sym
   end
 
   def authenticate_user_from_token!
     # ヘッダーから認証情報を取得
     auth_header = request.headers["Authorization"]
+    Rails.logger.debug "Bearer<token>：#{auth_header}"
 
-    # 1.JWT認証
+    # JWT認証
     if auth_header.present? && auth_header[/^Bearer /]
       token = auth_header.split(" ").last
+      Rails.logger.debug "token: #{token}"
 
       begin
-        # JWT生成と同じ秘密鍵を使用（credentials）
+        # JWT生成時に保存した秘密鍵（credentials）で署名検証しデコード
         payload = JWT.decode(token, Rails.application.credentials.secret_key_base)[0]
-
-        user_id = payload["user_id"] || payload["sub"]
+        Rails.logger.debug "payload: #{payload}"
+        user_id = payload["user_id"]
         if user_id
           @current_user = User.find_by(id: user_id)
-          Rails.logger.debug "JWT Auth success: user_id=#{user_id}, found_user=#{@current_user.present?}"
         else
-          Rails.logger.debug "No user_id in payload"
           @current_user = nil
         end
-      rescue JWT::DecodeError => e
-        Rails.logger.debug "JWT Auth failed: #{e.message}"
-        @current_user = nil
-      rescue => e
-        Rails.logger.debug "JWT Auth error: #{e.message}"
+      rescue StandardError => e
+        Rails.logger.debug "例外発生: #{e.message}"
         @current_user = nil
       end
     else
@@ -53,9 +51,7 @@ class ApplicationController < ActionController::API
 
   def authenticate_user!
     unless current_user
-      render json: {
-        errors: [ "ログインが必要です" ]
-      }, status: :unauthorized
+      render json: { errors: [ "ログインが必要です" ] }, status: :unauthorized
       return false
     end
     true
