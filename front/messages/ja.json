@@ -153,10 +153,10 @@
     "placeholder": "検索"
   },
   "combobox": {
-    "sort": "並べ替え",
+    "sort_by": "並べ替え",
     "popularity_order": "人気順",
-    "oldest_first": "古い順",
-    "newest_first": "新しい順"
+    "oldest_order": "古い順",
+    "newest_order": "新しい順"
   },
   "Header": {
     "login": "ログイン",
