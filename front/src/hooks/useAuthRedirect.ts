@@ -26,7 +26,8 @@ export const useAuthRedirect = () => {
       // 未認証の場合はリダイレクト
       if (!isAuthenticated) {
         // 現在のURLをlocalStorageに保存し、ログイン画面へ
-        localStorage.setItem('redirectAfterLogin', window.location.pathname);
+        const redirectPath = window.location.pathname.replace(/^\/(en|ja)/, '');
+        localStorage.setItem('redirectAfterLogin', redirectPath);
         router.push('/auth/login');
       }
     }
