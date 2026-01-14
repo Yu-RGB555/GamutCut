@@ -8,6 +8,10 @@ const withPWA = withPWAInit({
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     skipWaiting: true,
+    exclude: [
+      // 以下のファイルは存在しないため、ビルド時にキャッシュ対象として認識しないように除外
+      /\/_next\/dynamic-css-manifest\.json$/
+    ]
   }
 });
 
