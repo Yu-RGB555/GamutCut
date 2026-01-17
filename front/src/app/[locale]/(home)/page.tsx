@@ -31,7 +31,7 @@ export default function HelpPage() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ margin: "-50px" }}
+          viewport={{ once: true }}
         >
           <div className="space-y-6 lg:space-y-12">
             <motion.div
@@ -39,7 +39,7 @@ export default function HelpPage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              viewport={{ margin: "-50px" }}
+              viewport={{ once: true }}
             >
               {locale === 'ja' ? (
                 <>
@@ -49,15 +49,15 @@ export default function HelpPage() {
                     width={200}
                     height={200}
                     priority
-                    className="w-[200px] lg:w-[300px]"
+                    className="w-[160px] md:w-[200px] lg:w-[300px]"
                   />
-                  <span className="text-3xl lg:text-5xl pt-3 lg:pt-5 pl-1 lg:pl-2 font-bold text-label">
+                  <span className="text-2xl md:text-3xl lg:text-5xl pt-3 lg:pt-5 pl-1 lg:pl-2 font-bold text-label">
                     {t('welcome')}
                   </span>
                 </>
               ) : (
                 <>
-                  <span className="text-3xl lg:text-5xl pt-3 lg:pt-5 pr-2 lg:pr-4 font-bold text-label">
+                  <span className="text-2xl md:text-3xl lg:text-5xl pt-3 lg:pt-5 pr-2 lg:pr-4 font-bold text-label">
                     {t('welcome')}
                   </span>
                   <Image
@@ -66,7 +66,7 @@ export default function HelpPage() {
                     width={200}
                     height={200}
                     priority
-                    className="w-[200px] lg:w-[300px]"
+                    className="w-[160px] md:w-[200px] lg:w-[300px]"
                   />
                 </>
               )}
@@ -76,7 +76,7 @@ export default function HelpPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-              viewport={{ margin: "-50px" }}
+              viewport={{ once:true }}
             >
               {t('overview')}
             </motion.p>
@@ -89,7 +89,7 @@ export default function HelpPage() {
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ margin: "-100px" }}
+          viewport={{ once: true }}
         >
           {locale === 'ja' ? (
             <>
@@ -99,20 +99,20 @@ export default function HelpPage() {
                 width={200}
                 height={200}
                 priority
-                className="w-[200px] lg:w-[300px]"
+                className="w-[160px] md:w-[200px] lg:w-[300px]"
               />
-              <span className="text-3xl lg:text-5xl pt-3 lg:pt-5 pl-1 lg:pl-2 font-bold text-label">{t('features_title')}</span>
+              <span className="text-2xl md:text-3xl lg:text-5xl pt-3 lg:pt-5 pl-1 lg:pl-2 font-bold text-label">{t('features_title')}</span>
             </>
           ) : (
             <>
-              <span className="text-3xl lg:text-5xl pt-3 lg:pt-5 pr-2 lg:pr-4 font-bold text-label">{t('features_title')}</span>
+              <span className="text-2xl md:text-3xl lg:text-5xl pt-3 lg:pt-5 pr-2 lg:pr-4 font-bold text-label">{t('features_title')}</span>
               <Image
                 src="/app_logo.svg"
                 alt="App Logo"
                 width={200}
                 height={200}
                 priority
-                className="w-[200px] lg:w-[300px]"
+                className="w-[160px] md:w-[200px] lg:w-[300px]"
               />
             </>
           )}
@@ -122,14 +122,36 @@ export default function HelpPage() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ margin: "-100px" }}
+          viewport={{ once: true }}
         >
           <motion.div
             className="h-full"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
+            <Card className="bg-card border-2 border-muted h-full">
+              <CardHeader>
+                <div className="flex items-center space-x-2">
+                  <Palette className="h-6 w-6 text-red-400" />
+                  <CardTitle className="text-lg">{t('feature_hsv_title')}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-label/70">
+                  {t('feature_hsv_desc')}
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            className="h-full"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-            viewport={{ margin: "-50px" }}
+            viewport={{ once: true }}
           >
             <Card className="bg-card border-2 border-muted h-full">
               <CardHeader>
@@ -151,7 +173,7 @@ export default function HelpPage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            viewport={{ margin: "-50px" }}
+            viewport={{ once: true }}
           >
             <Card className="bg-card border-2 border-muted h-full">
               <CardHeader>
@@ -173,7 +195,7 @@ export default function HelpPage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-            viewport={{ margin: "-50px" }}
+            viewport={{ once: true }}
           >
             <Card className="bg-card border-2 border-muted h-full">
               <CardHeader>
@@ -195,7 +217,7 @@ export default function HelpPage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-            viewport={{ margin: "-50px" }}
+            viewport={{ once: true }}
           >
             <Card className="bg-card border-2 border-muted h-full">
               <CardHeader>
@@ -216,30 +238,8 @@ export default function HelpPage() {
             className="h-full"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
-            viewport={{ margin: "-50px" }}
-          >
-            <Card className="bg-card border-2 border-muted h-full">
-              <CardHeader>
-                <div className="flex items-center space-x-2">
-                  <Palette className="h-6 w-6 text-red-400" />
-                  <CardTitle className="text-lg">{t('feature_hsv_title')}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-label/70">
-                  {t('feature_hsv_desc')}
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            className="h-full"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
-            viewport={{ margin: "-50px" }}
+            viewport={{ once: true }}
           >
             <Card className="bg-card border-2 border-muted h-full">
               <CardHeader>
@@ -263,14 +263,14 @@ export default function HelpPage() {
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ margin: "-100px" }}
+          viewport={{ once: true }}
         >
           <motion.h2
             className="text-3xl font-bold text-label text-center mb-12"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            viewport={{ margin: "-100px" }}
+            viewport={{ once: true }}
           >
             {t('flow_title')}
           </motion.h2>
@@ -280,7 +280,7 @@ export default function HelpPage() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-              viewport={{ margin: "-50px" }}
+              viewport={{ once: true }}
             >
               <div className="w-16 h-16 bg-cyan-400 rounded-full flex items-center justify-center text-2xl font-bold text-black mx-auto mb-4">
                 1
@@ -295,7 +295,7 @@ export default function HelpPage() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-              viewport={{ margin: "-50px" }}
+              viewport={{ once: true }}
             >
               <div className="w-16 h-16 bg-green-400 rounded-full flex items-center justify-center text-2xl font-bold text-black mx-auto mb-4">
                 2
@@ -310,7 +310,7 @@ export default function HelpPage() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-              viewport={{ margin: "-50px" }}
+              viewport={{ once: true }}
             >
               <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-2xl font-bold text-black mx-auto mb-4">
                 3
@@ -325,7 +325,7 @@ export default function HelpPage() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-              viewport={{ margin: "-50px" }}
+              viewport={{ once: true }}
             >
               <div className="w-16 h-16 bg-pink-400 rounded-full flex items-center justify-center text-2xl font-bold text-black mx-auto mb-4">
                 4
@@ -344,14 +344,14 @@ export default function HelpPage() {
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ margin: "-100px" }}
+          viewport={{ once: true }}
         >
           <motion.h2
             className="text-2xl font-bold text-label mb-4"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
           >
             {t('cta_title')}
           </motion.h2>
@@ -360,7 +360,7 @@ export default function HelpPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
           >
             {t('cta_desc')}
           </motion.p>
@@ -369,7 +369,7 @@ export default function HelpPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
           >
             <Button asChild size="lg" className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold">
               <Link href="/mask">
@@ -390,14 +390,14 @@ export default function HelpPage() {
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ margin: "-100px" }}
+          viewport={{ once: true }}
         >
           <motion.h2
             className="text-3xl font-bold text-label text-center mb-8"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
           >
             {t('faq_title')}
           </motion.h2>
@@ -405,7 +405,7 @@ export default function HelpPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
           >
             <Accordion type="single" collapsible className="w-full space-y-4">
             <AccordionItem value="faq-1" className="bg-card border border-gray-400 rounded-lg px-6">
