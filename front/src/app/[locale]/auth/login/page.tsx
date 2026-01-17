@@ -158,11 +158,11 @@ export default function Login() {
             <hr className="w-1/3 border-gray-300" />
           </div>
           <SocialLoginButtons></SocialLoginButtons>
-          <div>
+          <div className="text-center">
             <span className="text-sm mr-2">{t('is_this_first?')}</span>
             <Link
               href="/auth/register"
-              className="ml-auto inline-block text-foreground text-sm underline-offset-4 hover:underline"
+              className="inline-block text-foreground text-sm underline-offset-4 hover:underline"
             >
               {t('sign_up')}
             </Link>
