@@ -217,7 +217,7 @@
 <br>
 
 ## アプリケーション構成図
-![alt アプリケーション構成図](https://github.com/user-attachments/assets/139f775c-bd39-4159-ae46-54abdabffd7e)
+![alt アプリケーション構成図](https://github.com/user-attachments/assets/9f84331e-3c60-4327-bf7b-3423ae8a2c6e)
 
 <br>
 
@@ -227,4 +227,4 @@
 <br>
 
 ## ER図
-![alt 卒制ER図](https://github.com/user-attachments/assets/c2aca4e2-38dc-4124-87b8-74d10e2e8436)
+![alt 卒制ER図](https://github.com/user-attachments/assets/43076173-aaf3-4458-8c95-23b6330cd001)
