@@ -3,6 +3,9 @@ name: Backend CI
 # backendファイル更新時のみ実行
 on:
   pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'back/**'
   push:
     branches: [ "main" ]
     paths:
