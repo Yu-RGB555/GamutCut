@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: ['/opengraph-image.png'],
       creator: '@GamutCut',
     },
-    metadataBase: new URL(process.env.FRONTEND_URL!),
+    metadataBase: new URL(process.env.FRONTEND_URL || 'http://localhost:3003'),
     robots: {
       index: true,
       follow: true,
