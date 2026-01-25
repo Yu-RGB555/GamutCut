@@ -16,6 +16,9 @@ jobs:
     defaults:
       run:
         working-directory: ./front
+    env:
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
     steps:
       - name: Checkout code
@@ -31,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+
       - name: Run Lint
         run: yarn lint
 
@@ -39,3 +45,6 @@ jobs:
 
       - name: Run Build Check
         run: yarn build
+
+      - name: Run Playwright tests
+        run: yarn playwright test

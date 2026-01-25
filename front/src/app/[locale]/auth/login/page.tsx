@@ -96,7 +96,7 @@ export default function Login() {
       <Card className="w-full max-w-sm mx-auto">
         <CardHeader className="flex flex-col items-center mb-4">
           <CardTitle className="flex justify-center w-full">
-            <img src='/app_logo.svg' className="w-3/4 h-auto" alt="GamutCut" />
+            <img src='/app_logo.svg' className="w-3/4 h-auto" alt="App Logo" />
           </CardTitle>
         </CardHeader>
         {errors.length > 0 && (
@@ -139,7 +139,11 @@ export default function Login() {
               </div>
             </div>
             <CardFooter className="flex-col gap-2 my-8">
-              <Button type="submit" className="w-full py-5">
+              <Button
+                data-testid="login-submit"
+                type="submit"
+                className="w-full py-5"
+              >
                 {t('login')}
               </Button>
               <div>
