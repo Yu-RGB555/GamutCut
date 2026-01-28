@@ -54,12 +54,12 @@ export function AppSidebar() {
       icon: Palette,
     },
     {
-      title: t('work_list'),
+      title: t('artwork_gallery'),
       url: "/work",
       icon: ImageIcon,
     },
     {
-      title: t('post_work'),
+      title: t('artwork'),
       url: "/work/new",
       icon: PenTool,
     },

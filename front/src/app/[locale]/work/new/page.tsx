@@ -19,6 +19,7 @@ import { AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useLoad } from "@/contexts/LoadingContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslations } from "next-intl";
 
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
@@ -39,6 +40,7 @@ export default function PostWorks() {
   const [isPresetDialogOpen, setIsPresetDialogOpen] = useState(false);
   const [illustrationFile, setIllustrationFile] = useState<File | null>(null);
   const [illustrationPreview, setIllustrationPreview] = useState<string | null>(null);
+  const t = useTranslations('PostWork');
 
   useEffect(() => {
     if (!illustrationFile){
@@ -130,7 +132,7 @@ export default function PostWorks() {
         {errors.length > 0 && (
           <Alert className="bg-card text-error mb-6">
             <AlertCircleIcon className="h-4 w-4" />
-            <AlertTitle className="font-semibold">投稿に失敗しました</AlertTitle>
+            <AlertTitle className="font-semibold">{t('failed_to_post')}</AlertTitle>
             <AlertDescription>
               <ul className="text-error font-semibold space-y-1 mt-2">
                 {errors.map((error, index) => (
@@ -142,7 +144,7 @@ export default function PostWorks() {
         )}
         <div className="flex justify-between mb-16">
           <div className="flex items-center">
-            <h1 className="text-label text-4xl font-extrabold">作品投稿</h1>
+            <h1 className="text-label text-4xl font-extrabold">{t('artwork')}</h1>
           </div>
           <div className="flex items-center gap-x-2">
           </div>
@@ -152,8 +154,8 @@ export default function PostWorks() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               <div>
                 <Label className="text-label font-semibold mb-2">
-                  イラスト作品
-                  <Label className="bg-destructive p-1 rounded-xs">必須</Label>
+                  {t('illustration_artwork')}
+                  <Label className="bg-destructive p-1 rounded-xs">{t('required')}</Label>
                 </Label>
                 <DropZone
                   onFileSelect={setIllustrationFile}
@@ -162,20 +164,20 @@ export default function PostWorks() {
                 />
                 {illustrationFile && (
                     (illustrationFile.size / 1024 / 1024) < 1 ? (
-                    <span className="flex justify-end text-sm text-gray-600 mt-2">
-                      選択中: {illustrationFile.name} ({Math.round(illustrationFile.size / 1024)}KB)
+                    <span className="flex justify-end text-sm text-gray-600 mt-2 line-clamp-1">
+                      {t('selected')}: {illustrationFile.name} ({Math.round(illustrationFile.size / 1024)}KB)
                     </span>
                     ) : (
-                    <span className="flex justify-end text-sm text-gray-600 mt-2">
-                      選択中: {illustrationFile.name} ({(illustrationFile.size / 1024 / 1024).toFixed(2)}MB)
+                    <span className="flex justify-end text-sm text-gray-600 mt-2 line-clamp-1">
+                      {t('selected')}: {illustrationFile.name} ({(illustrationFile.size / 1024 / 1024).toFixed(2)}MB)
                     </span>
                     )
                 )}
               </div>
               <div className="gap-2">
                 <Label className="text-label font-semibold mb-2">
-                  作品で使用したマスク
-                  <Label className="bg-destructive p-1 rounded-xs">必須</Label>
+                  {t('mask_used_in_the_artwork')}
+                  <Label className="bg-destructive p-1 rounded-xs">{t('required')}</Label>
                 </Label>
                 <div
                   className="cursor-pointer"
@@ -192,8 +194,8 @@ export default function PostWorks() {
                       >
                         <X className="w-4 h-4 text-white" />
                       </button>
-                      <span className="flex justify-end text-sm text-gray-600 mt-2">
-                        選択中: {presetData.name}
+                      <span className="flex justify-end text-sm text-gray-600 mt-2 line-clamp-1">
+                        {t('selected')}: {presetData.name}
                       </span>
                     </div>
                   ) : (
@@ -220,23 +222,23 @@ export default function PostWorks() {
             <div className="grid grid-cols gap-6">
               <div>
                 <Label className="text-label font-semibold mb-2">
-                  作品タイトル
-                  <Label className="bg-destructive p-1 rounded-xs">必須</Label>
+                  {t('title')}
+                  <Label className="bg-destructive p-1 rounded-xs">{t('required')}</Label>
                 </Label>
                 <Input
                   value={formData.title}
                   onChange={(e)=> handleInputChange('title', e.target.value)}
-                  placeholder="最大30文字まで"
+                  placeholder={t('title_placeholder')}
                   required
                 />
               </div>
               <div>
-                <Label className="text-label font-semibold mb-2">作品説明</Label>
+                <Label className="text-label font-semibold mb-2">{t('description')}</Label>
                 <Textarea
                   className="h-32"
                   value={formData.description}
                   onChange={(e)=> handleInputChange('description', e.target.value)}
-                  placeholder="最大300文字まで"
+                  placeholder={t('description_placeholder')}
                 />
               </div>
               <div>
@@ -255,13 +257,13 @@ export default function PostWorks() {
                 variant="secondary"
                 onClick={(e) => handleSubmit(e, true)}  // true(下書き)を渡す
               >
-                下書き保存
+                {t('save_as_draft')}
               </Button>
               <Button
                 type="button"
                 onClick={(e) => handleSubmit(e, false)} // false(公開)を渡す
               >
-                投稿
+                {t('post')}
               </Button>
             </div>
         </form>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface TagInputProps {
   tags: string[];
@@ -23,6 +24,8 @@ export function TagInput({
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
   const [isComposing, setIsComposing] = useState(false); // IME変換中フラグ
+  const t = useTranslations('Tags');
+  const locale = useLocale();
 
   const addTag = (tagName: string) => {
     const trimmedTag = tagName.trim();
@@ -83,10 +86,16 @@ export function TagInput({
   return (
     <div className="space-y-3">
       <Label className="text-label font-semibold">
-        タグ
-        <span className="text-xs text-gray-500 ml-2">
-          (最大{maxTags}個、各{maxTagLength}文字以内)
-        </span>
+        {t('title')}
+        {locale === 'ja' ? (
+          <span className="text-xs text-gray-500 ml-2">
+            (最大{maxTags}個、各{maxTagLength}文字以内)
+          </span>
+        ) : (
+          <span className="text-xs text-gray-500 ml-2">
+            ( Up to {maxTags} keywords, {maxTagLength} characters maximum each. )
+          </span>
+          )}
       </Label>
 
       {/* タグ表示エリア */}
@@ -123,7 +132,7 @@ export function TagInput({
           onKeyDown={handleKeyDown}
           onCompositionStart={handleCompositionStart} // IME変換開始
           onCompositionEnd={handleCompositionEnd}     // IME変換終了
-          placeholder="タグを入力してEnterキーまたは追加ボタンを押してください"
+          placeholder={t('placeholder')}
           maxLength={maxTagLength}
           disabled={tags.length >= maxTags}
         />
@@ -134,7 +143,7 @@ export function TagInput({
           variant="secondary"
           className="whitespace-nowrap"
         >
-          追加
+          {t('add_button')}
         </Button>
       </div>
 
@@ -145,7 +154,7 @@ export function TagInput({
 
       {/* ヘルプテキスト */}
       <p className="text-xs text-gray-500">
-        Enterキーまたは追加ボタンでタグを追加できます。タグをクリックして削除できます。
+        {t('help')}
       </p>
     </div>
   );

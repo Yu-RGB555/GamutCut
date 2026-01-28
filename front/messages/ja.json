@@ -51,8 +51,8 @@
   "Sidebar": {
     "home": "ホーム",
     "create_mask": "ガマットマスク作成",
-    "work_list": "作品一覧",
-    "post_work": "作品投稿",
+    "artwork_gallery": "作品一覧",
+    "artwork": "作品投稿",
     "settings": "設定",
     "menu": "メニュー",
     "others": "その他"
@@ -145,9 +145,9 @@
     "ok": "はい",
     "cancel": "キャンセル"
   },
-  "Works": {
+  "Artworks": {
     "popular_tags": "人気タグ",
-    "work": "作品"
+    "artwork": "作品"
   },
   "Search": {
     "placeholder": "検索"
@@ -157,6 +157,27 @@
     "popularity_order": "人気順",
     "oldest_order": "古い順",
     "newest_order": "新しい順"
+  },
+  "PostWork": {
+    "failed_to_post": "投稿に失敗しました",
+    "artwork": "作品投稿",
+    "illustration_artwork": "イラスト作品",
+    "selected": "選択中",
+    "required": "必須",
+    "title": "作品タイトル",
+    "title_placeholder": "最大30文字まで",
+    "description": "作品説明文",
+    "description_placeholder": "最大300文字まで",
+    "mask_used_in_the_artwork": "作品で使用したマスク",
+    "tags": "タグ",
+    "save_as_draft": "下書き保存",
+    "post": "投稿"
+  },
+  "Tags": {
+    "title": "タグ",
+    "placeholder": "タグを入力してEnterキーまたは追加ボタンを押してください",
+    "add_button": "追加",
+    "help": "Enterキーまたは追加ボタンでタグを追加できます。タグをクリックして削除できます。"
   },
   "Header": {
     "login": "ログイン",

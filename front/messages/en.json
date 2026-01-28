@@ -51,8 +51,8 @@
   "Sidebar": {
     "home": "Home",
     "create_mask": "Create Gamut Mask",
-    "work_list": "Works",
-    "post_work": "Post Work",
+    "artwork_gallery": "Artwork Gallery",
+    "artwork": "Artwork",
     "settings": "Settings",
     "menu": "Menu",
     "others": "Others"
@@ -145,9 +145,9 @@
     "ok": "OK",
     "cancel": "Cancel"
   },
-  "Works": {
+  "Artworks": {
     "popular_tags": "Popular Tags",
-    "work": "work"
+    "artwork": "Artwork"
   },
   "Search": {
     "placeholder": "Search"
@@ -157,6 +157,27 @@
     "popularity_order": "MOST POPULAR",
     "oldest_order": "OLDEST",
     "newest_order": "NEWEST"
+  },
+  "PostWork": {
+    "failed_to_post": "Failed to post",
+    "artwork": "Artwork",
+    "illustration_artwork": "Illustration Artwork",
+    "selected": "Selected",
+    "required": "Required",
+    "title": "Artwork Title",
+    "title_placeholder": "Up to 30 characters",
+    "description": "Artwork Description",
+    "description_placeholder": "Up to 300 characters",
+    "mask_used_in_the_artwork": "Mask used in the artwork",
+    "tags": "tags",
+    "save_as_draft": "Save as draft",
+    "post": "Post"
+  },
+  "Tags": {
+    "title": "Tags",
+    "placeholder": "Please enter a tag and press the Enter key or the Add button.",
+    "add_button": "add",
+    "help": "You can add tags by pressing the Enter key or the Add button. You can remove tags by clicking them."
   },
   "Header": {
     "login": "Login",
