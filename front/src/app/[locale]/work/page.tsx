@@ -31,7 +31,7 @@ function WorksListContent() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(''); // searchQueryの値を保存（デバウンス処理用）
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const t = useTranslations('Works');
+  const t = useTranslations('Artworks');
   const locale = useLocale();
 
   // URLパラメータから初期検索クエリとタグを取得し、同時に作品を取得
