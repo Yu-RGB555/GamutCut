@@ -19,6 +19,7 @@ import { Comment } from "@/types/comment";
 import { updateComment } from "@/lib/api";
 import { useAlert } from "@/contexts/AlertContext";
 import { Textarea } from "./ui/textarea";
+import { useTranslations } from "next-intl";
 
 interface CommentItemProps {
   comment: Comment;
@@ -38,6 +39,7 @@ export function CommentItem({
   onDelete,
   showActions = true
 }: CommentItemProps) {
+  const t = useTranslations('Comment');
   const { showAlert } = useAlert();
   const isOwner = currentUserId === comment.user.id;
 
@@ -72,7 +74,7 @@ export function CommentItem({
   const saveComment = async () => {
     const trimmedContent = editedContent.trim();
     if (trimmedContent === '') {
-      showAlert('コメントを入力してください');
+      showAlert(t('enter_comment'));
       return;
     }
 
@@ -93,7 +95,7 @@ export function CommentItem({
       }
     } catch (error) {
       console.error('コメント更新エラー:', error);
-      showAlert(error instanceof Error ? error.message : 'コメントの更新に失敗しました');
+      showAlert(error instanceof Error ? error.message : t('update_failed'));
     } finally {
       setIsUpdating(false);
     }
@@ -144,7 +146,7 @@ export function CommentItem({
               <span className="text-xs text-muted-foreground">
                 ・{formatDate(comment.created_at)}
                 {comment.created_at !== comment.updated_at && (
-                  <span className="text-xs text-muted-foreground">（編集済み）</span>
+                  <span className="text-xs text-muted-foreground">{t('edited')}</span>
                 )}
               </span>
             </div>
@@ -158,7 +160,7 @@ export function CommentItem({
                   className="h-6 px-2 text-xs"
                   onClick={startEditing}
                 >
-                  編集
+                  {t('edit')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -166,7 +168,7 @@ export function CommentItem({
                   className="h-6 px-2 text-xs text-destructive hover:text-destructive"
                   onClick={() => setIsDialogOpen(true)}
                 >
-                  削除
+                  {t('delete')}
                 </Button>
               </div>
             )}
@@ -186,7 +188,7 @@ export function CommentItem({
                 maxLength={500}
                 disabled={isUpdating}
                 autoFocus
-                placeholder="コメントを入力してください"
+                placeholder={t('enter_comment')}
               />
               <div className="flex justify-between items-center text-xs text-muted-foreground">
                 <span>{editedContent.length}/500</span>
@@ -227,18 +229,18 @@ export function CommentItem({
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>コメント削除の確認</DialogTitle>
-            <DialogDescription className="text-label pt-2">コメントを削除しますか？</DialogDescription>
+            <DialogTitle>{t('delete_confirmation_title')}</DialogTitle>
+            <DialogDescription className="text-label pt-2">{t('delete_confirmation_message')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="secondary"
               onClick={() => setIsDialogOpen(false)}
-            >キャンセル</Button>
+            >{t('cancel')}</Button>
             <Button
               variant="secondary"
               onClick={() => onDelete?.(comment.id)}
-            >はい</Button>
+            >{t('yes')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

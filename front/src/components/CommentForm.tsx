@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import { createComment } from "@/lib/api";
+import { useTranslations } from "next-intl";
 
 interface CommentFormProps {
   workId: number;
@@ -20,17 +21,18 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
   const router = useRouter();
   const { user } = useAuth();
   const { showAlert } = useAlert();
+  const t = useTranslations('Comment');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user) {
-      showAlert("コメントを投稿するにはログインが必要です");
+      showAlert(t('login_required'));
       return;
     }
 
     if (!content.trim()) {
-      showAlert("コメント内容を入力してください");
+      showAlert(t('enter_content'));
       return;
     }
 
@@ -43,7 +45,7 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
       showAlert(result.message);
     } catch (error) {
       console.error("コメント投稿エラー:", error);
-      showAlert(error instanceof Error ? error.message : "コメントの投稿に失敗しました");
+      showAlert(error instanceof Error ? error.message : t('fetch_failed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -57,7 +59,7 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
     return (
       <div className="p-4 border rounded-lg text-center">
         <p className="text-sm text-muted-foreground mb-2">
-          コメントを投稿するにはログインが必要です
+          {t('login_required')}
         </p>
         <Button
           variant="secondary"
@@ -68,7 +70,7 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
             router.push('/auth/login');
           }}
         >
-          ログイン
+          {t('login')}
         </Button>
       </div>
     );
@@ -79,7 +81,7 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
       <Textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="コメントを入力"
+        placeholder={t('placeholder')}
         className="text-white min-h-[100px] resize-none"
         maxLength={500}
         disabled={isSubmitting}
@@ -96,7 +98,7 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
               size="sm"
               className="border"
             >
-              キャンセル
+              {t('cancel')}
             </Button>
           )}
           <Button
@@ -104,7 +106,7 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
             disabled={isSubmitting || !content.trim()}
             size="sm"
           >
-            {isSubmitting ? "投稿中..." : "投稿"}
+            {isSubmitting ? t('posting') : t('post')}
           </Button>
         </div>
       </div>
