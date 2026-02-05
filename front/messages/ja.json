@@ -319,6 +319,23 @@
     },
     "end": "以上"
   },
+  "WorkDetail": {
+    "work_not_found": "作品が見つかりません...",
+    "edit": "編集",
+    "delete": "削除",
+    "delete_confirmation_title": "作品削除の確認",
+    "delete_confirmation_message": "一度削除すると元に戻すことができなくなります。",
+    "delete_confirmation_question": "本当に削除しますか？",
+    "cancel": "キャンセル",
+    "yes": "はい",
+    "no_image": "画像なし",
+    "mask_used_in_work": "作品で使用したマスク",
+    "copy_and_edit": "コピーして編集",
+    "mask_not_set": "マスク未設定",
+    "tags": "タグ",
+    "delete_failed": "作品の削除に失敗しました",
+    "mask_copied": "マスクをコピーしました。マスク作成画面に移ります。"
+  },
   "PrivacyPolicy": {
     "title": "プライバシーポリシー",
     "intro": "{serviceName}（以下、「当社」といいます。）は、本ウェブサイト上で提供するサービス（以下、「本サービス」といいます。）における、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下、「本ポリシー」といいます。）を定めます。",
