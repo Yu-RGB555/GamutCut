@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import { getComments, deleteComment } from "@/lib/api";
 import { Comment } from "@/types/comment";
+import { useLocale, useTranslations } from "next-intl";
 
 interface CommentListProps {
   workId: number;
@@ -25,6 +26,8 @@ export function CommentList({
   const [displayCount, setDisplayCount] = useState(3); // 表示するコメント数
   const { user } = useAuth();
   const { showAlert } = useAlert();
+  const t = useTranslations('Comment');
+  const locale = useLocale();
 
   // 投稿済みコメントの取得
   const fetchComments = async () => {
@@ -37,7 +40,7 @@ export function CommentList({
         setDisplayCount(Math.max(3, displayCount));
       }
     } catch (error) {
-      setError("コメントの取得に失敗しました");
+      setError(t('fetch_failed'));
     } finally {
       setLoading(false);
     }
@@ -56,7 +59,7 @@ export function CommentList({
       showAlert(result.message);
     } catch (error) {
       console.error("コメント削除に失敗:", error);
-      showAlert(error instanceof Error ? error.message : "コメントの削除に失敗しました");
+      showAlert(error instanceof Error ? error.message : t('delete_failed'));
     }
   };
 
@@ -104,7 +107,7 @@ export function CommentList({
       <div className="text-center py-8">
         <p className="text-destructive mb-4">{error}</p>
         <Button variant="outline" onClick={fetchComments}>
-          再試行
+          {t('retry')}
         </Button>
       </div>
     );
@@ -114,7 +117,7 @@ export function CommentList({
     <div className="space-y-4">
       <div className="flex items-center justify-between min-h-[2rem]">
         <h3 className="text-lg font-semibold">
-          コメント（{loading ? "..." : comments.length}）
+          {t('comments_count')}（{loading ? "..." : comments.length}）
         </h3>
       </div>
 
@@ -124,7 +127,7 @@ export function CommentList({
 
       {displayComments.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
-          最初のコメントを投稿してみましょう！
+          {t('first_comment')}
         </div>
       ) : (
         <div className="grid gap-2">
@@ -150,7 +153,11 @@ export function CommentList({
             onClick={handleShowMore}
             className="font-semibold min-w-[200px]"
           >
-            他 {comments.length - currentDisplayCount} 件のコメントを見る
+            {locale === 'ja' ? (
+              <span>他 {comments.length - currentDisplayCount} 件のコメントを見る</span>
+            ) : (
+              <span>Show {comments.length - currentDisplayCount} more comment</span>
+            )}
           </Button>
         )}
       </div>
