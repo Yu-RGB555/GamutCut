@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { useParams } from "next/navigation";
 import { Link } from '@/i18n/routing';
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
   const id = params?.id;
   const { user } = useAuth();
   const { showAlert } = useAlert();
+  const t = useTranslations('WorkDetail');
   const { setIsLoadingOverlay } = useLoad();
   const [work, setWork] = useState(initialData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -66,7 +68,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
       }
     } catch (error) {
       console.error(error);
-      showAlert('作品の削除に失敗しました');
+      showAlert(t('delete_failed'));
     } finally {
       setIsLoadingOverlay(false);
     }
@@ -76,7 +78,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
   const handleCopyMask = (maskData: MaskData) => {
     // マスクデータをlocalStorageに保存
     localStorage.setItem('copiedMaskData', JSON.stringify(maskData));
-    showAlert('マスクをコピーしました。マスク作成画面に移ります。');
+    showAlert(t('mask_copied'));
     // 少し遅延を入れてからページ遷移
     setTimeout(() => {
       router.push('/mask');
@@ -86,7 +88,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
   if (!work) {
     return <div className="flex min-h-[500px] justify-center items-center">
       <div className="text-white text-center font-semibold">
-        作品が見つかりません...
+        {t('work_not_found')}
       </div>
     </div>;
   }
@@ -95,7 +97,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
   if ( work.is_public !== "published" && user?.id !== work.user.id) {
     return <div className="flex min-h-[500px] justify-center items-center">
       <div className="text-white text-center font-semibold">
-        作品が見つかりません...
+        {t('work_not_found')}
       </div>
     </div>;
   }
@@ -116,11 +118,11 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
             <Button
               variant="secondary"
               onClick={() => handleEdit(work.id)}
-            >編集</Button>
+            >{t('edit')}</Button>
             <Button
               variant="destructive"
               onClick={() => setIsDialogOpen(true)}
-            >削除</Button>
+            >{t('delete')}</Button>
           </div>
         )}
       </div>
@@ -129,18 +131,18 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>作品削除の確認</DialogTitle>
-            <DialogDescription className="text-label pt-2">一度削除すると元に戻すことができなくなります。<br />本当に削除しますか？</DialogDescription>
+            <DialogTitle>{t('delete_confirmation_title')}</DialogTitle>
+            <DialogDescription className="text-label pt-2">{t('delete_confirmation_message')}<br />{t('delete_confirmation_question')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="secondary"
               onClick={() => setIsDialogOpen(false)}
-            >キャンセル</Button>
+            >{t('cancel')}</Button>
             <Button
               variant="secondary"
               onClick={() => handleDelete(work.id)}
-            >はい</Button>
+            >{t('yes')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -158,14 +160,14 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
                   className="object-cover w-full h-full"
                 />
               ) : (
-                <span className="text-gray-500">画像なし</span>
+                <span className="text-gray-500">{t('no_image')}</span>
               )}
             </div>
           </div>
 
           {/* 作品で使用したマスク */}
           <div className="flex flex-1 flex-col">
-            <Label className="text-label font-semibold mb-2">作品で使用したマスク</Label>
+            <Label className="text-label font-semibold mb-2">{t('mask_used_in_work')}</Label>
               <div>
                 {work.set_mask_data ? (
                   <div className="grid grid-row-2 relative">
@@ -175,13 +177,13 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
                       className="mt-2"
                       onClick={() => handleCopyMask(work.set_mask_data)}
                     >
-                      コピーして編集
+                      {t('copy_and_edit')}
                     </Button>
                   </div>
                 ) : (
                   <div className="justify-center w-full h-full border rounded-lg cursor-pointer">
                     <div className="flex flex-col items-center justify-center h-80">
-                      <p className="mb-2 text-sm font-semibold text-gray-500">マスク未設定</p>
+                      <p className="mb-2 text-sm font-semibold text-gray-500">{t('mask_not_set')}</p>
                       <p className="text-xs text-gray-500"></p>
                     </div>
                   </div>
@@ -237,7 +239,7 @@ export function WorkDetailClient({initialData}: WorkDetailClientProps) {
           {/* タグ表示エリア */}
           {work.tags && work.tags.length > 0 && (
             <div className="mt-4">
-              <Label className="text-label font-semibold mb-3 block">タグ</Label>
+              <Label className="text-label font-semibold mb-3 block">{t('tags')}</Label>
               <div className="flex flex-wrap gap-2">
                 {work.tags.map((tag) => (
                   <Link

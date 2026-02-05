@@ -195,6 +195,23 @@
     "terms_of_service": "Terms of Service",
     "contact": "Contact"
   },
+  "WorkDetail": {
+    "work_not_found": "Work not found...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "delete_confirmation_title": "Confirm Deletion",
+    "delete_confirmation_message": "Once deleted, it cannot be recovered.",
+    "delete_confirmation_question": "Are you sure you want to delete?",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no_image": "No image",
+    "mask_used_in_work": "Mask used in this work",
+    "copy_and_edit": "Copy and Edit",
+    "mask_not_set": "Mask not set",
+    "tags": "Tags",
+    "delete_failed": "Failed to delete work",
+    "mask_copied": "Mask copied. Redirecting to mask creation page."
+  },
   "TermsOfService": {
     "title": "Terms of Service",
     "intro": "These Terms of Service (hereinafter referred to as \"these Terms\") set forth the terms and conditions for using the service (hereinafter referred to as \"the Service\") provided by {serviceName} (hereinafter referred to as \"the Company\") on this website. All registered users (hereinafter referred to as \"Users\") shall use the Service in accordance with these Terms.",
