@@ -66,7 +66,8 @@ export function CommentForm({ workId, onCommentCreated }: CommentFormProps) {
           size="sm"
           onClick={() => {
             // localStorageにパスを保存してログイン画面へ遷移
-            localStorage.setItem('redirectAfterLogin', window.location.pathname);
+            const redirectPath = window.location.pathname.replace(/^\/(en|ja)/, '')
+            localStorage.setItem('redirectAfterLogin', redirectPath);
             router.push('/auth/login');
           }}
         >
