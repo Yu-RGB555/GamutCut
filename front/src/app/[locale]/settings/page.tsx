@@ -6,10 +6,12 @@ import { Mail, Lock, UserX } from 'lucide-react';
 import { MdArrowForwardIos } from "react-icons/md";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslations } from 'next-intl';
 
 export default function SettingsPage() {
   const { isLoading } = useAuthRedirect();
   const { user } = useAuth();
+  const t = useTranslations('Settings');
 
   // 認証状態の初期化中、またはユーザー情報がない場合は何も表示しない
   if (isLoading || !user) {
@@ -21,10 +23,10 @@ export default function SettingsPage() {
       <Card>
         <CardHeader className="mb-2">
           <CardTitle className="text-3xl font-bold text-label">
-            設定
+            {t('title')}
           </CardTitle>
           <CardDescription className="text-label">
-            アカウント設定を管理できます<br />
+            {t('description')}<br />
           </CardDescription>
         </CardHeader>
 
@@ -45,9 +47,9 @@ export default function SettingsPage() {
                             <Mail className="h-5 w-5 text-blue-600" />
                           </div>
                           <div>
-                            <CardTitle className="text-lg">メールアドレス変更</CardTitle>
+                            <CardTitle className="text-lg">{t('email_change')}</CardTitle>
                             <CardDescription>
-                              登録されているメールアドレスを変更できます
+                              {t('email_change_description')}
                             </CardDescription>
                           </div>
                         </div>
@@ -67,9 +69,9 @@ export default function SettingsPage() {
                             <Lock className="h-5 w-5 text-green-600" />
                           </div>
                           <div>
-                            <CardTitle className="text-lg">パスワード変更</CardTitle>
+                            <CardTitle className="text-lg">{t('password_change')}</CardTitle>
                             <CardDescription>
-                              アカウントのパスワードを変更できます
+                              {t('password_change_description')}
                             </CardDescription>
                           </div>
                         </div>
@@ -92,9 +94,9 @@ export default function SettingsPage() {
                         <UserX className="h-5 w-5 text-red-600" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg text-red-700">アカウント削除</CardTitle>
+                        <CardTitle className="text-lg text-red-700">{t('delete_account')}</CardTitle>
                         <CardDescription className="text-red-700">
-                          アカウントを完全に削除します（復元不可）
+                          {t('delete_account_description')}
                         </CardDescription>
                       </div>
                     </div>

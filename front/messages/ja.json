@@ -195,6 +195,16 @@
     "terms_of_service": "利用規約",
     "contact": "お問い合わせ"
   },
+  "Settings": {
+    "title": "設定",
+    "description": "アカウント設定を管理できます",
+    "email_change": "メールアドレス変更",
+    "email_change_description": "登録されているメールアドレスを変更できます",
+    "password_change": "パスワード変更",
+    "password_change_description": "アカウントのパスワードを変更できます",
+    "delete_account": "アカウント削除",
+    "delete_account_description": "アカウントを完全に削除します（復元不可）"
+  },
   "WorkDetail": {
     "work_not_found": "作品が見つかりません...",
     "edit": "編集",
