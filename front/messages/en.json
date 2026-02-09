@@ -195,6 +195,16 @@
     "terms_of_service": "Terms of Service",
     "contact": "Contact"
   },
+  "Settings": {
+    "title": "Settings",
+    "description": "Manage your account settings",
+    "email_change": "Change Email",
+    "email_change_description": "Change your registered email address",
+    "password_change": "Change Password",
+    "password_change_description": "Change your account password",
+    "delete_account": "Delete Account",
+    "delete_account_description": "Permanently delete your account (irreversible)"
+  },
   "WorkDetail": {
     "work_not_found": "Work not found...",
     "edit": "Edit",
