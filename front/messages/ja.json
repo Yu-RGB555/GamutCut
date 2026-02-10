@@ -205,6 +205,31 @@
     "delete_account": "アカウント削除",
     "delete_account_description": "アカウントを完全に削除します（復元不可）"
   },
+  "EmailChange": {
+    "title": "メールアドレス変更",
+    "description": "登録されているメールアドレスを変更できます",
+    "sns_user_restriction": "SNS認証ユーザーはメールアドレス変更手続きは行えません",
+    "current_email": "現在のメールアドレス",
+    "new_email": "新しいメールアドレス",
+    "new_email_placeholder": "new@example.com",
+    "current_password": "現在のパスワード",
+    "current_password_placeholder": "現在のパスワードを入力",
+    "change_button": "変更",
+    "success_title": "メールアドレスの変更が完了しました",
+    "back_to_settings": "設定画面に戻る",
+    "validation": {
+      "email_required": "新しいメールアドレスを入力してください",
+      "email_invalid": "有効なメールアドレスを入力してください",
+      "password_required": "現在のパスワードを入力してください",
+      "unexpected_error": "予期しないエラーが発生しました"
+    },
+    "notice": {
+      "title": "注意",
+      "confirmation_email": "新しいメールアドレスに確認メールが送信されます",
+      "old_email_valid": "確認が完了するまで、元のメールアドレスが有効です",
+      "login_with_new": "変更後は新しいメールアドレスでログインしてください"
+    }
+  },
   "WorkDetail": {
     "work_not_found": "作品が見つかりません...",
     "edit": "編集",
