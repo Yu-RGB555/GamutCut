@@ -14,12 +14,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { changeEmail } from '@/lib/api';
 import { useLoad } from '@/contexts/LoadingContext';
+import { useTranslations } from 'next-intl';
 
 export default function EmailChangePage() {
   useAuthRedirect();
   const router = useRouter();
   const { setIsLoadingOverlay } = useLoad();
   const { user, updateUser } = useAuth();
+  const t = useTranslations('EmailChange');
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,7 +34,7 @@ export default function EmailChangePage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-white text-center font-semibold">
-          SNS認証ユーザーはメールアドレス変更手続きは行えません
+          {t('sns_user_restriction')}
         </div>
       </div>
     );
@@ -50,13 +52,13 @@ export default function EmailChangePage() {
     const newErrors: string[] = [];
 
     if (!formData.newEmail.trim()) {
-      newErrors.push('新しいメールアドレスを入力してください');
+      newErrors.push(t('validation.email_required'));
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.newEmail)) {
-      newErrors.push('有効なメールアドレスを入力してください');
+      newErrors.push(t('validation.email_invalid'));
     }
 
     if (!formData.password) {
-      newErrors.push('現在のパスワードを入力してください');
+      newErrors.push(t('validation.password_required'));
     }
 
     setErrors(newErrors);
@@ -95,7 +97,7 @@ export default function EmailChangePage() {
         setErrors([e.message]);
       } else {
         // その他
-        setErrors(['予期しないエラーが発生しました']);
+        setErrors([t('validation.unexpected_error')]);
       }
     } finally {
       setIsLoadingOverlay(false);
@@ -113,8 +115,7 @@ export default function EmailChangePage() {
                 <MdOutlineCheckCircle className="h-20 w-20 text-primary" />
               </div>
               <p className="text-3xl font-semibold text-label m-2">
-                メールアドレスの変更が<br />
-                完了しました
+                {t('success_title')}
               </p>
               <div className="space-y-2 m-16">
                 <Button
@@ -122,7 +123,7 @@ export default function EmailChangePage() {
                   className="w-2/3 font-normal"
                   onClick={() => router.push('/settings')}
                 >
-                  設定画面に戻る
+                  {t('back_to_settings')}
                 </Button>
               </div>
             </div>
@@ -139,9 +140,9 @@ export default function EmailChangePage() {
       {/* フォーム */}
       <Card>
         <CardHeader className="mb-2">
-          <CardTitle className="text-3xl font-bold text-label mb-2">メールアドレス変更</CardTitle>
+          <CardTitle className="text-3xl font-bold text-label mb-2">{t('title')}</CardTitle>
           <CardDescription className="text-label">
-            登録されているメールアドレスを変更できます
+            {t('description')}
           </CardDescription>
 
             {/* エラー表示 */}
@@ -159,33 +160,33 @@ export default function EmailChangePage() {
         </CardHeader>
         <CardContent>
           <div className="max-w-xl bg-blue-200 border border-blue-200 rounded-lg p-4 mb-10">
-            <p className="font-semibold text-blue-800 mb-2">現在のメールアドレス</p>
+            <p className="font-semibold text-blue-800 mb-2">{t('current_email')}</p>
             <p className="text-blue-800 pl-4">{user?.email}</p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6 mb-12">
             <div className="space-y-2">
-              <Label htmlFor="newEmail">新しいメールアドレス</Label>
+              <Label htmlFor="newEmail">{t('new_email')}</Label>
               <Input
                 id="newEmail"
                 name="newEmail"
                 type="email"
                 value={formData.newEmail}
                 onChange={handleInputChange}
-                placeholder="new@example.com"
+                placeholder={t('new_email_placeholder')}
                 autoComplete="email"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="current-password">現在のパスワード</Label>
+              <Label htmlFor="current-password">{t('current_password')}</Label>
               <Input
                 id="current-password"
                 name="password"
                 type="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="現在のパスワードを入力"
+                placeholder={t('current_password_placeholder')}
                 autoComplete="current-password"
                 required
               />
@@ -196,7 +197,7 @@ export default function EmailChangePage() {
                 type="submit"
                 className=" w-16"
               >
-                変更
+                {t('change_button')}
               </Button>
             </div>
           </form>
@@ -204,11 +205,11 @@ export default function EmailChangePage() {
           {/* 注意事項 */}
           <Alert className="mt-2 mb-4">
             <AlertDescription className="text-label">
-              <strong>⚠️ 注意：</strong>
+              <strong>⚠️ {t('notice.title')}：</strong>
               <ul className="mt-2 space-y-1 text-sm">
-                <li>• 新しいメールアドレスに確認メールが送信されます</li>
-                <li>• 確認が完了するまで、元のメールアドレスが有効です</li>
-                <li>• 変更後は新しいメールアドレスでログインしてください</li>
+                <li>• {t('notice.confirmation_email')}</li>
+                <li>• {t('notice.old_email_valid')}</li>
+                <li>• {t('notice.login_with_new')}</li>
               </ul>
             </AlertDescription>
           </Alert>

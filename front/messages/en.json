@@ -205,6 +205,31 @@
     "delete_account": "Delete Account",
     "delete_account_description": "Permanently delete your account (irreversible)"
   },
+  "EmailChange": {
+    "title": "Change Email Address",
+    "description": "Change your registered email address",
+    "sns_user_restriction": "Social authentication users cannot change their email address",
+    "current_email": "Current Email Address",
+    "new_email": "New Email Address",
+    "new_email_placeholder": "new@example.com",
+    "current_password": "Current Password",
+    "current_password_placeholder": "Enter your current password",
+    "change_button": "Change",
+    "success_title": "Email address changed successfully",
+    "back_to_settings": "Back to Settings",
+    "validation": {
+      "email_required": "Please enter a new email address",
+      "email_invalid": "Please enter a valid email address",
+      "password_required": "Please enter your current password",
+      "unexpected_error": "An unexpected error occurred"
+    },
+    "notice": {
+      "title": "Notice",
+      "confirmation_email": "A confirmation email will be sent to your new email address",
+      "old_email_valid": "Your old email address will remain valid until confirmation is complete",
+      "login_with_new": "Please log in with your new email address after the change"
+    }
+  },
   "WorkDetail": {
     "work_not_found": "Work not found...",
     "edit": "Edit",
