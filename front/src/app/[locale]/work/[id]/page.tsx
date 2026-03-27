@@ -3,6 +3,8 @@
 import type { Metadata } from "next";
 import { WorkDetailClient } from "./work-detail-client";
 import { showWork } from "@/lib/api";
+import { isMaintenanceMode } from "@/lib/maintenance";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: Promise<{id: number}>
@@ -12,6 +14,12 @@ type Props = {
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
+  // メンテナンスモード中はデフォルトメタデータを返す
+  if (isMaintenanceMode()) {
+    return {
+      title: 'GamutCut - メンテナンス中',
+    };
+  }
 
   // 作品idをparamsから読み取り
   const { id } = await params;
@@ -55,6 +63,11 @@ export async function generateMetadata(
 }
 
 export default async function Page({ params }: Props) {
+  // メンテナンスモード中はホームにリダイレクト
+  if (isMaintenanceMode()) {
+    redirect('/');
+  }
+
   // 作品idをparamsから読み取り
   const { id } = await params;
 

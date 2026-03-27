@@ -7,11 +7,14 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslations } from 'next-intl';
+import { MaintenancePage } from '@/components/MaintenancePage';
 
 export default function SettingsPage() {
-  const { isLoading } = useAuthRedirect();
+  const { isLoading, maintenance } = useAuthRedirect();
   const { user } = useAuth();
   const t = useTranslations('Settings');
+
+  if (maintenance) return <MaintenancePage />;
 
   // 認証状態の初期化中、またはユーザー情報がない場合は何も表示しない
   if (isLoading || !user) {

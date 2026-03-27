@@ -23,10 +23,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useTranslations } from "next-intl";
+import { isMaintenanceMode } from "@/lib/maintenance";
 
 export function AppSidebar() {
   const router = useRouter();
   const t = useTranslations('Sidebar');
+  const maintenance = isMaintenanceMode();
 
   // useSidebarフックを活用してSidebarの内部状態にアクセスしサイドバーを制御
   const { setOpenMobile, isMobile } = useSidebar();
@@ -53,19 +55,21 @@ export function AppSidebar() {
       url: "/mask",
       icon: Palette,
     },
-    {
-      title: t('artwork_gallery'),
-      url: "/work",
-      icon: ImageIcon,
-    },
-    {
-      title: t('artwork'),
-      url: "/work/new",
-      icon: PenTool,
-    },
+    ...(!maintenance ? [
+      {
+        title: t('artwork_gallery'),
+        url: "/work",
+        icon: ImageIcon,
+      },
+      {
+        title: t('artwork'),
+        url: "/work/new",
+        icon: PenTool,
+      },
+    ] : []),
   ]
 
-  const utilityItems = [
+  const utilityItems = maintenance ? [] : [
     {
       title: t('settings'),
       url: "/settings",

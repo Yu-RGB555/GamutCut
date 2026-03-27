@@ -3,6 +3,22 @@ import { Work } from '@/types/work';
 import { Preset } from '@/types/preset';
 import { Tag } from '@/types/tag';
 import { Comment, CommentDetail, CreateCommentRequest, CreateCommentResponse, DeleteCommentResponse, UpdateCommentRequest, UpdateCommentResponse } from '@/types/comment';
+import { isMaintenanceMode } from '@/lib/maintenance';
+
+// メンテナンスモード時にAPI呼び出しをブロックするエラー
+export class MaintenanceError extends Error {
+  constructor() {
+    super('バックエンドサーバーはメンテナンス中です');
+    this.name = 'MaintenanceError';
+  }
+}
+
+// メンテナンスモードのチェック
+const checkMaintenance = () => {
+  if (isMaintenanceMode()) {
+    throw new MaintenanceError();
+  }
+};
 
 // API URLの取得
 const getApiBaseUrl = (): string => {
@@ -70,6 +86,7 @@ const getServerSideHeaders = async (includeAuth: boolean = true, includeContentT
 
 // 新規登録用
 export async function registerUser(userData: RegisterRequest): Promise<RegisterResponse> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/users/sign_up`, {
     method: 'POST',
     headers: getCommonHeaders(false),
@@ -88,6 +105,7 @@ export async function registerUser(userData: RegisterRequest): Promise<RegisterR
 
 // ログイン用
 export async function loginUser(userData: LoginRequest): Promise<LoginResponse> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/users/sign_in`, {
     method: 'POST',
     headers: getCommonHeaders(false),
@@ -106,6 +124,7 @@ export async function loginUser(userData: LoginRequest): Promise<LoginResponse> 
 
 // 作品一覧取得
 export async function getWorks(): Promise<Work[]> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'GET',
     headers: getCommonHeaders(true, false),
@@ -128,6 +147,7 @@ export async function getWorks(): Promise<Work[]> {
 
 // 検索機能付き作品一覧取得
 export async function getWorksWithSearch(searchQuery?: string, tagName?: string, sortTerm?: string): Promise<Work[]> {
+  checkMaintenance();
   const params = new URLSearchParams();
 
   if (searchQuery && searchQuery.trim()) {
@@ -176,6 +196,7 @@ export async function getWorksWithSearch(searchQuery?: string, tagName?: string,
 
 // 作品詳細
 export async function showWork(workId: number): Promise<Work> {
+  checkMaintenance();
   // サーバーサイドかクライアントサイドかによってヘッダー設定を分ける
   const headers = typeof window === 'undefined'
     ? await getServerSideHeaders(true, true)
@@ -196,6 +217,7 @@ export async function showWork(workId: number): Promise<Work> {
 
 // 作品投稿
 export async function postWork(formData: FormData) {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works`, {
     method: 'POST',
     headers: getCommonHeaders(true, false),
@@ -215,6 +237,7 @@ export async function postWork(formData: FormData) {
 
 // 作品更新
 export async function updateWork(submitData: FormData, workId: number): Promise<{ message: string}> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'PATCH',
     headers: getCommonHeaders(true, false),
@@ -232,6 +255,7 @@ export async function updateWork(submitData: FormData, workId: number): Promise<
 
 // 作品削除
 export async function deleteWork(workId: number): Promise<{ message: string }>{
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}`, {
     method: 'DELETE',
     headers: getCommonHeaders(true, true),
@@ -247,6 +271,7 @@ export async function deleteWork(workId: number): Promise<{ message: string }>{
 
 // 作品の画像をBlobとして取得（バックエンド経由）
 export async function getWorkImageBlob(workId: number): Promise<Blob> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/image`, {
     method: 'GET',
     credentials: 'include',
@@ -261,6 +286,7 @@ export async function getWorkImageBlob(workId: number): Promise<Blob> {
 
 // Myマスク保存
 export async function maskSave(presetData: Preset): Promise<{ message: string}> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/presets`, {
     method: 'POST',
     headers: getCommonHeaders(true, true),
@@ -276,6 +302,7 @@ export async function maskSave(presetData: Preset): Promise<{ message: string}> 
 
 // Myマスク削除
 export async function deletePreset(presetId: number): Promise<{ message: string}> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/presets/${presetId}`, {
     method: 'DELETE',
     headers: getCommonHeaders(true, true),
@@ -291,6 +318,7 @@ export async function deletePreset(presetId: number): Promise<{ message: string}
 
 // Myマスク名更新
 export async function updatePreset(presetId: number, name: string): Promise<{ message: string}> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/presets/${presetId}`, {
     method: 'PATCH',
     headers: getCommonHeaders(true, true),
@@ -306,6 +334,7 @@ export async function updatePreset(presetId: number, name: string): Promise<{ me
 
 // Myマスク一覧取得
 export async function getPresets(): Promise<Preset[]> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/presets`, {
     method: 'GET',
     headers: getCommonHeaders(true, true),
@@ -327,6 +356,7 @@ export async function getPresets(): Promise<Preset[]> {
 
 // いいね追加・削除
 export async function toggleLike(workId: number, isLiked: boolean): Promise<{ liked: boolean; likes_count: number; message: string }> {
+  checkMaintenance();
   const method = isLiked ? 'DELETE' : 'POST';
 
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/like`, {
@@ -344,6 +374,7 @@ export async function toggleLike(workId: number, isLiked: boolean): Promise<{ li
 
 // ブックマーク追加・削除
 export async function toggleBookmark(workId: number, isBookmarked: boolean): Promise<{ bookmarked: boolean; message: string }> {
+  checkMaintenance();
   const method = isBookmarked ? 'DELETE' : 'POST';
 
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/bookmark`, {
@@ -361,6 +392,7 @@ export async function toggleBookmark(workId: number, isBookmarked: boolean): Pro
 
 // 人気タグ一覧取得
 export async function getPopularTags(limit: number = 10): Promise<Tag[]> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/tags/popular?limit=${limit}`, {
     method: 'GET',
     headers: getCommonHeaders(false, false),
@@ -376,6 +408,7 @@ export async function getPopularTags(limit: number = 10): Promise<Tag[]> {
 
 // コメント一覧取得
 export async function getComments(workId: number): Promise<Comment[]> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments`, {
     method: 'GET',
     headers: getCommonHeaders(true, false),
@@ -391,6 +424,7 @@ export async function getComments(workId: number): Promise<Comment[]> {
 
 // コメント投稿
 export async function createComment(workId: number, commentData: CreateCommentRequest): Promise<CreateCommentResponse> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments`, {
     method: 'POST',
     headers: getCommonHeaders(true, true),
@@ -408,6 +442,7 @@ export async function createComment(workId: number, commentData: CreateCommentRe
 
 // コメント更新
 export async function updateComment(workId: number, commentId: number, commentData: UpdateCommentRequest): Promise<UpdateCommentResponse> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments/${commentId}`, {
     method: 'PATCH',
     headers: getCommonHeaders(true, true),
@@ -425,6 +460,7 @@ export async function updateComment(workId: number, commentId: number, commentDa
 
 // コメント削除
 export async function deleteComment(workId: number, commentId: number): Promise<DeleteCommentResponse> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/works/${workId}/comments/${commentId}`, {
     method: 'DELETE',
     headers: getCommonHeaders(true, true),
@@ -441,6 +477,7 @@ export async function deleteComment(workId: number, commentId: number): Promise<
 
 // 単体コメント詳細取得（通知機能用）
 export async function getCommentDetail(commentId: number): Promise<CommentDetail> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/v1/comments/${commentId}`, {
     method: 'GET',
     headers: getCommonHeaders(true, false),
@@ -456,6 +493,7 @@ export async function getCommentDetail(commentId: number): Promise<CommentDetail
 
 // アバター画像をBlobとして取得（バックエンド経由）
 export async function getAvatarBlob(): Promise<{ blob: Blob; filename: string; filesize: number } | null> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/users/avatar`, {
     method: 'GET',
     headers: getCommonHeaders(true, false),
@@ -480,6 +518,7 @@ export async function getAvatarBlob(): Promise<{ blob: Blob; filename: string; f
 
 // プロフィール取得（認証済みユーザー自身のプロフィール）
 export async function getProfile(): Promise<User> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
     method: 'GET',
     headers: getCommonHeaders(true, true),
@@ -495,6 +534,7 @@ export async function getProfile(): Promise<User> {
 
 // プロフィール取得（特定ユーザーのプロフィール）
 export async function getUserProfile(userId: number): Promise<User> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
     method: 'GET',
     headers: getCommonHeaders(true, true),
@@ -510,6 +550,7 @@ export async function getUserProfile(userId: number): Promise<User> {
 
 // プロフィール更新（認証済みユーザー自身のプロフィール）
 export async function updateProfile(profileData: FormData): Promise<UpdateProfileResponse> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
     method: 'PATCH',
     headers: getCommonHeaders(true, false),
@@ -528,6 +569,7 @@ export async function updateProfile(profileData: FormData): Promise<UpdateProfil
 
 // メールアドレス変更
 export async function changeEmail(emailData: { email: string, password: string }): Promise<{message: string, user: User}> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/users/change_email`, {
     method: 'PATCH',
     headers: getCommonHeaders(true, true),
@@ -549,6 +591,7 @@ export async function changeEmail(emailData: { email: string, password: string }
 
 // パスワードリセット要求
 export async function passwordResets(email: string): Promise<{message: string}> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/password_resets`, {
     method: 'POST',
     headers: getCommonHeaders(false, true),
@@ -562,6 +605,7 @@ export async function passwordResets(email: string): Promise<{message: string}> 
 
 // パスワード変更
 export async function passwordUpdate(token: string, passwordData: PasswordUpdateRequest): Promise<PasswordUpdateResponse> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/password_resets/${token}`, {
     method: 'PATCH',
     headers: getCommonHeaders(false, true),
@@ -579,6 +623,7 @@ export async function passwordUpdate(token: string, passwordData: PasswordUpdate
 
 // 退会
 export async function signOut(): Promise<{message: string}> {
+  checkMaintenance();
   const response = await fetch(`${API_BASE_URL}/api/users/sign_out`, {
     method: 'DELETE',
     headers: getCommonHeaders(true, true),

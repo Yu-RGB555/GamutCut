@@ -16,12 +16,16 @@ import { Label } from "@/components/ui/label";
 import { passwordResets } from '@/lib/api';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useLoad } from '@/contexts/LoadingContext';
+import { isMaintenanceMode } from '@/lib/maintenance';
+import { MaintenancePage } from '@/components/MaintenancePage';
 
 export default function ForgotPassword() {
   const { setIsLoadingOverlay } = useLoad();
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [email, setEmail] = useState('');
+
+  if (isMaintenanceMode()) return <MaintenancePage />;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);

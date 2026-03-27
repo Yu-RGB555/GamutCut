@@ -11,13 +11,16 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { BackButton } from '@/components/BackButton';
 import { signOut } from '@/lib/api';
 import { useLoad } from '@/contexts/LoadingContext';
+import { MaintenancePage } from '@/components/MaintenancePage';
 
 export default function DeleteAccountPage() {
-  useAuthRedirect();
+  const { maintenance } = useAuthRedirect();
   const router = useRouter();
   const { setIsLoadingOverlay } = useLoad();
   const [errors, setErrors] = useState<string[]>([]);
   const [agreedToDelete, setAgreedToDelete] = useState(false);
+
+  if (maintenance) return <MaintenancePage />;
 
   const validateForm = (): boolean => {
     const newErrors: string[] = [];

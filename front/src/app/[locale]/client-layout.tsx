@@ -9,6 +9,8 @@ import { LoadingProvider } from '@/contexts/LoadingContext';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { MaintenanceBanner } from "@/components/MaintenanceBanner";
+import { isMaintenanceMode } from "@/lib/maintenance";
 import { NextStepProvider, NextStep } from 'nextstepjs';
 import { Tour } from 'nextstepjs';
 import { CustomCard } from '@/components/CustomCard';
@@ -130,14 +132,17 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
               >
                 <SidebarProvider>
                   <div className="flex min-h-screen min-w-screen">
-                    {/* サイドバー */}
-                    <AppSidebar />
+                    {/* サイドバー（メンテナンス中は非表示） */}
+                    {!isMaintenanceMode() && <AppSidebar />}
 
                     {/* メインコンテンツエリア */}
                     <div className="flex-1 flex flex-col">
                       <Header />
+                      <MaintenanceBanner />
                       <main className="flex-1 pt-16">
-                        <SidebarTrigger className="fixed left-4 top-20 z-50 border border-md md:hidden"/>
+                        {!isMaintenanceMode() && (
+                          <SidebarTrigger className="fixed left-4 top-20 z-50 border border-md md:hidden"/>
+                        )}
                         {children}
                       </main>
                       <Footer />

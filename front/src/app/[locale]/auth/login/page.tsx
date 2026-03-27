@@ -19,6 +19,8 @@ import { LoginRequest } from '@/types/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAlert } from '@/contexts/AlertContext';
 import { useLocale, useTranslations } from 'next-intl';
+import { isMaintenanceMode } from '@/lib/maintenance';
+import { MaintenancePage } from '@/components/MaintenancePage';
 
 export default function Login() {
   const router = useRouter();
@@ -31,6 +33,8 @@ export default function Login() {
   });
   const t = useTranslations('Login');
   const locale = useLocale();
+
+  if (isMaintenanceMode()) return <MaintenancePage />;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

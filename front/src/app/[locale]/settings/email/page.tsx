@@ -15,9 +15,10 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { changeEmail } from '@/lib/api';
 import { useLoad } from '@/contexts/LoadingContext';
 import { useTranslations } from 'next-intl';
+import { MaintenancePage } from '@/components/MaintenancePage';
 
 export default function EmailChangePage() {
-  useAuthRedirect();
+  const { maintenance } = useAuthRedirect();
   const router = useRouter();
   const { setIsLoadingOverlay } = useLoad();
   const { user, updateUser } = useAuth();
@@ -28,6 +29,8 @@ export default function EmailChangePage() {
     newEmail: '',
     password: ''
   });
+
+  if (maintenance) return <MaintenancePage />;
 
   // SNS認証ユーザーは非表示
   if (user?.has_social_accounts) {

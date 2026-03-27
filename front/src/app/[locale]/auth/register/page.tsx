@@ -21,6 +21,8 @@ import { LoginRequest } from '@/types/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAlert } from '@/contexts/AlertContext';
 import { useLocale, useTranslations } from 'next-intl';
+import { isMaintenanceMode } from '@/lib/maintenance';
+import { MaintenancePage } from '@/components/MaintenancePage';
 
 export default function Register() {
   const router = useRouter();
@@ -36,6 +38,8 @@ export default function Register() {
   });
   const t = useTranslations('SignUp');
   const locale = useLocale();
+
+  if (isMaintenanceMode()) return <MaintenancePage />;
 
   // フォーム入力値
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
