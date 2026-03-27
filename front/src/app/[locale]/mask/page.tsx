@@ -13,9 +13,11 @@ import { useLoad } from "@/contexts/LoadingContext";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslations } from "next-intl";
+import { isMaintenanceMode } from "@/lib/maintenance";
 
 export default function CreateGamutMask() {
   const { isAuthenticated } = useAuth();
+  const maintenance = isMaintenanceMode();
   const [presets, setPresets] = useState<Preset[]>([]);
   const [copiedMaskData, setCopiedMaskData] = useState<MaskData | null>(null);
   const { setIsLoadingOverlay } = useLoad();
@@ -83,15 +85,17 @@ export default function CreateGamutMask() {
             />
           </div>
 
-          {/* Myマスク一覧セクション */}
-          <div id="step-5" className="space-y-16">
-            <h3 className="text-label text-left text-lg font-semibold">{t('my_mask_list')}</h3>
-            <MyMaskList
-              myPresets={presets}
-              fetchPresets={() => fetchPresets(false)}
-              isAuthenticated={isAuthenticated}
-            />
-          </div>
+          {/* Myマスク一覧セクション（メンテナンス中は非表示） */}
+          {!maintenance && (
+            <div id="step-5" className="space-y-16">
+              <h3 className="text-label text-left text-lg font-semibold">{t('my_mask_list')}</h3>
+              <MyMaskList
+                myPresets={presets}
+                fetchPresets={() => fetchPresets(false)}
+                isAuthenticated={isAuthenticated}
+              />
+            </div>
+          )}
         </div>
 
         {/* ガイドツアーボタン */}

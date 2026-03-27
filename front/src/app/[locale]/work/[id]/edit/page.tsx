@@ -29,6 +29,7 @@ import { PresetSelectDialog } from "@/components/PresetSelectDialog";
 import { updateWork, showWork, getWorkImageBlob } from "@/lib/api";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useLoad } from "@/contexts/LoadingContext";
+import { MaintenancePage } from "@/components/MaintenancePage";
 
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
@@ -54,7 +55,7 @@ export default function EditWorks() {
   const { setIsLoadingOverlay } = useLoad();
   const params = useParams();
   const { user } = useAuth();
-  const { isAuthenticated, isLoading } = useAuthRedirect();
+  const { isAuthenticated, isLoading, maintenance } = useAuthRedirect();
   const id = params?.id;
   const currentObjectUrl = useRef<string | null>(null); // ObjectURLの管理用ref
   const [showUnauthorizedDialog, setShowUnauthorizedDialog] = useState(false);
@@ -289,6 +290,9 @@ export default function EditWorks() {
       setIsLoadingOverlay(false);
     }
   };
+
+  // メンテナンスモード中はメンテナンスページを表示
+  if (maintenance) return <MaintenancePage />;
 
   // 認証状態の初期化中、またはユーザー情報がない場合は何も表示しない
   if (isLoading || !user) {

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { User } from '@/types/auth';
+import { isMaintenanceMode } from '@/lib/maintenance';
 
 // AuthContextの型定義
 interface AuthContextType {
@@ -56,6 +57,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [logout]);
 
   useEffect(() => {
+    // メンテナンスモード中はトークン検証をスキップ
+    if (isMaintenanceMode()) {
+      setIsLoading(false);
+      return;
+    }
+
     // ページリロード時に、localStorageからユーザー情報を読み込む
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -68,6 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [checkTokenValidity]);
 
   useEffect(() => {
+    // メンテナンスモード中は定期チェックを行わない
+    if (isMaintenanceMode()) return;
+
     // 定期的にトークンの有効性をチェック（1分間隔）
     const tokenCheckInterval = setInterval(() => {
       const currentUser = localStorage.getItem('user');

@@ -20,6 +20,7 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useLoad } from "@/contexts/LoadingContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslations } from "next-intl";
+import { MaintenancePage } from "@/components/MaintenancePage";
 
 // 型定義(公開設定)
 type PublicStatus = 0 | 1 | 2; // published: 0, restricted: 1, draft: 2
@@ -29,7 +30,7 @@ export default function PostWorks() {
   const { setIsLoadingOverlay } = useLoad();
   const { showAlert } = useAlert();
   const { user } = useAuth();
-  const { isAuthenticated, isLoading } = useAuthRedirect();
+  const { isAuthenticated, isLoading, maintenance } = useAuthRedirect();
   const [errors, setErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: '',
@@ -120,6 +121,9 @@ export default function PostWorks() {
       setIsLoadingOverlay(false);
     }
   };
+
+  // メンテナンスモード中はメンテナンスページを表示
+  if (maintenance) return <MaintenancePage />;
 
   // 認証状態の初期化中、またはユーザー情報がない場合は何も表示しない
   if (isLoading || !user ) {

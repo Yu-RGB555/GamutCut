@@ -17,6 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import { UserCircle2Icon } from "lucide-react";
 import { useLoad } from "@/contexts/LoadingContext";
 import { useLocale, useTranslations } from "next-intl";
+import { isMaintenanceMode } from "@/lib/maintenance";
+import { MaintenancePage } from "@/components/MaintenancePage";
 
 function WorksListContent() {
   const { user } = useAuth();
@@ -305,6 +307,8 @@ function WorksListContent() {
 }
 
 export default function WorksList() {
+  if (isMaintenanceMode()) return <MaintenancePage />;
+
   return (
     <Suspense fallback={null}>
       <WorksListContent />

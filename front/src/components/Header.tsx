@@ -13,6 +13,7 @@ import {
   HeartIcon,
   BookmarkIcon,
   Edit2Icon,
+  AlertTriangle,
 } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import {
@@ -26,6 +27,7 @@ import {
 } from './ui/sheet';
 import { Skeleton } from './ui/skeleton';
 import { useTranslations } from 'next-intl';
+import { isMaintenanceMode } from '@/lib/maintenance';
 
 export function Header() {
   const { logout } = useAuth();
@@ -104,7 +106,7 @@ export function Header() {
           {/* ロゴ・サイト名 */}
           <div className="flex items-center">
             <Link
-              href="/"
+              href={isMaintenanceMode() ? "/mask" : "/"}
               className="flex text-2xl font-bold text-foreground items-center"
             >
               <Image
@@ -122,7 +124,7 @@ export function Header() {
             {isLoading ? (
               // ローディング中はスケルトン表示
               <Skeleton className="w-10 h-10 rounded-full" />
-            ) : isAuthenticated ? (
+            ) : isAuthenticated && !isMaintenanceMode() ? (
               <>
                 <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                   <SheetTrigger>
@@ -192,21 +194,28 @@ export function Header() {
                 </Sheet>
               </>
             ) : (
-              <>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => router.push('/auth/login')}
-                >
-                  {t('login')}
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => router.push('/auth/register')}
-                >
-                  {t('sign_up')}
-                </Button>
-              </>
+              isMaintenanceMode() ? (
+                <div className="flex items-center gap-1.5 text-sm text-yellow-600 dark:text-yellow-400">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>{t('maintenance')}</span>
+                </div>
+              ) : (
+                <>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => router.push('/auth/login')}
+                  >
+                    {t('login')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => router.push('/auth/register')}
+                  >
+                    {t('sign_up')}
+                  </Button>
+                </>
+              )
             )}
           </div>
         </div>

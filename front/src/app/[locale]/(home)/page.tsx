@@ -8,18 +8,32 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { isMaintenanceMode } from '@/lib/maintenance';
 import { Palette, Download, Zap, Check } from "lucide-react";
 import { BsPersonArmsUp } from "react-icons/bs";
 import { FaPenNib } from "react-icons/fa";
-import { Link } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 import Image from "next/image";
 import { motion } from "motion/react";
 import { useTranslations, useLocale } from "next-intl";
+import { useEffect } from "react";
 
 export default function HelpPage() {
-
+  const router = useRouter();
   const t = useTranslations('Introduction');
   const locale = useLocale();
+  const maintenance = isMaintenanceMode();
+
+  // メンテナンスモード中は /mask をトップページとして使用
+  useEffect(() => {
+    if (maintenance) {
+      router.replace('/mask');
+    }
+  }, [maintenance, router]);
+
+  if (maintenance) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen mb-8">

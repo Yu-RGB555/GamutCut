@@ -6,6 +6,8 @@ import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Suspense } from 'react';
 import { useLoad } from '@/contexts/LoadingContext';
+import { isMaintenanceMode } from '@/lib/maintenance';
+import { MaintenancePage } from '@/components/MaintenancePage';
 
 function AuthCallbackInner() {
   const router = useRouter();
@@ -60,6 +62,8 @@ function AuthCallbackInner() {
 }
 
 export default function AuthCallback() {
+  if (isMaintenanceMode()) return <MaintenancePage />;
+
   return (
     <Suspense fallback={null}>
       <AuthCallbackInner />

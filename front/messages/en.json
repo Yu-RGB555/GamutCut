@@ -184,6 +184,7 @@
     "sign_up": "Sign Up",
     "logout": "Logout",
     "mypage": "Mypage",
+    "maintenance": "Maintenance",
     "user_menu": {
       "draft_list": "Draft List",
       "like_list": "Like List",
@@ -453,5 +454,13 @@
       "content_1": "Inquiries regarding this Policy will be accepted through the inquiry form on the website."
     },
     "end": "End"
+  },
+  "Maintenance": {
+    "banner": "The backend server is currently under maintenance. Some features (viewing/posting works, user authentication, etc.) are unavailable. The mask creation tool remains available.",
+    "login_disabled": "Maintenance",
+    "page_unavailable_title": "Feature Temporarily Unavailable",
+    "page_unavailable_desc": "This feature is currently unavailable due to maintenance. The mask creation tool remains available.",
+    "back_home": "Back to Home",
+    "go_mask": "Create Mask"
   }
 }

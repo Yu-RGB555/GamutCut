@@ -53,7 +53,7 @@ export default function ProfilesPage() {
   const { setIsLoadingOverlay } = useLoad();
   const { updateUser } = useAuth();
   const { showAlert } = useAlert();
-  const { isAuthenticated } = useAuthRedirect();
+  const { isAuthenticated, maintenance } = useAuthRedirect();
   const [profileUser, setProfileUser] = useState<UserType | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);

@@ -8,6 +8,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { UserCircle2Icon } from "lucide-react";
 import XLogo from "@/components/XLogo";
 import { useLoad } from "@/contexts/LoadingContext";
+import { isMaintenanceMode } from "@/lib/maintenance";
+import { MaintenancePage } from "@/components/MaintenancePage";
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -40,6 +42,8 @@ export default function UserProfilePage() {
       fetchUser();
     }
   }, [userId]);
+
+  if (isMaintenanceMode()) return <MaintenancePage />;
 
   if (error || !user) {
     return (
