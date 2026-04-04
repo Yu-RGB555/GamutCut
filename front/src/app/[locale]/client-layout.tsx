@@ -12,7 +12,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { MaintenanceBanner } from "@/components/MaintenanceBanner";
 import { isMaintenanceMode } from "@/lib/maintenance";
 import { NextStepProvider, NextStep } from 'nextstepjs';
-import { Tour } from 'nextstepjs';
+import { Tour, Step } from 'nextstepjs';
 import { CustomCard } from '@/components/CustomCard';
 import { useState } from 'react';
 import { BsPersonArmsUp } from "react-icons/bs";
@@ -26,78 +26,93 @@ import { useTranslations } from 'next-intl';
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const t = useTranslations('Tour');
 
+  // Step型を継承し、skipオプションを追加したCustomStepという独自の型を定義
+  interface CustomStep extends Step {
+    // ステップの表示制御フラグ（任意オプション）
+    skip?: boolean;
+  }
+
   // ツアー内容
+  const allSteps: CustomStep[] = [
+    {
+      // FirstStep（step:0）
+      icon: <><BsPersonArmsUp className="text-primary" /></>,
+      title: t('step1_title'),
+      content: <>{t('step1_content')}</>,
+      showControls: true,
+      showSkip: true,
+      skip: false,
+    },
+    {
+      // 2ndStep（step:1）
+      icon: <><FaShapes className="text-primary"/></>,
+      title: t('step2_title'),
+      content: <>{t('step2_content_1')}<br />{t('step2_content_2')}</>,
+      selector: '#step-2',
+      side: 'top',
+      showControls: true,
+      showSkip: true,
+      pointerPadding: 10,
+      pointerRadius: 10,
+      skip: false,
+    },
+    {
+      // 3thStep（step:2）
+      icon: <><HiDownload className="text-primary"/></>,
+      title: t('step3_title'),
+      content: <>{t('step3_content_1')}<br />{t('step3_content_2')}</>,
+      selector: '#step-3',
+      side: 'top',
+      showControls: true,
+      showSkip: true,
+      pointerPadding: 10,
+      pointerRadius: 10,
+      skip: false,
+    },
+    {
+      // 4thStep（step:3）
+      icon: <><IoIosSave className="text-primary"/></>,
+      title: t('step4_title'),
+      content: <>{t('step4_content_1')}<br /><span className="text-muted-foreground text-xs">{t('step4_note')}</span></>,
+      selector: '#step-4',
+      side: 'top',
+      showControls: true,
+      showSkip: true,
+      pointerPadding: 10,
+      pointerRadius: 10,
+      skip: true,
+    },
+    {
+      // 5thStep（step:4）
+      icon: <><MdOutlineCollections className="text-primary"/></>,
+      title: t('step5_title'),
+      content: <>{t('step5_content_1')}<br /><span className="text-muted-foreground text-xs">{t('step5_note')}</span></>,
+      selector: '#step-5',
+      side: 'top',
+      showControls: true,
+      showSkip: true,
+      pointerPadding: 10,
+      pointerRadius: 10,
+      skip: true,
+    },
+    {
+      // LastStep（step:5）
+      icon: <><HiOutlineRocketLaunch className="text-primary"/></>,
+      title: t('step6_title'),
+      content: <>{t('step6_content_1')}<br />{t('step6_content_2')}</>,
+      showControls: true,
+      showSkip: true,
+      pointerPadding: 0,
+      pointerRadius: 10,
+      skip: false,
+    },
+  ];
+
+    // 最終的に表示するツアー内容
   const steps: Tour[] = [
     {
       tour: 'mainTour',
-      steps: [
-        {
-          // FirstStep（step:0）
-          icon: <><BsPersonArmsUp className="text-primary" /></>,
-          title: t('step1_title'),
-          content: <>{t('step1_content')}</>,
-          showControls: true,
-          showSkip: true,
-        },
-        {
-          // 2ndStep（step:1）
-          icon: <><FaShapes className="text-primary"/></>,
-          title: t('step2_title'),
-          content: <>{t('step2_content_1')}<br />{t('step2_content_2')}</>,
-          selector: '#step-2',
-          side: 'top',
-          showControls: true,
-          showSkip: true,
-          pointerPadding: 10,
-          pointerRadius: 10,
-        },
-        {
-          // 3thStep（step:2）
-          icon: <><HiDownload className="text-primary"/></>,
-          title: t('step3_title'),
-          content: <>{t('step3_content_1')}<br />{t('step3_content_2')}</>,
-          selector: '#step-3',
-          side: 'top',
-          showControls: true,
-          showSkip: true,
-          pointerPadding: 10,
-          pointerRadius: 10,
-        },
-        {
-          // 4thStep（step:3）
-          icon: <><IoIosSave className="text-primary"/></>,
-          title: t('step4_title'),
-          content: <>{t('step4_content_1')}<br /><span className="text-muted-foreground text-xs">{t('step4_note')}</span></>,
-          selector: '#step-4',
-          side: 'top',
-          showControls: true,
-          showSkip: true,
-          pointerPadding: 10,
-          pointerRadius: 10,
-        },
-        {
-          // 5thStep（step:4）
-          icon: <><MdOutlineCollections className="text-primary"/></>,
-          title: t('step5_title'),
-          content: <>{t('step5_content_1')}<br /><span className="text-muted-foreground text-xs">{t('step5_note')}</span></>,
-          selector: '#step-5',
-          side: 'top',
-          showControls: true,
-          showSkip: true,
-          pointerPadding: 10,
-          pointerRadius: 10,
-        },
-        {
-          // LastStep（step:5）
-          icon: <><HiOutlineRocketLaunch className="text-primary"/></>,
-          title: t('step6_title'),
-          content: <>{t('step6_content_1')}<br />{t('step6_content_2')}</>,
-          showControls: true,
-          showSkip: true,
-          pointerPadding: 0,
-          pointerRadius: 10,
-        },
-      ],
+      steps: allSteps.filter(step => !step.skip) // skip:trueのみ表示
     },
   ];
 
@@ -138,7 +153,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
                     {/* メインコンテンツエリア */}
                     <div className="flex-1 flex flex-col">
                       <Header />
-                      <MaintenanceBanner />
+                      {/* <MaintenanceBanner /> */}
                       <main className="flex-1 pt-16">
                         {!isMaintenanceMode() && (
                           <SidebarTrigger className="fixed left-4 top-20 z-50 border border-md md:hidden"/>

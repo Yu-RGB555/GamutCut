@@ -7,11 +7,7 @@ import { getPresets } from "@/lib/api";
 import { Preset } from "@/types/preset";
 import { MyMaskList } from "@/components/MyMaskList";
 import { MaskData } from "@/types/mask";
-import { useNextStep } from 'nextstepjs';
-import { motion } from "motion/react"
 import { useLoad } from "@/contexts/LoadingContext";
-import Image from "next/image";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslations } from "next-intl";
 import { isMaintenanceMode } from "@/lib/maintenance";
 
@@ -21,12 +17,7 @@ export default function CreateGamutMask() {
   const [presets, setPresets] = useState<Preset[]>([]);
   const [copiedMaskData, setCopiedMaskData] = useState<MaskData | null>(null);
   const { setIsLoadingOverlay } = useLoad();
-  const { startNextStep } = useNextStep();
   const t = useTranslations('CreateMask');
-
-  const handleStartTour = () => {
-    startNextStep("mainTour");
-  };
 
   // Myマスク一覧データ取得
   const fetchPresets = async (showLoading: boolean = true): Promise<void> => {
@@ -72,9 +63,9 @@ export default function CreateGamutMask() {
 
   return (
     <>
-      <div className="bg-gray-400 border border-gray-500 rounded-lg p-4 m-12">
+      {/* <div className="bg-gray-400 border border-gray-500 rounded-lg p-4 m-12">
         <h3 className="font-semibold text-gray-900">{t('temp_message')}</h3>
-      </div>
+      </div> */}
       <div className="justify-items-center mx-4 sm:mx-8 lg:mx-16 mb-40">
         <div className="grid grid-cols-1 gap-y-16">
           {/* マスク作成セクション */}
@@ -96,31 +87,6 @@ export default function CreateGamutMask() {
               />
             </div>
           )}
-        </div>
-
-        {/* ガイドツアーボタン */}
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <motion.button
-                onClick={handleStartTour}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-12 h-12 sm:w-14 sm:h-14 text-center border border-gray-500 hover:cursor-pointer rounded-full shadow-lg overflow-hidden"
-              >
-                <Image
-                  src="/guide_tour.webp"
-                  alt="クイックガイド"
-                  width={100}
-                  height={100}
-                  className="object-cover w-full h-full"
-                />
-              </motion.button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="font-semibold">{t('quick_guide')}</p>
-            </TooltipContent>
-          </Tooltip>
         </div>
       </div>
     </>
