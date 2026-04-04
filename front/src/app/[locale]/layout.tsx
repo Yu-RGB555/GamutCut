@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import '../globals.css'
+import '@/app/globals.css'
 import { ClientLayout } from './client-layout'
 import { generateJsonLd } from '@/lib/structured-data'
 import { getMessages, getTranslations } from 'next-intl/server'
@@ -21,18 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       'ガマットマッピング',
       'ガマットマスク',
       'ガマットマスク ツール',
-      'Gamut Mapping',
-      'Gamut Mask',
-      'Gamut Mask Tool',
+      'gamut masking',
+      'gamut mask',
+      'gamut tool',
+      'gamut mask tool',
+      'gamut creator',
       'GamutCut',
-      'デジタルイラスト',
-      '着彩',
-      '色相環',
-      'イラスト制作',
-      'カラーパレット',
-      'デジタルアート',
-      '配色',
-      'Digital Art Tool'
+      'digital art tool'
     ],
     openGraph: {
       title: t('og_title'),
