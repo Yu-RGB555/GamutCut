@@ -1,7 +1,6 @@
 'use client';
 
 import { Link } from '@/i18n/routing';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -28,6 +27,10 @@ import {
 import { Skeleton } from './ui/skeleton';
 import { useTranslations } from 'next-intl';
 import { isMaintenanceMode } from '@/lib/maintenance';
+import Image from "next/image";
+import { useNextStep } from 'nextstepjs';
+import { motion } from "motion/react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function Header() {
   const { logout } = useAuth();
@@ -39,6 +42,13 @@ export function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const t = useTranslations('Header');
+  const T = useTranslations('CreateMask');
+
+  // ツアーガイド
+  const { startNextStep } = useNextStep();
+  const handleStartTour = () => {
+    startNextStep("mainTour");
+  };
 
   // ユーザーメニュー項目の定義
   const userMenuItems = [
@@ -195,10 +205,30 @@ export function Header() {
               </>
             ) : (
               isMaintenanceMode() ? (
-                <div className="flex items-center gap-1.5 text-sm text-yellow-600 dark:text-yellow-400">
-                  <AlertTriangle className="h-4 w-4" />
-                  <span>{t('maintenance')}</span>
-                </div>
+                // ガイドツアーボタン
+                  <div className="fixed top-2 right-4 sm:bottom-6 sm:right-6 z-50">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.button
+                          onClick={handleStartTour}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-10 h-10 sm:w-12 sm:h-12 text-center border border-gray-500 hover:cursor-pointer rounded-full shadow-lg overflow-hidden"
+                        >
+                          <Image
+                            src="/guide_tour.webp"
+                            alt="クイックガイド"
+                            width={100}
+                            height={100}
+                            className="object-cover w-full h-full"
+                          />
+                        </motion.button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-semibold">{T('quick_guide')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
               ) : (
                 <>
                   <Button
