@@ -12,7 +12,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { MaintenanceBanner } from "@/components/MaintenanceBanner";
 import { isMaintenanceMode } from "@/lib/maintenance";
 import { NextStepProvider, NextStep } from 'nextstepjs';
-import { Tour } from 'nextstepjs';
+import { Tour, Step } from 'nextstepjs';
 import { CustomCard } from '@/components/CustomCard';
 import { useState } from 'react';
 import { BsPersonArmsUp } from "react-icons/bs";
@@ -26,8 +26,14 @@ import { useTranslations } from 'next-intl';
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const t = useTranslations('Tour');
 
+  // Step型を継承し、skipオプションを追加したCustomStepという独自の型を定義
+  interface CustomStep extends Step {
+    // ステップの表示制御フラグ（任意オプション）
+    skip?: boolean;
+  }
+
   // ツアー内容
-  const allSteps: any[] = [
+  const allSteps: CustomStep[] = [
     {
       // FirstStep（step:0）
       icon: <><BsPersonArmsUp className="text-primary" /></>,
