@@ -52,7 +52,7 @@ export function PresetPreview({ maskData, size =300 }: PresetPreviewProps) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 色相環を描画
-    colorWheelDrawer.draw(ctx, PREVIEW_CANVAS_SIZE, PREVIEW_CANVAS_SIZE, maskData.value);
+    colorWheelDrawer.draw(ctx, PREVIEW_CANVAS_SIZE, PREVIEW_CANVAS_SIZE, maskData.value, maskData.rotation ?? 0);
 
     // マスクを描画
     if (maskData.masks.length > 0) {

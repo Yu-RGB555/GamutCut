@@ -37,13 +37,13 @@ export const hsvToRgb = (h: number, s: number, v: number): [number, number, numb
 };
 
 // 各座標(x, y)の色相と彩度を定義
-export const getColorFromCoords = (x: number, y: number, centerX: number, centerY: number, maxRadius: number) => {
+export const getColorFromCoords = (x: number, y: number, centerX: number, centerY: number, maxRadius: number, rotation: number = 0) => {
   const dx = x - centerX;
   const dy = y - centerY;
   const distance = Math.sqrt(dx * dx + dy * dy);
   const angle = Math.atan2(dy, dx) * 180 / Math.PI;
 
-  const hue = (angle + 90 + 360) % 360;
+  const hue = ((angle + 90 - rotation) % 360 + 360) % 360;
   const saturation = Math.max(0, Math.min(100, (distance / maxRadius) * 100));
 
   return { hue, saturation, distance };

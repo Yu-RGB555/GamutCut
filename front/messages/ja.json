@@ -71,6 +71,7 @@
     "alert_max_masks": "マスクの追加は最大3つまでです",
     "alert_save_fail": "マスクの保存に失敗しました",
     "value": "明度",
+    "rotation": "回転",
     "my_mask_list": "Myマスク一覧",
     "color_info": "色情報",
     "hue": "色相",
