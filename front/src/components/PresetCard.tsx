@@ -81,7 +81,7 @@ export function PresetCard({ preset, onDeleteSuccess, showEditButton = true, sho
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 色相環を描画
-    colorWheelDrawer.draw(ctx, CARD_CANVAS_SIZE, CARD_CANVAS_SIZE, preset.mask_data.value);
+    colorWheelDrawer.draw(ctx, CARD_CANVAS_SIZE, CARD_CANVAS_SIZE, preset.mask_data.value, preset.mask_data.rotation ?? 0);
 
     // マスクを描画
     if (preset.mask_data.masks.length > 0) {

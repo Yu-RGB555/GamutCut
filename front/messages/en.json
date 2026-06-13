@@ -71,6 +71,7 @@
     "alert_max_masks": "You can add up to 3 masks.",
     "alert_save_fail": "Failed to save mask",
     "value": "Value",
+    "rotation": "Rotation",
     "my_mask_list": "My Mask List",
     "color_info": "Color Info",
     "hue": "Hue",

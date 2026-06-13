@@ -9,7 +9,7 @@ export class ColorWheelDrawer {
     this.sectorCount = sectorCount;
   }
 
-  draw(ctx: CanvasRenderingContext2D, width: number, height: number, value: number) {
+  draw(ctx: CanvasRenderingContext2D, width: number, height: number, value: number, rotation: number = 0) {
     const centerX = width / 2;
     const centerY = height / 2;
 
@@ -22,8 +22,8 @@ export class ColorWheelDrawer {
     const degreesPerSector = 360 / this.sectorCount;
 
     for (let sector = 0; sector < this.sectorCount; sector++) {
-      const startAngle = degToRad(sector * degreesPerSector - 90);
-      const endAngle = degToRad((sector + 1) * degreesPerSector - 90);
+      const startAngle = degToRad(sector * degreesPerSector - 90 + rotation);
+      const endAngle = degToRad((sector + 1) * degreesPerSector - 90 + rotation);
       const hue = sector * degreesPerSector;
 
       const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, this.maxRadius);

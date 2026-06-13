@@ -51,6 +51,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
   // 色相環パラメータ
   const [currentValue, setCurrentValue] = useState<number>(100);
+  const [rotation, setRotation] = useState<number>(0);
   const [colorInfo, setColorInfo] = useState<ColorInfo>({
     coordinates: '-',
     hue: '-',
@@ -89,7 +90,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     if (!ctx) return;
 
     // 色相環を描画
-    colorWheelDrawer.draw(ctx, canvas.width, canvas.height, currentValue);
+    colorWheelDrawer.draw(ctx, canvas.width, canvas.height, currentValue, rotation);
 
     if (selectedMask.length === 0) {
       return; // マスクがない場合はグレーアウト処理をしない
@@ -161,7 +162,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
-    const { hue, saturation, distance } = getColorFromCoords(x, y, centerX, centerY, colorWheelDrawer.getMaxRadius());
+    const { hue, saturation, distance } = getColorFromCoords(x, y, centerX, centerY, colorWheelDrawer.getMaxRadius(), rotation);
 
     // 色情報の取得
     if (distance <= colorWheelDrawer.getMaxRadius()) {
@@ -373,6 +374,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         name: presetName,
         mask_data: {
           value: currentValue,
+          rotation: rotation,
           masks: currentMasks,
         }
       };
@@ -440,6 +442,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
       setSelectedMask(restoredMasks);
       setCurrentValue(copiedMaskData.value);
+      setRotation(copiedMaskData.rotation ?? 0);
       setSelectedMaskIndex(restoredMasks.length > 0 ? restoredMasks.length - 1 : 0);
     }
   }, [copiedMaskData]);
@@ -448,7 +451,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   useEffect(() => {
     redraw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentValue, selectedMask]);
+  }, [currentValue, rotation, selectedMask]);
 
   return (
     <>
@@ -486,6 +489,23 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
                     className="w-1/2 h-2 hover:cursor-pointer"
                   />
                   <span className="text-label">{currentValue}%</span>
+                </div>
+              </div>
+
+              {/* 回転調整スライダー */}
+              <div className="w-full space-y-2">
+                <h3 className="text-card-foreground text-lg font-semibold">{t('rotation')}</h3>
+                <div className="flex items-center sm:flex-row gap-2 sm:gap-4">
+                  <Slider
+                    defaultValue={[0]}
+                    value={[rotation]}
+                    min={0}
+                    max={360}
+                    step={1}
+                    onValueChange={(value) => setRotation(value[0])}
+                    className="w-1/2 h-2 hover:cursor-pointer"
+                  />
+                  <span className="text-label">{rotation}°</span>
                 </div>
               </div>
 
