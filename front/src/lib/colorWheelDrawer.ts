@@ -5,11 +5,8 @@ export class ColorWheelDrawer {
   private maxRadius: number = 0;  // 初期値を設定
   private sectorCount: number;
 
-  // 無回転状態の色相環を描画したオフスクリーンキャッシュ
-  // グラデーション色は value のみに依存し rotation には依存しないため、
-  // value（とサイズ）が同じ間はこのキャッシュを回転させて描画するだけで済む
+  // 明度100%・無回転状態の色相環を描画したオフスクリーンキャッシュ
   private cacheCanvas: HTMLCanvasElement | null = null;
-  private cacheValue: number | null = null;
   private cacheWidth: number = 0;
   private cacheHeight: number = 0;
 
@@ -25,17 +22,20 @@ export class ColorWheelDrawer {
     // 最小サイズの75%を半径として使用（余白を確保）
     this.maxRadius = Math.min(width, height) * 0.375;
 
-    if (!this.isCacheValid(width, height, value)) {
-      this.renderToCache(width, height, value);
+    if (!this.isCacheValid(width, height)) {
+      this.renderToCache(width, height);
     }
 
     ctx.clearRect(0, 0, width, height);
 
-    // キャッシュ済みの無回転色相環を中心点周りに回転させて描画
+    // キャッシュ済みの無回転色相環を描画
+    // 明度に関しては、描画時に ctx.filter の brightness() で後付けの形で調整する
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate(degToRad(rotation));
+    ctx.filter = `brightness(${value}%)`;
     ctx.drawImage(this.cacheCanvas!, -centerX, -centerY);
+    ctx.filter = 'none';
     ctx.restore();
 
     ctx.beginPath();
@@ -45,15 +45,14 @@ export class ColorWheelDrawer {
     ctx.stroke();
   }
 
-  private isCacheValid(width: number, height: number, value: number): boolean {
+  private isCacheValid(width: number, height: number): boolean {
     return this.cacheCanvas !== null
-      && this.cacheValue === value
       && this.cacheWidth === width
       && this.cacheHeight === height;
   }
 
-  // 無回転状態の色相環をキャッシュキャンバスに描画する
-  private renderToCache(width: number, height: number, value: number) {
+  // 明度100%・無回転状態の色相環をキャッシュキャンバスに描画する
+  private renderToCache(width: number, height: number) {
     if (!this.cacheCanvas) {
       this.cacheCanvas = document.createElement('canvas');
     }
@@ -83,7 +82,7 @@ export class ColorWheelDrawer {
       for (let i = 0; i <= gradientSteps; i++) {
         const position = i / gradientSteps;
         const saturation = position * 100;
-        const [r, g, b] = hsvToRgb(hue, saturation, value);
+        const [r, g, b] = hsvToRgb(hue, saturation, 100);
         gradient.addColorStop(position, `rgb(${r}, ${g}, ${b})`);
       }
 
@@ -101,7 +100,6 @@ export class ColorWheelDrawer {
       cacheCtx.restore();
     }
 
-    this.cacheValue = value;
     this.cacheWidth = width;
     this.cacheHeight = height;
   }
