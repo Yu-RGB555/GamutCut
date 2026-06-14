@@ -5,6 +5,14 @@ export class ColorWheelDrawer {
   private maxRadius: number = 0;  // 初期値を設定
   private sectorCount: number;
 
+  // 無回転状態の色相環を描画したオフスクリーンキャッシュ
+  // グラデーション色は value のみに依存し rotation には依存しないため、
+  // value（とサイズ）が同じ間はこのキャッシュを回転させて描画するだけで済む
+  private cacheCanvas: HTMLCanvasElement | null = null;
+  private cacheValue: number | null = null;
+  private cacheWidth: number = 0;
+  private cacheHeight: number = 0;
+
   constructor(sectorCount: number = 360) {
     this.sectorCount = sectorCount;
   }
@@ -17,16 +25,59 @@ export class ColorWheelDrawer {
     // 最小サイズの75%を半径として使用（余白を確保）
     this.maxRadius = Math.min(width, height) * 0.375;
 
+    if (!this.isCacheValid(width, height, value)) {
+      this.renderToCache(width, height, value);
+    }
+
     ctx.clearRect(0, 0, width, height);
 
+    // キャッシュ済みの無回転色相環を中心点周りに回転させて描画
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(degToRad(rotation));
+    ctx.drawImage(this.cacheCanvas!, -centerX, -centerY);
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, this.maxRadius, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  private isCacheValid(width: number, height: number, value: number): boolean {
+    return this.cacheCanvas !== null
+      && this.cacheValue === value
+      && this.cacheWidth === width
+      && this.cacheHeight === height;
+  }
+
+  // 無回転状態の色相環をキャッシュキャンバスに描画する
+  private renderToCache(width: number, height: number, value: number) {
+    if (!this.cacheCanvas) {
+      this.cacheCanvas = document.createElement('canvas');
+    }
+
+    if (this.cacheCanvas.width !== width || this.cacheCanvas.height !== height) {
+      this.cacheCanvas.width = width;
+      this.cacheCanvas.height = height;
+    }
+
+    const cacheCtx = this.cacheCanvas.getContext('2d');
+    if (!cacheCtx) return;
+
+    cacheCtx.clearRect(0, 0, width, height);
+
+    const centerX = width / 2;
+    const centerY = height / 2;
     const degreesPerSector = 360 / this.sectorCount;
 
     for (let sector = 0; sector < this.sectorCount; sector++) {
-      const startAngle = degToRad(sector * degreesPerSector - 90 + rotation);
-      const endAngle = degToRad((sector + 1) * degreesPerSector - 90 + rotation);
+      const startAngle = degToRad(sector * degreesPerSector - 90);
+      const endAngle = degToRad((sector + 1) * degreesPerSector - 90);
       const hue = sector * degreesPerSector;
 
-      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, this.maxRadius);
+      const gradient = cacheCtx.createRadialGradient(centerX, centerY, 0, centerX, centerY, this.maxRadius);
 
       const gradientSteps = 20;
       for (let i = 0; i <= gradientSteps; i++) {
@@ -36,25 +87,23 @@ export class ColorWheelDrawer {
         gradient.addColorStop(position, `rgb(${r}, ${g}, ${b})`);
       }
 
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
+      cacheCtx.save();
+      cacheCtx.beginPath();
+      cacheCtx.moveTo(centerX, centerY);
 
       const angleBuffer = degToRad(0.1);
-      ctx.arc(centerX, centerY, this.maxRadius, startAngle - angleBuffer, endAngle + angleBuffer);
-      ctx.closePath();
-      ctx.clip();
+      cacheCtx.arc(centerX, centerY, this.maxRadius, startAngle - angleBuffer, endAngle + angleBuffer);
+      cacheCtx.closePath();
+      cacheCtx.clip();
 
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, width, height);
-      ctx.restore();
+      cacheCtx.fillStyle = gradient;
+      cacheCtx.fillRect(0, 0, width, height);
+      cacheCtx.restore();
     }
 
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, this.maxRadius, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    this.cacheValue = value;
+    this.cacheWidth = width;
+    this.cacheHeight = height;
   }
 
   getMaxRadius(){
