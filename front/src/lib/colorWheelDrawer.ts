@@ -9,6 +9,12 @@ export class ColorWheelDrawer {
   private cacheCanvas: HTMLCanvasElement | null = null;
   private cacheWidth: number = 0;
   private cacheHeight: number = 0;
+  // cacheCanvasから取得した明度100%基準のピクセルデータ
+  private cachePixelData: ImageData | null = null;
+
+  // 現在の明度(value)を適用した結果を保持するオフスクリーンキャンバス
+  private valueCanvas: HTMLCanvasElement | null = null;
+  private lastValue: number | null = null;
 
   constructor(sectorCount: number = 360) {
     this.sectorCount = sectorCount;
@@ -26,16 +32,19 @@ export class ColorWheelDrawer {
       this.renderToCache(width, height);
     }
 
+    // 明度が変化した場合のみ、valueCanvasにピクセル演算で明度を反映し直す
+    if (value !== this.lastValue) {
+      this.applyBrightness(value, width, height);
+      this.lastValue = value;
+    }
+
     ctx.clearRect(0, 0, width, height);
 
-    // キャッシュ済みの無回転色相環を描画
-    // 明度に関しては、描画時に ctx.filter の brightness() で後付けの形で調整する
+    // 明度反映済みキャンバスを描画
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate(degToRad(rotation));
-    ctx.filter = `brightness(${value}%)`;
-    ctx.drawImage(this.cacheCanvas!, -centerX, -centerY);
-    ctx.filter = 'none';
+    ctx.drawImage(this.valueCanvas!, -centerX, -centerY);
     ctx.restore();
 
     ctx.beginPath();
@@ -102,6 +111,40 @@ export class ColorWheelDrawer {
 
     this.cacheWidth = width;
     this.cacheHeight = height;
+
+    // 明度100%基準のピクセルデータを保持しておく
+    this.cachePixelData = cacheCtx.getImageData(0, 0, width, height);
+
+    // valueCanvasもcacheCanvasと同サイズに揃え、明度の再計算を強制する
+    if (!this.valueCanvas) {
+      this.valueCanvas = document.createElement('canvas');
+    }
+    if (this.valueCanvas.width !== width || this.valueCanvas.height !== height) {
+      this.valueCanvas.width = width;
+      this.valueCanvas.height = height;
+    }
+    this.lastValue = null;
+  }
+
+  // cachePixelDataに明度(value/100)を乗算してvalueCanvasに反映する
+  private applyBrightness(value: number, width: number, height: number) {
+    if (!this.cachePixelData || !this.valueCanvas) return;
+
+    const valueCtx = this.valueCanvas.getContext('2d');
+    if (!valueCtx) return;
+
+    const factor = value / 100;
+    const src = this.cachePixelData.data;
+    const dst = new Uint8ClampedArray(src.length);
+
+    for (let i = 0; i < src.length; i += 4) {
+      dst[i] = src[i] * factor;
+      dst[i + 1] = src[i + 1] * factor;
+      dst[i + 2] = src[i + 2] * factor;
+      dst[i + 3] = src[i + 3];
+    }
+
+    valueCtx.putImageData(new ImageData(dst, width, height), 0, 0);
   }
 
   getMaxRadius(){
