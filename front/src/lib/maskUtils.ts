@@ -10,15 +10,12 @@ import { Point } from "@/types/gamut";
   }
 
   // マスクの拡大縮小
-  export const getScaledPoints = (points: Point[], scale: number): Point[] => {
-    const center = points.reduce(
-      (acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
-    center.x /= points.length;
-    center.y /= points.length;
+  export const getScaledPoints = (points: Point[], scale: number, center?: Point): Point[] => {
+    const c = center ?? getCenter(points);
 
     return points.map(p => ({
-      x: center.x + (p.x - center.x) * scale,
-      y: center.y + (p.y - center.y) * scale
+      x: c.x + (p.x - c.x) * scale,
+      y: c.y + (p.y - c.y) * scale
     }));
   }
 

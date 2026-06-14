@@ -25,4 +25,5 @@ export interface MaskWithScale {
   scale: number;
   shape_type: string; // 図形タイプ（英語）
   // name は削除：shape_type から動的に翻訳する
+  center?: Point; // 拡縮の基準点（作成・復元時に一度だけ計算し、頂点ドラッグでは不変）
 }

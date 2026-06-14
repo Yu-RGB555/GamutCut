@@ -125,7 +125,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         continue;
       }
 
-      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1, mask.center);
       const pointIdx = findClosestPoint(x, y, scaledPoints);
       if (pointIdx !== -1) {
         setIsDragging(true);
@@ -138,7 +138,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     // 図形全体ドラッグ判定
     for (let idx = 0; idx < selectedMask.length; idx++) {
       const mask = selectedMask[idx];
-      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1, mask.center);
       if (isPointInPolygon(x, y, scaledPoints)) {
         setDraggingMaskIndex(idx);
         setLastMousePos({ x, y });
@@ -188,12 +188,12 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     if (isDragging && dragMaskIndex !== -1 && dragPointIndex !== -1) {
       const updatedMasks = selectedMask.map((mask, idx) => {
         if (idx === dragMaskIndex) {
-          const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1); // スケール済み点群の取得
+          const scale = mask.scale ?? 1;
+          const center = mask.center ?? getCenter(mask.originalPoints); // 拡縮の基準点（固定）
+          const scaledPoints = getScaledPoints(mask.originalPoints, scale, center); // スケール済み点群の取得
           const newScaledPoints = [...scaledPoints]; // ドラッグされた頂点だけ新しい座標に置き換え
           newScaledPoints[dragPointIndex] = { x, y };
-          // 逆変換でoriginalPointsを再計算
-          const center = getCenter(scaledPoints);
-          const scale = mask.scale ?? 1;
+          // 逆変換でoriginalPointsを再計算（centerは固定のため他の頂点はズレない）
           const newOriginalPoints = newScaledPoints.map(p => ({
             x: center.x + (p.x - center.x) / scale,
             y: center.y + (p.y - center.y) / scale
@@ -215,7 +215,9 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         if (idx === draggingMaskIndex) {
           return {
             ...mask,
-            originalPoints: mask.originalPoints.map(p => ({ x: p.x + dx, y: p.y + dy }))
+            originalPoints: mask.originalPoints.map(p => ({ x: p.x + dx, y: p.y + dy })),
+            // 拡縮の基準点も図形と一緒に移動させる
+            center: mask.center ? { x: mask.center.x + dx, y: mask.center.y + dy } : undefined
           };
         }
         return mask;
@@ -232,7 +234,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
       let foundMask = false;  // マスク領域の判定
 
       selectedMask.forEach(mask => {
-        const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+        const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1, mask.center);
 
         // 円形マスク以外の場合のみ頂点判定を行う
         if (!isCircularMask(mask)) {
@@ -293,7 +295,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         id: mask.id,
         originalPoints: absPoints,
         scale: 1,
-        shape_type: mask.shape_type
+        shape_type: mask.shape_type,
+        center: getCenter(absPoints) // 拡縮の基準点を固定
       }
     ]);
     setSelectedMaskIndex(selectedMask.length);
@@ -353,7 +356,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
       // 現在のマスクの状態を相対座標で保存
       const currentMasks = selectedMask.map(mask => {
-        const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+        const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1, mask.center);
 
         // 中心点からの相対座標に変換（-1.0 ~ 1.0の範囲）
         const relativePoints = scaledPoints.map(point => ({
@@ -436,7 +439,8 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
           id: Date.now() + index, // 一時的なID
           originalPoints: absolutePoints,
           scale: mask.scale || 1,
-          shape_type: mask.shape_type || 'unknown' // 図形タイプ
+          shape_type: mask.shape_type || 'unknown', // 図形タイプ
+          center: getCenter(absolutePoints) // 拡縮の基準点を固定
         };
       });
 

@@ -21,7 +21,7 @@ export class MaskDrawer {
     tempCtx.globalAlpha = 1.0;
     tempCtx.beginPath();
     selectedMask.forEach(mask => {
-      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1, mask.center);
       if (scaledPoints.length > 0) {
         tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
         for (let i = 1; i < scaledPoints.length; i++) {
@@ -36,7 +36,7 @@ export class MaskDrawer {
     tempCtx.globalCompositeOperation = "source-over";
     tempCtx.globalAlpha = 1.0;
     selectedMask.forEach(mask => {
-      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1);
+      const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1, mask.center);
       if (scaledPoints.length > 0) {
         tempCtx.beginPath();
         tempCtx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
