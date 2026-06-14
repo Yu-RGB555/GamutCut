@@ -45,9 +45,18 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   // キャンバスを参照
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // 描画インスタンス
-  const colorWheelDrawer = new ColorWheelDrawer;
-  const maskDrawer = new MaskDrawer;
+  // 描画インスタンス（キャッシュを保持するため再レンダーをまたいで永続化する）
+  const colorWheelDrawerRef = useRef<ColorWheelDrawer | null>(null);
+  if (colorWheelDrawerRef.current === null) {
+    colorWheelDrawerRef.current = new ColorWheelDrawer();
+  }
+  const colorWheelDrawer = colorWheelDrawerRef.current;
+
+  const maskDrawerRef = useRef<MaskDrawer | null>(null);
+  if (maskDrawerRef.current === null) {
+    maskDrawerRef.current = new MaskDrawer();
+  }
+  const maskDrawer = maskDrawerRef.current;
 
   // 色相環パラメータ
   const [currentValue, setCurrentValue] = useState<number>(100);

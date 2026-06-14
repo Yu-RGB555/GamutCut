@@ -2,14 +2,26 @@ import { MaskWithScale } from "@/types/gamut";
 import { getScaledPoints } from "./maskUtils";
 
 export class MaskDrawer {
+  // グレーアウト用の一時キャンバス（毎フレーム生成しないよう再利用する）
+  private tempCanvas: HTMLCanvasElement | null = null;
+
   drawMasks(ctx: CanvasRenderingContext2D, selectedMask: MaskWithScale[], canvasWidth: number, canvasHeight: number){
     // グレーアウト用のレイヤーを作成
-    // 一時キャンバスを用意
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvasWidth;
-    tempCanvas.height = canvasHeight;
+    if (!this.tempCanvas) {
+      this.tempCanvas = document.createElement('canvas');
+    }
+    const tempCanvas = this.tempCanvas;
+    if (tempCanvas.width !== canvasWidth || tempCanvas.height !== canvasHeight) {
+      tempCanvas.width = canvasWidth;
+      tempCanvas.height = canvasHeight;
+    }
     const tempCtx = tempCanvas.getContext('2d');
     if (!tempCtx) return;
+
+    // 再利用キャンバスのため前フレームの内容をクリア
+    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.globalAlpha = 1.0;
+    tempCtx.globalCompositeOperation = "source-over";
 
     // 全体を半透明グレーで塗りつぶす
     tempCtx.globalAlpha = 0.65;
