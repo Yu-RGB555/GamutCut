@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { generateAlternates } from '@/lib/metadata';
+import { MaintenanceGuard } from '@/components/MaintenanceGuard';
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -18,5 +19,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default function WorkLayout({ children }: { children: React.ReactNode;}) {
-  return <>{children}</>;
+  return <MaintenanceGuard>{children}</MaintenanceGuard>;
 }
