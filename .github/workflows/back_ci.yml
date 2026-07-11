@@ -3,26 +3,31 @@ name: Backend CI
 # backendファイル更新時のみ実行
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
     paths:
       - 'back/**'
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
     paths:
       - 'back/**'
+
+# 同一PR・同一ブランチで古いRunが残っていたらキャンセル
+concurrency:
+  group: back-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   backend_test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
-        # /backで実施
         working-directory: ./back
 
     services:
       # 仮想dbのセットアップ
       postgres:
-        image: postgres:14
+        image: postgres:17
         ports:
           - 5432:5432
         env:
@@ -54,16 +59,17 @@ jobs:
           bundler-cache: true
           working-directory: ./back
 
-      - name: Setup Database
-        run: |
-          bin/rails db:create
-          bin/rails db:schema:load
-
+      # 軽量で失敗しやすいテストをDBセットアップ前に実施し、無駄を省く
       - name: Run RuboCop
         run: bin/rubocop
 
       - name: Run Brakeman
         run: bin/brakeman --no-pager
+
+      - name: Setup Database
+        run: |
+          bin/rails db:create
+          bin/rails db:schema:load
 
       - name: Run RSpec
         run: bundle exec rspec
