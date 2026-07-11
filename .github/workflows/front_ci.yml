@@ -25,6 +25,7 @@ jobs:
     env:
       FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
       NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      NEXT_PUBLIC_MAINTENANCE_MODE: 'true'
 
     steps:
       - name: Checkout code
