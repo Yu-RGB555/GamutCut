@@ -2,17 +2,23 @@ name: Frontend CI
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
     paths:
       - 'front/**'
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
     paths:
       - 'front/**'
+
+# 同一PR・同一ブランチで古いRunが残っていたらキャンセル
+concurrency:
+  group: front-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   frontend_test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: ./front
@@ -34,17 +40,46 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps
-
+      # 軽量で失敗しやすいテストをブラウザDL前に実施し、無駄を省く
       - name: Run Lint
         run: yarn lint
 
       - name: Run Type Check
         run: npx tsc --noEmit
 
+      # Next.jsのビルドキャッシュ（2回目以降のビルドを高速化）
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: front/.next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('front/yarn.lock') }}-${{ hashFiles('front/src/**/*.ts', 'front/src/**/*.tsx') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('front/yarn.lock') }}-
+
       - name: Run Build Check
         run: yarn build
+
+      # Playwrightのバージョンを取得（ブラウザキャッシュのキーに使用）
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(node -e "console.log(require('@playwright/test/package.json').version)")" >> "$GITHUB_OUTPUT"
+
+      # ブラウザ本体をキャッシュ（バージョンが変わらない限りDLを省略）
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+      # ブラウザは chromium のみインストールして使用
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: yarn playwright install --with-deps chromium
+
+      - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: yarn playwright install-deps chromium
 
       - name: Run Playwright tests
         run: yarn playwright test
