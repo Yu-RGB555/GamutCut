@@ -12,8 +12,6 @@ import { UserCircle2Icon } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import { Link } from '@/i18n/routing';
-import { isMaintenanceMode } from '@/lib/maintenance';
-import { MaintenancePage } from '@/components/MaintenancePage';
 
 interface Comment {
   id: number;
@@ -103,8 +101,6 @@ export default function CommentDetailPage() {
       showAlert("コメントの削除に失敗しました");
     }
   };
-
-  if (isMaintenanceMode()) return <MaintenancePage />;
 
   if (isLoading) {
     return (
