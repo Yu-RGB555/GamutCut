@@ -1,2 +1,7 @@
 # env files
 .env*
+
+# docs
+CLAUDE.md
+.claude/
+docs/

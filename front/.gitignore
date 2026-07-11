@@ -45,3 +45,11 @@ next-env.d.ts
 **/public/sw.js.map
 **/public/workbox-*.js
 **/public/workbox-*.js.map
+
+# mdファイル
+CLAUDE.md
+issue.md
+maintenance.md
+TEST_STRATEGY.md
+back/TESTING.md
+execution_timing.md
