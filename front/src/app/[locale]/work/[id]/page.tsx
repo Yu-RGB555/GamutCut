@@ -63,7 +63,8 @@ export async function generateMetadata(
 }
 
 export default async function Page({ params }: Props) {
-  // メンテナンスモード中はホームにリダイレクト
+  // メンテナンスモード中は work/layout.tsx の MaintenanceGuard によりこのページ自体が
+  // 描画されないため、通常この分岐には到達しない（ガードが外れた場合の防御として残置）
   if (isMaintenanceMode()) {
     redirect('/');
   }

@@ -7,7 +7,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { UserCircle2Icon } from "lucide-react";
 import XLogo from "./XLogo";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
-import { MaintenancePage } from "@/components/MaintenancePage";
 import { motion } from "motion/react";
 
 const tabs = [
@@ -22,12 +21,10 @@ interface MyPageLayoutProps {
 }
 
 export function MyPageLayout({ children }: MyPageLayoutProps) {
-  const { isLoading, maintenance } = useAuthRedirect();
+  const { isLoading } = useAuthRedirect();
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
-
-  if (maintenance) return <MaintenancePage />;
 
   // 認証状態の初期化中は何も表示しない（LoadingOverlayが表示）
   if (isLoading || !user) {

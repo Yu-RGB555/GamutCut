@@ -18,8 +18,6 @@ import { Label } from "@/components/ui/label";
 import { passwordUpdate } from '@/lib/api';
 import { PasswordUpdateRequest } from '@/types/auth';
 import { useLoad } from '@/contexts/LoadingContext';
-import { isMaintenanceMode } from '@/lib/maintenance';
-import { MaintenancePage } from '@/components/MaintenancePage';
 
 function PasswordResetForm() {
   const router = useRouter();
@@ -208,8 +206,6 @@ function PasswordResetForm() {
 }
 
 export default function PasswordReset() {
-  if (isMaintenanceMode()) return <MaintenancePage />;
-
   return (
     <Suspense fallback={null}>
       <PasswordResetForm />

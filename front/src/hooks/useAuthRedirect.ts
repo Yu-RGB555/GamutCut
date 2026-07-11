@@ -43,5 +43,5 @@ export const useAuthRedirect = () => {
   }, [isAuthenticated, isLoading, router, setIsLoadingOverlay, maintenance]);
 
   // メンテナンスモード中は常に未認証として返す
-  return { isAuthenticated: maintenance ? false : isAuthenticated, isLoading: maintenance ? false : isLoading, maintenance };
+  return { isAuthenticated: maintenance ? false : isAuthenticated, isLoading: maintenance ? false : isLoading };
 };
