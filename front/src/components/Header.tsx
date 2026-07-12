@@ -122,9 +122,12 @@ export function Header() {
               <Image
                 src='/app_logo.svg'
                 alt="GamutCut"
-                width={100}
+                // 縦横比はSVG本来の比率（約5.15:1）に合わせる（ずれるとCLS・警告の原因）
+                width={103}
                 height={20}
-                sizes="100px"
+                sizes="103px"
+                className="h-5 w-auto"
+                priority  // LCP対象のロゴのため優先読み込み
               />
             </Link>
           </div>

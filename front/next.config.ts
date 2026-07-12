@@ -9,8 +9,9 @@ const withPWA = withPWAInit({
   workboxOptions: {
     skipWaiting: true,
     exclude: [
-      // 以下のファイルは存在しないため、ビルド時にキャッシュ対象として認識しないように除外
-      /\/_next\/dynamic-css-manifest\.json$/
+      // 本番で配信されない（404になる）ため、precache対象から除外
+      // ※excludeは「/_next/」プレフィックスが付く前のアセット名に対して評価されるため、末尾一致で書く
+      /dynamic-css-manifest\.json$/
     ]
   }
 });

@@ -9,8 +9,6 @@ export class ColorWheelDrawer {
   private cacheCanvas: HTMLCanvasElement | null = null;
   private cacheWidth: number = 0;
   private cacheHeight: number = 0;
-  // cacheCanvasから取得した明度100%基準のピクセルデータ
-  private cachePixelData: ImageData | null = null;
 
   // 現在の明度(value)を適用した結果を保持するオフスクリーンキャンバス
   private valueCanvas: HTMLCanvasElement | null = null;
@@ -95,25 +93,20 @@ export class ColorWheelDrawer {
         gradient.addColorStop(position, `rgb(${r}, ${g}, ${b})`);
       }
 
-      cacheCtx.save();
+      // 扇形の内側だけを直接塗る（全面塗り＋切り抜きより大幅に軽い。詳細: docs/colorWheelDrawer.md）
       cacheCtx.beginPath();
       cacheCtx.moveTo(centerX, centerY);
 
       const angleBuffer = degToRad(0.1);
       cacheCtx.arc(centerX, centerY, this.maxRadius, startAngle - angleBuffer, endAngle + angleBuffer);
       cacheCtx.closePath();
-      cacheCtx.clip();
 
       cacheCtx.fillStyle = gradient;
-      cacheCtx.fillRect(0, 0, width, height);
-      cacheCtx.restore();
+      cacheCtx.fill();
     }
 
     this.cacheWidth = width;
     this.cacheHeight = height;
-
-    // 明度100%基準のピクセルデータを保持しておく
-    this.cachePixelData = cacheCtx.getImageData(0, 0, width, height);
 
     // valueCanvasもcacheCanvasと同サイズに揃え、明度の再計算を強制する
     if (!this.valueCanvas) {
@@ -126,25 +119,30 @@ export class ColorWheelDrawer {
     this.lastValue = null;
   }
 
-  // cachePixelDataに明度(value/100)を乗算してvalueCanvasに反映する
+  // 色相環に明度を反映してvalueCanvasに描き出す。
+  // JSのピクセルループではなくCanvasの合成モードで一括適用する（詳細: docs/colorWheelDrawer.md）
   private applyBrightness(value: number, width: number, height: number) {
-    if (!this.cachePixelData || !this.valueCanvas) return;
+    if (!this.cacheCanvas || !this.valueCanvas) return;
 
     const valueCtx = this.valueCanvas.getContext('2d');
     if (!valueCtx) return;
 
-    const factor = value / 100;
-    const src = this.cachePixelData.data;
-    const dst = new Uint8ClampedArray(src.length);
+    valueCtx.clearRect(0, 0, width, height);
+    valueCtx.drawImage(this.cacheCanvas, 0, 0);
 
-    for (let i = 0; i < src.length; i += 4) {
-      dst[i] = src[i] * factor;
-      dst[i + 1] = src[i + 1] * factor;
-      dst[i + 2] = src[i + 2] * factor;
-      dst[i + 3] = src[i + 3];
-    }
+    // 明度100%はキャッシュそのままで終了
+    if (value >= 100) return;
 
-    valueCtx.putImageData(new ImageData(dst, width, height), 0, 0);
+    const v = Math.round(255 * value / 100);
+    valueCtx.save();
+    // 乗算合成でグレーを重ね、全体を明度の割合だけ暗くする
+    valueCtx.globalCompositeOperation = 'multiply';
+    valueCtx.fillStyle = `rgb(${v}, ${v}, ${v})`;
+    valueCtx.fillRect(0, 0, width, height);
+    // 円の外側まで塗られたグレーを、元の色相環の円形に切り抜き直す
+    valueCtx.globalCompositeOperation = 'destination-in';
+    valueCtx.drawImage(this.cacheCanvas, 0, 0);
+    valueCtx.restore();
   }
 
   getMaxRadius(){
