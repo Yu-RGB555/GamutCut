@@ -460,9 +460,30 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     }
   }, [copiedMaskData]);
 
+  // 初回の描画が終わったかどうか
+  const hasDrawnRef = useRef(false);
+
   // 再描画トリガー
+  // 初回のみ、ページ表示を優先するため描画をrAF2回分あとに遅らせる（詳細: docs/maskMaking.md）
   useEffect(() => {
-    redraw();
+    if (hasDrawnRef.current) {
+      redraw();
+      return;
+    }
+
+    let cancelled = false;
+    const rafId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (cancelled) return;
+        hasDrawnRef.current = true;
+        redraw();
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentValue, rotation, selectedMask]);
 
