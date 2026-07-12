@@ -2,12 +2,18 @@ import type { Metadata } from 'next'
 import '@/app/globals.css'
 import { ClientLayout } from './client-layout'
 import { generateJsonLd } from '@/lib/structured-data'
-import { getMessages, getTranslations } from 'next-intl/server'
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
+import { routing } from '@/i18n/routing'
 
 interface Props {
   children: React.ReactNode;
   params: Promise<{ locale: string }>
+}
+
+// 対応言語（en / ja）のページをビルド時に事前生成し、表示開始（LCP）を速くする
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -80,6 +86,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function RootLayout({ children, params }: Props) {
   // paramsから 'ja' or 'en' を取得
   const { locale } = await params;
+
+  // next-intlに言語を直接伝えて静的生成を成立させる（無いと動的レンダリングに戻る）
+  setRequestLocale(locale);
 
   // 言語ファイルを読み込み
   const messages = await getMessages();
