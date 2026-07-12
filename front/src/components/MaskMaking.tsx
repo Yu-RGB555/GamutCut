@@ -460,6 +460,39 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     }
   }, [copiedMaskData]);
 
+  // 色相環・マスクの上ではページスクロールを抑止し、円の外側（四隅など）は
+  // ブラウザのデフォルト＝タッチスクロールに任せる
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      const x = ((touch.clientX - rect.left) / rect.width) * canvas.width;
+      const y = ((touch.clientY - rect.top) / rect.height) * canvas.height;
+
+      // 初回描画前は getMaxRadius() が 0 のためフォールバック値を使う
+      const maxRadius = colorWheelDrawer.getMaxRadius()
+        || Math.min(canvas.width, canvas.height) * 0.375;
+      const inWheel = Math.hypot(x - canvas.width / 2, y - canvas.height / 2) <= maxRadius;
+
+      // マスクは円の外へも移動できるため、マスク領域・頂点近傍も操作対象に含める
+      const onMask = selectedMask.some(mask => {
+        const scaledPoints = getScaledPoints(mask.originalPoints, mask.scale ?? 1, mask.center);
+        return isPointInPolygon(x, y, scaledPoints)
+          || (!isCircularMask(mask) && findClosestPoint(x, y, scaledPoints) !== -1);
+      });
+
+      if (inWheel || onMask) e.preventDefault();
+    };
+
+    // preventDefault を有効にするため passive: false で登録する
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    return () => canvas.removeEventListener('touchstart', handleTouchStart);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMask]);
+
   // 初回の描画が終わったかどうか
   const hasDrawnRef = useRef(false);
 
@@ -490,71 +523,25 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 mt-6 lg:mt-12">
-        <div className="justify-items-center space-y-4 lg:space-y-8">
-          <div className="relative w-full max-w-[400px]">
-
-            {/* キャンバス */}
-            <canvas
-              ref={canvasRef}
-              width={400}
-              height={400}
-              className="rounded-md w-full h-auto max-w-[400px] max-h-[400px] touch-none"
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerLeave={handlePointerUp}
-            />
-            <div className="absolute top-0 left-0">
-              <ColorInfoPanel colorInfo={colorInfo}/>
-            </div>
-
-            <div className="flex flex-col space-y-8 mt-4">
-              {/* 明度調整スライダー */}
-              <div className="w-full space-y-2">
-                <h3 className="text-card-foreground text-lg font-semibold">{t('value')}</h3>
-                <div className="flex items-center sm:flex-row gap-2 sm:gap-4">
-                  <Slider
-                    defaultValue={[100]}
-                    value={[currentValue]}
-                    min={0}
-                    max={100}
-                    step={1}
-                    onValueChange={(value) => setCurrentValue(value[0])}
-                    className="w-1/2 h-2 hover:cursor-pointer"
-                  />
-                  <span className="text-label">{currentValue}%</span>
-                </div>
-              </div>
-
-              {/* 回転調整スライダー */}
-              <div className="w-full space-y-2">
-                <h3 className="text-card-foreground text-lg font-semibold">{t('rotation')}</h3>
-                <div className="flex items-center sm:flex-row gap-2 sm:gap-4">
-                  <Slider
-                    defaultValue={[0]}
-                    value={[rotation]}
-                    min={0}
-                    max={360}
-                    step={1}
-                    onValueChange={(value) => setRotation(value[0])}
-                    className="w-1/2 h-2 hover:cursor-pointer"
-                  />
-                  <span className="text-label">{rotation}°</span>
-                </div>
-              </div>
-
-              {/* Myマスクに保存ボタン・ダウンロードボタン */}
-              <ExportControls
-                selectedMaskLength={selectedMask.length}
-                onMaskExport={handleMaskExport}
-                onMaskSave={handleMaskSave}
-              />
-            </div>
+        {/* キャンバス */}
+        <div className="relative w-full max-w-[400px] justify-self-center lg:col-start-1 lg:row-start-1">
+          <canvas
+            ref={canvasRef}
+            width={400}
+            height={400}
+            className="rounded-md w-full h-auto max-w-[400px] max-h-[400px]"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
+          />
+          <div className="absolute top-0 left-0">
+            <ColorInfoPanel colorInfo={colorInfo}/>
           </div>
         </div>
 
-        {/* 色情報パネル */}
-        <div className="justify-items-center space-y-4 lg:space-y-8">
+        {/* マスク操作パネル（lg未満はキャンバス直下、lg以上は右カラム） */}
+        <div className="w-full max-w-[400px] justify-self-center lg:col-start-2 lg:row-start-1 lg:row-span-2">
           <MaskControls
             shapeTemplates={shapeTemplates}
             selectedMask={selectedMask}
@@ -565,6 +552,50 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
             onMaskDelete={handleMaskDelete}
             onMaskIndexChange={setSelectedMaskIndex}
             onScaleChange={handleScaleChange}
+          />
+        </div>
+
+        {/* スライダー・エクスポート操作 */}
+        <div className="w-full max-w-[400px] justify-self-center lg:col-start-1 lg:row-start-2 flex flex-col space-y-8">
+          {/* 明度調整スライダー */}
+          <div className="w-full space-y-2">
+            <h3 className="text-card-foreground text-lg font-semibold">{t('value')}</h3>
+            <div className="flex items-center sm:flex-row gap-2 sm:gap-4">
+              <Slider
+                defaultValue={[100]}
+                value={[currentValue]}
+                min={0}
+                max={100}
+                step={1}
+                onValueChange={(value) => setCurrentValue(value[0])}
+                className="w-1/2 h-2 hover:cursor-pointer"
+              />
+              <span className="text-label">{currentValue}%</span>
+            </div>
+          </div>
+
+          {/* 回転調整スライダー */}
+          <div className="w-full space-y-2">
+            <h3 className="text-card-foreground text-lg font-semibold">{t('rotation')}</h3>
+            <div className="flex items-center sm:flex-row gap-2 sm:gap-4">
+              <Slider
+                defaultValue={[0]}
+                value={[rotation]}
+                min={0}
+                max={360}
+                step={1}
+                onValueChange={(value) => setRotation(value[0])}
+                className="w-1/2 h-2 hover:cursor-pointer"
+              />
+              <span className="text-label">{rotation}°</span>
+            </div>
+          </div>
+
+          {/* Myマスクに保存ボタン・ダウンロードボタン */}
+          <ExportControls
+            selectedMaskLength={selectedMask.length}
+            onMaskExport={handleMaskExport}
+            onMaskSave={handleMaskSave}
           />
         </div>
       </div>
