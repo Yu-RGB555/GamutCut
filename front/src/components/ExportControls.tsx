@@ -11,7 +11,7 @@ interface ExportControlsProps {
   onMaskSave: () => void;
 }
 
-export const ExportControls: React.FC<ExportControlsProps> = ({
+const ExportControlsComponent: React.FC<ExportControlsProps> = ({
   selectedMaskLength,
   onMaskExport,
   onMaskSave
@@ -58,3 +58,6 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
     </div>
   );
 };
+
+// 明度・回転スライダー操作時など、propsが変わらない再レンダーをスキップするためmemo化
+export const ExportControls = React.memo(ExportControlsComponent);

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAlert } from '@/contexts/AlertContext';
 import { ShapeTemplate, ColorInfo, MaskWithScale } from '@/types/gamut';
@@ -285,7 +285,7 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   };
 
   // テンプレートマスク選択
-  const handleMaskSelect = (mask: ShapeTemplate) => {
+  const handleMaskSelect = useCallback((mask: ShapeTemplate) => {
     // マスクの最大数制限（3つまで）
     if (selectedMask.length >= 3) {
       setIsDialogOpen(false);
@@ -310,10 +310,10 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     ]);
     setSelectedMaskIndex(selectedMask.length);
     setIsDialogOpen(false);
-  };
+  }, [selectedMask, showAlert, t]);
 
   // エクスポート処理
-  const handleMaskExport = () => {
+  const handleMaskExport = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -330,10 +330,10 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
         URL.revokeObjectURL(url);
       }
     }, 'image/png');
-  };
+  }, []);
 
   // マスク削除
-  const handleMaskDelete = () => {
+  const handleMaskDelete = useCallback(() => {
     if (selectedMask.length === 0) return;
 
     // 選択中のマスクを削除
@@ -346,13 +346,13 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
     } else if (selectedMaskIndex >= updatedMasks.length) {
       setSelectedMaskIndex(updatedMasks.length - 1);
     }
-  };
+  }, [selectedMask, selectedMaskIndex]);
 
   // プリセット保存ダイアログを開く
-  const handleMaskSave = () => {
+  const handleMaskSave = useCallback(() => {
     setPresetName('No Title');
     setIsSaveDialogOpen(true);
-  };
+  }, []);
 
   // プリセット保存を実行する
   const executePresetSave = async () => {
@@ -412,11 +412,11 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
   };
 
   // 拡大縮小
-  const handleScaleChange = (scale: number) => {
+  const handleScaleChange = useCallback((scale: number) => {
     setSelectedMask(selectedMask.map((mask, idx) =>
       idx === selectedMaskIndex ? { ...mask, scale } : mask
     ));
-  };
+  }, [selectedMask, selectedMaskIndex]);
 
   // Enterキーで保存
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -498,25 +498,31 @@ export function MaskMaking({ onSaveSuccess, copiedMaskData }: MaskMakingProps) {
 
   // 再描画トリガー
   // 初回のみ、ページ表示を優先するため描画をrAF2回分あとに遅らせる（詳細: docs/maskMaking.md）
+  // 2回目以降も、スライダーのドラッグ中など短時間にdepsが連続で変わるケースに備えて
+  // rAFでスケジュールし、1フレームにつき最大1回の描画に間引く（連続変化時は
+  // クリーンアップで前回分をキャンセルし、最終的な値で1回だけ描画される）
   useEffect(() => {
-    if (hasDrawnRef.current) {
-      redraw();
-      return;
+    if (!hasDrawnRef.current) {
+      let cancelled = false;
+      const rafId = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (cancelled) return;
+          hasDrawnRef.current = true;
+          redraw();
+        });
+      });
+
+      return () => {
+        cancelled = true;
+        cancelAnimationFrame(rafId);
+      };
     }
 
-    let cancelled = false;
     const rafId = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (cancelled) return;
-        hasDrawnRef.current = true;
-        redraw();
-      });
+      redraw();
     });
 
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(rafId);
-    };
+    return () => cancelAnimationFrame(rafId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentValue, rotation, selectedMask]);
 

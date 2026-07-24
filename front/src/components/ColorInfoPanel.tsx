@@ -1,3 +1,4 @@
+import React from 'react';
 import { ColorInfo } from "@/types/gamut";
 import { useTranslations } from 'next-intl';
 
@@ -5,7 +6,7 @@ interface ColorInfoProps {
   colorInfo: ColorInfo;
 }
 
-export const ColorInfoPanel: React.FC<ColorInfoProps> = ({ colorInfo }) => {
+const ColorInfoPanelComponent: React.FC<ColorInfoProps> = ({ colorInfo }) => {
   const t = useTranslations('CreateMask');
 
   return (
@@ -32,3 +33,6 @@ export const ColorInfoPanel: React.FC<ColorInfoProps> = ({ colorInfo }) => {
     </div>
   );
 }
+
+// スライダー操作時など、colorInfoが変わらない再レンダーをスキップするためmemo化
+export const ColorInfoPanel = React.memo(ColorInfoPanelComponent);

@@ -17,7 +17,7 @@ interface MaskControlsProps {
   onScaleChange: (scale: number) => void;
 }
 
-export const MaskControls: React.FC<MaskControlsProps> = ({
+const MaskControlsComponent: React.FC<MaskControlsProps> = ({
   shapeTemplates,
   selectedMask,
   selectedMaskIndex,
@@ -121,3 +121,6 @@ export const MaskControls: React.FC<MaskControlsProps> = ({
     </div>
   );
 }
+
+// 明度・回転スライダー操作時など、propsが変わらない再レンダーをスキップするためmemo化
+export const MaskControls = React.memo(MaskControlsComponent);
