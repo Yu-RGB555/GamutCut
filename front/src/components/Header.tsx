@@ -28,9 +28,15 @@ import { Skeleton } from './ui/skeleton';
 import { useTranslations } from 'next-intl';
 import { isMaintenanceMode } from '@/lib/maintenance';
 import Image from "next/image";
-import { useNextStep } from 'nextstepjs';
-import { motion } from "motion/react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import dynamic from 'next/dynamic';
+
+// nextstepjs・motionはガイドツアーボタン専用の重い依存のため、
+// ロゴ（LCP対象）を含むHeader本体のバンドルから切り離して遅延ロードする
+// （詳細: docs/plan/20260725_010137_plan.md）
+const GuideTourButton = dynamic(
+  () => import('./GuideTourButton').then((mod) => mod.GuideTourButton),
+  { ssr: false }
+);
 
 export function Header() {
   const { logout } = useAuth();
@@ -42,13 +48,6 @@ export function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const t = useTranslations('Header');
-  const T = useTranslations('CreateMask');
-
-  // ツアーガイド
-  const { startNextStep } = useNextStep();
-  const handleStartTour = () => {
-    startNextStep("mainTour");
-  };
 
   // ユーザーメニュー項目の定義
   const userMenuItems = [
@@ -208,30 +207,8 @@ export function Header() {
               </>
             ) : (
               isMaintenanceMode() ? (
-                // ガイドツアーボタン
-                  <div className="fixed top-2 right-4 sm:bottom-6 sm:right-6 z-50">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <motion.button
-                          onClick={handleStartTour}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="w-10 h-10 sm:w-12 sm:h-12 text-center border border-gray-500 hover:cursor-pointer rounded-full shadow-lg overflow-hidden"
-                        >
-                          <Image
-                            src="/guide_tour.webp"
-                            alt="クイックガイド"
-                            width={100}
-                            height={100}
-                            className="object-cover w-full h-full"
-                          />
-                        </motion.button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="font-semibold">{T('quick_guide')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
+                // ガイドツアーボタン（nextstepjs・motionを含む重い部分のため遅延ロード）
+                <GuideTourButton />
               ) : (
                 <>
                   <Button

@@ -12,7 +12,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { MaintenanceBanner } from "@/components/MaintenanceBanner";
 import { isMaintenanceMode } from "@/lib/maintenance";
 import { NextStepProvider, NextStep } from 'nextstepjs';
-import { Tour, Step } from 'nextstepjs';
+import type { Tour, Step } from 'nextstepjs';
 import { CustomCard } from '@/components/CustomCard';
 import { useState } from 'react';
 import { BsPersonArmsUp } from "react-icons/bs";
